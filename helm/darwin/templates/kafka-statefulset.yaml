@@ -66,9 +66,9 @@ spec:
                 - sh
                 - -c
                 - "kafka-broker-api-versions --bootstrap-server localhost:9092"
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            timeoutSeconds: 5
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 20
             failureThreshold: 5
           resources:
             {{- toYaml .Values.kafka.resources | nindent 12 }}
