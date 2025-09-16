@@ -1,12 +1,13 @@
 #!/bin/sh
 set -e
 
-while getopts a:p:t: flag
+while getopts a:p:t:e: flag
 do
     case "${flag}" in
         a) application=${OPTARG};;
         p) path=${OPTARG};;
         t) base_path=${OPTARG};;
+        e) base_image=${OPTARG};;
     esac
 done
 
@@ -31,6 +32,7 @@ cd $base_path
 echo "application: $application";
 echo "path: $path";
 echo "base_path: $base_path";
+echo "base_image: $base_image";
 
 rm -rf $path/target
 mkdir -p -m 755 $path/target/$application/.odinst
@@ -39,12 +41,12 @@ cd $path;
 cp -r ../.odin/$application/. target/$application/.odin
 
 chmod 755 target/$application/.odin
-cd target
-
-cp -r $application/. /app/
-
-if [[ -f "/app/.odin/setup.sh" ]]; then
-    bash /app/.odin/setup.sh
-fi
-
 cd $cur_dir
+
+sudo docker build \
+  --build-arg BASE_IMAGE=$base_image \
+  --build-arg APP_NAME=$application \
+  --build-arg APP_BASE_DIR=feature-store \
+  --build-arg APP_DIR=$path \
+  -t $application:latest \
+  -f deployer/images/Dockerfile .

@@ -4,116 +4,96 @@ global:
   storageClass: standard
   namespace: darwin
 
-# Darwin Platform Components
-
-# Feature Store Component (Darwin OFS V2)
-darwinFeatureStore:
-  enabled: false
-  replicaCount: 2
-  image:
-    repository: darwin-ofs-v2
-    tag: latest
-    pullPolicy: IfNotPresent
-  service:
-    type: ClusterIP
-    port: 8080
-  ingress:
+# Darwin Platform Services
+services:
+  # Feature Store Service
+  feature-store:
     enabled: true
-    className: nginx
-    annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /
-    hosts:
-      - host: darwin-feature-store.local
-        paths:
-          - path: /
-            pathType: Prefix
-  resources:
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-    requests:
-      cpu: 500m
-      memory: 2Gi
-  autoscaling:
-    enabled: true
-    minReplicas: 2
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 70
-  # Custom environment variables for feature store
-  extraEnvVars:
-    - name: LOG_LEVEL
-      value: "DEBUG"
-    - name: ENVIRONMENT
-      value: "development"
-    - name: FEATURE_STORE_VERSION
-      value: "v2.0.0"
-    - name: CACHE_TTL
-      value: "3600"
-  # Pre-deploy configuration for feature store
-  preDeploy:
-    enabled: true
+    replicaCount: 2
     image:
       repository: darwin-ofs-v2
       tag: latest
       pullPolicy: IfNotPresent
-    env:
-      appDir: "/app"
-      environment: "darwin-local"
-      vpcSuffix: "-darwin-local"
-      teamSuffix: "-darwin-local"
-      serviceName: "darwin-ofs-v2"
-      deploymentType: "container"
-    # Custom commands (optional)
-    commands: []
-    # Additional environment variables
-    extraEnvVars: []
-    resources:
-      limits:
-        cpu: 200m
-        memory: 256Mi
-      requests:
-        cpu: 50m
-        memory: 64Mi
-
-# Workflow Orchestration Component
-darwinWorkflow:
-  enabled: false
-  replicaCount: 1
-  image:
-    repository: darwin-workflow
-    tag: latest
-    pullPolicy: IfNotPresent
-  service:
-    type: ClusterIP
-    port: 8081
-  ingress:
+    service:
+      type: ClusterIP
+      port: 8080
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+      hosts:
+        - host: darwin-feature-store.local
+          paths:
+            - path: /
+              pathType: Prefix
+    autoscaling:
+      enabled: false
+              
+  feature-store-admin:
     enabled: true
-    className: nginx
-    hosts:
-      - host: darwin-workflow.local
-        paths:
-          - path: /
-            pathType: Prefix
+    replicaCount: 1
+    image:
+      repository: darwin-ofs-v2-admin
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8080
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-feature-store-admin.local
+          paths:
+            - path: /
+              pathType: Prefix
+    autoscaling:
+      enabled: false
 
-# Compute Orchestration Component  
-darwinCompute:
-  enabled: false
-  replicaCount: 1
-  image:
-    repository: darwin-compute
-    tag: latest
-    pullPolicy: IfNotPresent
-  service:
-    type: ClusterIP
-    port: 8082
-  ingress:
-    enabled: true
-    className: nginx
-    hosts:
-      - host: darwin-compute.local
-        paths:
-          - path: /
-            pathType: Prefix
+  # Workflow Orchestration Service
+  workflow:
+    enabled: false
+    replicaCount: 1
+    image:
+      repository: darwin-workflow
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8081
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-workflow.local
+          paths:
+            - path: /
+              pathType: Prefix
+    autoscaling:
+      enabled: false
+
+  # Compute Orchestration Service  
+  compute:
+    enabled: false
+    replicaCount: 1
+    image:
+      repository: darwin-compute
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8082
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-compute.local
+          paths:
+            - path: /
+              pathType: Prefix
+    autoscaling:
+        enabled: false
 
 # Data Infrastructure Components
 

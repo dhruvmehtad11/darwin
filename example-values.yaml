@@ -1,0 +1,196 @@
+# Global configuration
+global:
+  imageRegistry: docker.io
+  storageClass: standard
+  namespace: darwin
+
+# Generic Services Configuration
+services:
+  # Feature Store Service
+  feature-store:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: darwin-ofs-v2
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8080
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+      hosts:
+        - host: darwin-feature-store.local
+          paths:
+            - path: /
+              pathType: Prefix
+    healthcheck:
+      path: /healthcheck
+      initialDelaySeconds: 60
+      readinessDelay: 30
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+      requests:
+        cpu: 500m
+        memory: 2Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 70
+    extraEnvVars:
+      - name: LOG_LEVEL
+        value: "DEBUG"
+      - name: FEATURE_STORE_VERSION
+        value: "v2.0.0"
+
+  # Workflow Service
+  workflow:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: darwin-workflow
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8081
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-workflow.local
+          paths:
+            - path: /
+              pathType: Prefix
+    healthcheck:
+      path: /healthcheck
+      initialDelaySeconds: 45
+      readinessDelay: 20
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 1Gi
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: WORKFLOW_VERSION
+        value: "v1.0.0"
+
+  # Compute Service
+  compute:
+    enabled: false
+    replicaCount: 1
+    image:
+      repository: darwin-compute
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8082
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-compute.local
+          paths:
+            - path: /
+              pathType: Prefix
+    healthcheck:
+      path: /healthcheck
+    resources:
+      limits:
+        cpu: 4000m
+        memory: 8Gi
+      requests:
+        cpu: 1000m
+        memory: 4Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 80
+
+  # Data Pipeline Service
+  data-pipeline:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: darwin-pipeline
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8083
+    ingress:
+      enabled: false
+    healthcheck:
+      path: /healthcheck
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 512Mi
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: PIPELINE_MODE
+        value: "batch"
+
+  # Analytics Service
+  analytics:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: darwin-analytics
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8084
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-analytics.local
+          paths:
+            - path: /
+              pathType: Prefix
+    healthcheck:
+      path: /healthcheck
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 1.5Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 75
+
+# Database configurations (shared across services)
+mysql:
+  auth:
+    username: root
+    password: password
+
+cassandra:
+  cluster:
+    name: darwin-cassandra
+
+kafka:
+  cluster:
+    name: darwin-kafka

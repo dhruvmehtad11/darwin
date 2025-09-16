@@ -22,7 +22,6 @@ if [ "$ENV" = "local" ]; then
         
         sh ./kind/start-cluster.sh
         ENV_CREATION=true
-        
         rm ./kind/kind-config-tmp.yaml
     else
         echo "\nSkipping kind cluster setup"
@@ -55,14 +54,10 @@ pushd deployer/images/python-3.9.7
 sh build.sh
 popd
 
-sudo docker build \
-  --build-arg BASE_IMAGE=darwin/java:11-maven-bookworm-slim \
-  --build-arg APP_NAME=darwin-ofs-v2 \
-  --build-arg APP_BASE_DIR=feature-store \
-  --build-arg APP_DIR=app \
-  -t darwin-ofs-v2:latest \
-  -f deployer/images/Dockerfile .
+sh deployer/scripts/image-builder.sh -a darwin-ofs-v2 -t feature-store -p app -e darwin/java:11-maven-bookworm-slim
+sh deployer/scripts/image-builder.sh -a darwin-ofs-v2-admin -t feature-store -p admin -e darwin/java:11-maven-bookworm-slim
 
 if [ "$ENV_CREATION" = "true" ]; then
     kind load docker-image darwin-ofs-v2:latest --name $CLUSTER_NAME
+    kind load docker-image darwin-ofs-v2-admin:latest --name $CLUSTER_NAME
 fi

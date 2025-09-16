@@ -7,22 +7,15 @@ ARG APP_BASE_DIR
 ARG APP_DIR
 WORKDIR /app/
 
-# Copy folder to the image
-COPY ${APP_BASE_DIR}/ /app/${APP_BASE_DIR}/
-
-# Copy artifact from build context
-COPY deployer/scripts/image-builder.sh /app/
-
-# Build
-RUN --mount=type=cache,target=/root/.m2/repository \
-  sh image-builder.sh -a ${APP_NAME} -t ${APP_BASE_DIR} -p ${APP_DIR}
-
-RUN rm /app/image-builder.sh
-RUN rm -r /app/$APP_BASE_DIR
+COPY ${APP_BASE_DIR}/${APP_DIR}/target/${APP_NAME}/. /app/
 
 # Setup
 # RUN --mount=type=cache,target=/root/.m2/repository \
 #   sh ./.odin/${APP_NAME}/setup.sh
+
+# if [[ -f "/app/.odin/setup.sh" ]]; then
+#     bash /app/.odin/setup.sh
+# fi
 
 # Entrypoint
 ENTRYPOINT ["bash", "-c", "/app/.odin/start.sh"]

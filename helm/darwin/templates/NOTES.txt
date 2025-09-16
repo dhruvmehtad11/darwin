@@ -1,14 +1,16 @@
 🎉 Darwin Platform Successfully Deployed!
 
 1. Darwin Platform Components:
-{{- if .Values.darwinFeatureStore.enabled }}
-   🗃️  Feature Store: http://darwin-feature-store.local
+{{- range $serviceName, $config := .Values.services }}
+{{- if $config.enabled }}
+{{- if $config.ingress.enabled }}
+{{- range $config.ingress.hosts }}
+   🚀 {{ $serviceName | title }}: http://{{ .host }}
 {{- end }}
-{{- if .Values.darwinWorkflow.enabled }}
-   🔄 Workflow Engine: http://darwin-workflow.local  
+{{- else }}
+   🚀 {{ $serviceName | title }}: {{ include "darwin.fullname" $ }}-{{ $serviceName }}:{{ $config.service.port }}
 {{- end }}
-{{- if .Values.darwinCompute.enabled }}
-   ⚡ Compute Engine: http://darwin-compute.local
+{{- end }}
 {{- end }}
 
 2. Data Infrastructure:
@@ -35,6 +37,6 @@
    
 5. Enable Additional Components:
    helm upgrade {{ .Release.Name }} ./helm/darwin \
-     --set darwinWorkflow.enabled=true \
-     --set darwinCompute.enabled=true \
+     --set services.workflow.enabled=true \
+     --set services.compute.enabled=true \
      -n {{ .Release.Namespace }}

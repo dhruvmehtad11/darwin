@@ -10,9 +10,9 @@ data:
   version: "{{ .Chart.AppVersion }}"
   cluster-name: "{{ .Values.global.namespace | default "darwin" }}"
   components: |
-    feature-store: {{ .Values.darwinFeatureStore.enabled }}
-    workflow: {{ .Values.darwinWorkflow.enabled }}
-    compute: {{ .Values.darwinCompute.enabled }}
+    {{- range $serviceName, $config := .Values.services }}
+    {{ $serviceName }}: {{ $config.enabled }}
+    {{- end }}
   infrastructure: |
     mysql: {{ .Values.mysql.enabled }}
     cassandra: {{ .Values.cassandra.enabled }}
