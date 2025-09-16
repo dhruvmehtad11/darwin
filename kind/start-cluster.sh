@@ -1,17 +1,16 @@
 #!/bin/sh
 set -e
 
-
-CLUSTER_NAME=kind  # change if you use --name
-CONFIG=./kind/kind-config.yaml
-KUBECONFIG=./kind/config/kindkubeconfig.yaml
+CLUSTER_NAME=$CLUSTER_NAME
+KIND_CONFIG=$KIND_CONFIG
+KUBECONFIG=$KUBECONFIG
 
 if ! command -v kind &> /dev/null; then
     echo "kind could not be found, installing it"
     brew install kind || apt-get install kind
 fi
 
-export KUBECONFIG=./kind/config/kindkubeconfig.yaml
+export KUBECONFIG=$KUBECONFIG
 
 # Check if cluster exists
 if kind get clusters | grep -q "^${CLUSTER_NAME}$"; then
@@ -20,7 +19,7 @@ else
   echo "🚀 Creating kind cluster '${CLUSTER_NAME}'..."
   kind create cluster \
     --name "${CLUSTER_NAME}" \
-    --config "${CONFIG}" \
+    --config "${KIND_CONFIG}" \
     --kubeconfig "${KUBECONFIG}"
 
   # Install cert-manager with CRDs
