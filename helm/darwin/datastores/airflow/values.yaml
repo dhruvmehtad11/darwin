@@ -1,0 +1,117 @@
+image:
+  repository: apache/airflow
+  tag: "2.7.0"
+  pullPolicy: IfNotPresent
+
+executor: CeleryExecutor
+
+webserver:
+  replicas: 1
+  defaultUser:
+    enabled: true
+    username: admin
+    password: admin123
+    firstName: Admin
+    lastName: User
+    email: admin@darwin.local
+    role: Admin
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+scheduler:
+  replicas: 1
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+workers:
+  replicas: 2
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  persistence:
+    enabled: true
+    size: 10Gi
+
+postgresql:
+  enabled: true
+  auth:
+    username: airflow
+    password: airflow-password
+    database: airflow
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      size: 5Gi
+
+config:
+  core:
+    dags_folder: /opt/airflow/dags
+    load_examples: false
+    logging_level: INFO
+  celery:
+    worker_concurrency: 4
+  webserver:
+    expose_config: true
+    rbac: true
+
+dags:
+  persistence:
+    enabled: true
+    size: 5Gi
+    
+logs:
+  persistence:
+    enabled: true
+    size: 10Gi
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: airflow.darwin.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+env:
+  - name: AIRFLOW__CORE__FERNET_KEY
+    value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
+  - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+    value: "postgresql://airflow:airflow-password@darwin-postgresql:5432/airflow"
+
+extraVolumes:
+  - name: darwin-scripts
+    configMap:
+      name: darwin-airflow-scripts
+
+extraVolumeMounts:
+  - name: darwin-scripts
+    mountPath: /opt/airflow/scripts

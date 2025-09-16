@@ -1,0 +1,10 @@
+apiVersion: v2
+name: zookeeper
+description: Apache Zookeeper coordination service for Darwin
+type: application
+version: 1.0.0
+appVersion: "3.8.1"
+keywords:
+  - zookeeper
+  - coordination
+  - distributed-systems

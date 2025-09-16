@@ -1,0 +1,6 @@
+apiVersion: v2
+name: airflow
+description: Apache Airflow workflow orchestration platform for Darwin Feature Store
+type: application
+version: 1.0.0
+appVersion: "2.7.0"

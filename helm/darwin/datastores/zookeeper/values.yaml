@@ -1,0 +1,52 @@
+image:
+  repository: zookeeper
+  tag: "3.8.1"
+  pullPolicy: IfNotPresent
+
+replicaCount: 3
+
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 10Gi
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+service:
+  type: ClusterIP
+  ports:
+    client: 2181
+    follower: 2888
+    election: 3888
+
+config: |
+  tickTime=2000
+  initLimit=10
+  syncLimit=5
+  dataDir=/data
+  dataLogDir=/datalog
+  clientPort=2181
+  maxClientCnxns=60
+  autopurge.snapRetainCount=3
+  autopurge.purgeInterval=1
+
+jvm:
+  heap: 512m
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+networkPolicy:
+  enabled: true
+
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1

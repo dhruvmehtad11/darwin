@@ -1,0 +1,157 @@
+replicaCount: 2
+
+image:
+  repository: darwin-ofs-v2
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  hosts:
+    - host: feature-store.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 2Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: "kubernetes"
+  - name: MYSQL_HOST
+    value: "mysql"
+  - name: MYSQL_PORT
+    value: "3306"
+  - name: MYSQL_DATABASE
+    value: "darwin_ofs"
+  - name: MYSQL_USERNAME
+    value: "darwin_user"
+  - name: MYSQL_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysql-credentials
+        key: password
+  - name: CASSANDRA_HOSTS
+    value: "cassandra"
+  - name: CASSANDRA_PORT
+    value: "9042"
+  - name: CASSANDRA_KEYSPACE
+    value: "darwin_ofs"
+  - name: KAFKA_BOOTSTRAP_SERVERS
+    value: "kafka:9092"
+  - name: JVM_OPTS
+    value: "-Xms2g -Xmx2g"
+
+configMap:
+  enabled: true
+  data:
+    application.properties: |
+      server.port=8080
+      
+      # Database Configuration
+      spring.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
+      spring.datasource.username=${MYSQL_USERNAME}
+      spring.datasource.password=${MYSQL_PASSWORD}
+      spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+      
+      # Cassandra Configuration
+      spring.data.cassandra.contact-points=${CASSANDRA_HOSTS}
+      spring.data.cassandra.port=${CASSANDRA_PORT}
+      spring.data.cassandra.keyspace-name=${CASSANDRA_KEYSPACE}
+      
+      # Kafka Configuration
+      spring.kafka.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVERS}
+      spring.kafka.consumer.group-id=darwin-ofs-consumer
+      spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+      spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+      
+      # Logging
+      logging.level.com.dream11=DEBUG
+      logging.level.org.springframework=INFO
+
+secrets:
+  enabled: true
+  mysql:
+    password: darwin-password
+
+health:
+  livenessProbe:
+    httpGet:
+      path: /actuator/health
+      port: 8080
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /actuator/health/readiness
+      port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    path: /actuator/prometheus
+    port: 8080
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  mountPath: /app/data

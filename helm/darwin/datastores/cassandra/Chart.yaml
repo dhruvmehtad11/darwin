@@ -1,0 +1,10 @@
+apiVersion: v2
+name: cassandra
+description: Apache Cassandra NoSQL database for Darwin Feature Store
+type: application
+version: 1.0.0
+appVersion: "4.1.3"
+keywords:
+  - cassandra
+  - database
+  - nosql

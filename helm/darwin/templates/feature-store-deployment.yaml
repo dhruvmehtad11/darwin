@@ -1,0 +1,85 @@
+{{- if .Values.darwinFeatureStore.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "darwin.fullname" . }}-feature-store
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: feature-store
+spec:
+  {{- if not .Values.darwinFeatureStore.autoscaling.enabled }}
+  replicas: {{ .Values.darwinFeatureStore.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "darwin.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: feature-store
+  template:
+    metadata:
+      labels:
+        {{- include "darwin.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: feature-store
+    spec:
+      containers:
+        - name: feature-store
+          image: "{{ .Values.darwinFeatureStore.image.repository }}:{{ .Values.darwinFeatureStore.image.tag }}"
+          imagePullPolicy: {{ .Values.darwinFeatureStore.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.darwinFeatureStore.service.port }}
+              protocol: TCP
+          env:
+            - name: TEAM_SUFFIX
+              value: "-darwin-local"
+            - name: VPC_SUFFIX
+              value: "-darwin-local"
+            - name: ENV
+              value: "darwin-local"
+            - name: VAULT_SERVICE_MYSQL_USERNAME
+              value: "dummyUsername"
+            - name: VAULT_SERVICE_MYSQL_PASSWORD
+              value: "dummyPassword"
+            - name: IGNITE_JETTY_PORT
+              value: "80"
+            - name: DARWIN_MYSQL_HOST
+              value: "{{ include "darwin.fullname" . }}-mysql"
+            - name: DARWIN_MYSQL_USERNAME
+              value: "{{ .Values.mysql.auth.username }}"
+            - name: DARWIN_MYSQL_PASSWORD
+              value: "{{ .Values.mysql.auth.password }}"
+            - name: DARWIN_CASSANDRA_HOST
+              value: "{{ include "darwin.fullname" . }}-cassandra"
+            - name: DARWIN_KAFKA_HOST
+              value: "{{ include "darwin.fullname" . }}-kafka"
+            # Custom environment variables from values.yaml
+            {{- if .Values.darwinFeatureStore.extraEnvVars }}
+            {{- toYaml .Values.darwinFeatureStore.extraEnvVars | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.darwinFeatureStore.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+              readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "darwin.fullname" . }}-feature-store-config
+{{- end }}

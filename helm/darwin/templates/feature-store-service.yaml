@@ -1,0 +1,20 @@
+{{- if .Values.darwinFeatureStore.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "darwin.fullname" . }}-feature-store
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: feature-store
+spec:
+  type: {{ .Values.darwinFeatureStore.service.type }}
+  ports:
+    - port: {{ .Values.darwinFeatureStore.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "darwin.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: feature-store
+{{- end }}

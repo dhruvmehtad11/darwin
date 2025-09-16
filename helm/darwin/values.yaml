@@ -1,0 +1,224 @@
+# Global configuration
+global:
+  imageRegistry: docker.io
+  storageClass: standard
+  namespace: darwin
+
+# Darwin Platform Components
+
+# Feature Store Component (Darwin OFS V2)
+darwinFeatureStore:
+  enabled: false
+  replicaCount: 2
+  image:
+    repository: darwin-ofs-v2
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    hosts:
+      - host: darwin-feature-store.local
+        paths:
+          - path: /
+            pathType: Prefix
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+  # Custom environment variables for feature store
+  extraEnvVars:
+    - name: LOG_LEVEL
+      value: "DEBUG"
+    - name: ENVIRONMENT
+      value: "development"
+    - name: FEATURE_STORE_VERSION
+      value: "v2.0.0"
+    - name: CACHE_TTL
+      value: "3600"
+
+# Workflow Orchestration Component
+darwinWorkflow:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: darwin-workflow
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8081
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: darwin-workflow.local
+        paths:
+          - path: /
+            pathType: Prefix
+
+# Compute Orchestration Component  
+darwinCompute:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: darwin-compute
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8082
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: darwin-compute.local
+        paths:
+          - path: /
+            pathType: Prefix
+
+# Data Infrastructure Components
+
+# MySQL Database
+mysql:
+  enabled: true
+  architecture: standalone
+  auth:
+    rootPassword: password
+    database: darwin
+    username: darwin
+    password: darwin
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 1Gi
+
+# Cassandra Database
+cassandra:
+  enabled: true
+  cluster:
+    name: darwin-cassandra
+    replicaCount: 3
+  dbUser:
+    user: darwin_user
+    password: darwin-password
+  persistence:
+    enabled: true
+    size: 50Gi
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+
+# Apache Kafka
+kafka:
+  enabled: true
+  replicaCount: 3
+  auth:
+    enabled: false
+  persistence:
+    enabled: true
+    size: 20Gi
+  zookeeper:
+    enabled: false  # We'll use separate zookeeper
+  externalZookeeper:
+    servers: zookeeper:2181
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+# Apache Zookeeper
+zookeeper:
+  enabled: true
+  replicaCount: 3
+  persistence:
+    enabled: true
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+# Apache Airflow
+airflow:
+  enabled: false
+  executor: CeleryExecutor
+  webserver:
+    defaultUser:
+      enabled: true
+      username: admin
+      password: admin123
+      email: admin@darwin.local
+  postgresql:
+    enabled: true
+    auth:
+      username: airflow
+      password: airflow-password
+      database: airflow
+  redis:
+    enabled: true
+    auth:
+      enabled: false
+  workers:
+    replicas: 2
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+# Monitoring and Observability
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+    admin:
+      user: admin
+      password: admin123
+
+# Development Environment Settings
+development:
+  enabled: false
+  debug: false
+  hotReload: false
+
+# Production Environment Settings
+production:
+  enabled: false
+  security:
+    networkPolicies: true
+    podSecurityStandards: true

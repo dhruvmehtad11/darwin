@@ -1,0 +1,40 @@
+🎉 Darwin Platform Successfully Deployed!
+
+1. Darwin Platform Components:
+{{- if .Values.darwinFeatureStore.enabled }}
+   🗃️  Feature Store: http://darwin-feature-store.local
+{{- end }}
+{{- if .Values.darwinWorkflow.enabled }}
+   🔄 Workflow Engine: http://darwin-workflow.local  
+{{- end }}
+{{- if .Values.darwinCompute.enabled }}
+   ⚡ Compute Engine: http://darwin-compute.local
+{{- end }}
+
+2. Data Infrastructure:
+{{- if .Values.mysql.enabled }}
+   - MySQL: mysql:3306
+{{- end }}
+{{- if .Values.cassandra.enabled }}
+   - Cassandra: cassandra:9042
+{{- end }}
+{{- if .Values.kafka.enabled }}
+   - Kafka: kafka:9092
+{{- end }}
+{{- if .Values.airflow.enabled }}
+   - Airflow: http://airflow.darwin.local
+{{- end }}
+
+3. Access Information:
+   📊 Airflow Dashboard: http://airflow.darwin.local (admin/admin123)
+   🗄️  MySQL Database: mysql:3306 (darwin_user/darwin-password)
+   
+4. Platform Management:
+   kubectl get all -n {{ .Release.Namespace }}  # View all resources
+   helm status {{ .Release.Name }} -n {{ .Release.Namespace }}  # Check release status
+   
+5. Enable Additional Components:
+   helm upgrade {{ .Release.Name }} ./helm/darwin \
+     --set darwinWorkflow.enabled=true \
+     --set darwinCompute.enabled=true \
+     -n {{ .Release.Namespace }}

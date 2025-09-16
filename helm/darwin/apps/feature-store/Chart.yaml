@@ -1,0 +1,17 @@
+apiVersion: v2
+name: feature-store
+description: Darwin Feature Store - Online feature serving and management
+type: application
+version: 1.0.0
+appVersion: "2.0.0"
+keywords:
+  - feature-store
+  - machine-learning
+  - microservices
+  - feature-serving
+home: https://github.com/dream11/darwin-distro
+sources:
+  - https://github.com/dream11/darwin-distro
+maintainers:
+  - name: Dream11 Infrastructure Team
+    email: infraautomation@dream11.com

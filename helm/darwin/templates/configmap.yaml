@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "darwin.fullname" . }}-config
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+data:
+  environment: "kubernetes"
+  platform: "darwin"
+  version: "{{ .Chart.AppVersion }}"
+  cluster-name: "{{ .Values.global.namespace | default "darwin" }}"
+  components: |
+    feature-store: {{ .Values.darwinFeatureStore.enabled }}
+    workflow: {{ .Values.darwinWorkflow.enabled }}
+    compute: {{ .Values.darwinCompute.enabled }}
+  infrastructure: |
+    mysql: {{ .Values.mysql.enabled }}
+    cassandra: {{ .Values.cassandra.enabled }}
+    kafka: {{ .Values.kafka.enabled }}
+    airflow: {{ .Values.airflow.enabled }}

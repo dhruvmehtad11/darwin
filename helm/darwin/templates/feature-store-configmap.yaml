@@ -1,0 +1,34 @@
+{{- if .Values.darwinFeatureStore.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "darwin.fullname" . }}-feature-store-config
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: feature-store
+data:
+  application.properties: |
+    server.port={{ .Values.darwinFeatureStore.service.port }}
+    
+    # Database Configuration
+    spring.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
+    spring.datasource.username=${MYSQL_USERNAME}
+    spring.datasource.password=${MYSQL_PASSWORD}
+    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+    
+    # Cassandra Configuration
+    spring.data.cassandra.contact-points=${CASSANDRA_HOSTS}
+    spring.data.cassandra.port=${CASSANDRA_PORT}
+    spring.data.cassandra.keyspace-name=${CASSANDRA_KEYSPACE}
+    
+    # Kafka Configuration
+    spring.kafka.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVERS}
+    spring.kafka.consumer.group-id=darwin-ofs-consumer
+    spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+    spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+    
+    # Logging
+    logging.level.com.dream11=DEBUG
+    logging.level.org.springframework=INFO
+{{- end }}

@@ -1,0 +1,40 @@
+image:
+  repository: cassandra
+  tag: "5.0"
+  pullPolicy: IfNotPresent
+
+cluster:
+  name: darwin-cassandra
+  replicaCount: 3
+  seedCount: 2
+
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 50Gi
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 2Gi
+
+jvm:
+  maxHeapSize: 2G
+  newHeapSize: 800M
+
+service:
+  type: ClusterIP
+  ports:
+    cql: 9042
+    thrift: 9160
+
+networkPolicy:
+  enabled: true
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
