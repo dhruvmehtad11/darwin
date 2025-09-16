@@ -3,6 +3,9 @@ set -e
 
 echo '' > config.env
 
+ENV=local
+ENV_CREATION=false
+
 # Check if ENV environment variable equals "local"
 if [ "$ENV" = "local" ]; then
     echo "ENV is set to 'local'"
@@ -12,10 +15,15 @@ if [ "$ENV" = "local" ]; then
     then
         echo "\nStarting kind cluster..."
 
+        envsubst < ./kind/kind-config.yaml > ./kind/kind-config-tmp.yaml
         export CLUSTER_NAME=kind
-        export KIND_CONFIG=./kind/kind-config.yaml
+        export KIND_CONFIG=./kind/kind-config-tmp.yaml
         export KUBECONFIG=./kind/config/kindkubeconfig.yaml
+        
         sh ./kind/start-cluster.sh
+        ENV_CREATION=true
+        
+        rm ./kind/kind-config-tmp.yaml
     else
         echo "\nSkipping kind cluster setup"
     fi
@@ -54,3 +62,7 @@ sudo docker build \
   --build-arg APP_DIR=app \
   -t darwin-ofs-v2:latest \
   -f deployer/images/Dockerfile .
+
+if [ "$ENV_CREATION" = "true" ]; then
+    kind load docker-image darwin-ofs-v2:latest --name $CLUSTER_NAME
+fi

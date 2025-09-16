@@ -21,6 +21,50 @@ spec:
         {{- include "darwin.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: feature-store
     spec:
+      {{- if .Values.darwinFeatureStore.preDeploy.enabled }}
+      initContainers:
+        - name: pre-deploy
+          image: "{{ .Values.darwinFeatureStore.preDeploy.image.repository }}:{{ .Values.darwinFeatureStore.preDeploy.image.tag }}"
+          imagePullPolicy: {{ .Values.darwinFeatureStore.preDeploy.image.pullPolicy }}
+          env:
+            - name: APP_DIR
+              value: "{{ .Values.darwinFeatureStore.preDeploy.env.appDir }}"
+            - name: ENV
+              value: "{{ .Values.darwinFeatureStore.preDeploy.env.environment }}"
+            - name: VPC_SUFFIX
+              value: "{{ .Values.darwinFeatureStore.preDeploy.env.vpcSuffix }}"
+            - name: TEAM_SUFFIX
+              value: "{{ .Values.darwinFeatureStore.preDeploy.env.teamSuffix }}"
+            - name: SERVICE_NAME
+              value: "{{ .Values.darwinFeatureStore.preDeploy.env.serviceName }}"
+            - name: DEPLOYMENT_TYPE
+              value: "{{ .Values.darwinFeatureStore.preDeploy.env.deploymentType }}"
+            - name: COMPONENT
+              value: "feature-store"
+            {{- if .Values.darwinFeatureStore.preDeploy.extraEnvVars }}
+            {{- toYaml .Values.darwinFeatureStore.preDeploy.extraEnvVars | nindent 12 }}
+            {{- end }}
+          command:
+            - sh
+            - -c
+            - |
+              if [ -f ".odin/pre-deploy.sh" ]; then
+                .odin/pre-deploy.sh
+              else
+                echo "❌ Error: .odin/pre-deploy.sh not found"
+                exit 1
+              fi
+          resources:
+            {{- toYaml .Values.darwinFeatureStore.preDeploy.resources | nindent 12 }}
+          volumeMounts:
+            - name: m2-cache
+              mountPath: /root/.m2
+      {{- end }}
+      volumes:
+        - name: m2-cache
+          hostPath:
+            path: /mnt/shared-data/.m2
+            type: Directory
       containers:
         - name: feature-store
           image: "{{ .Values.darwinFeatureStore.image.repository }}:{{ .Values.darwinFeatureStore.image.tag }}"

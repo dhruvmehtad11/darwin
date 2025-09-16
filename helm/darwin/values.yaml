@@ -49,6 +49,31 @@ darwinFeatureStore:
       value: "v2.0.0"
     - name: CACHE_TTL
       value: "3600"
+  # Pre-deploy configuration for feature store
+  preDeploy:
+    enabled: true
+    image:
+      repository: darwin-ofs-v2
+      tag: latest
+      pullPolicy: IfNotPresent
+    env:
+      appDir: "/app"
+      environment: "darwin-local"
+      vpcSuffix: "-darwin-local"
+      teamSuffix: "-darwin-local"
+      serviceName: "darwin-ofs-v2"
+      deploymentType: "container"
+    # Custom commands (optional)
+    commands: []
+    # Additional environment variables
+    extraEnvVars: []
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 64Mi
 
 # Workflow Orchestration Component
 darwinWorkflow:
@@ -135,7 +160,7 @@ cassandra:
 
 # Apache Kafka
 kafka:
-  enabled: true
+  enabled: false
   replicaCount: 3
   auth:
     enabled: false
