@@ -1,0 +1,42 @@
+{{- if .Values.cassandra.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-cassandra
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cassandra
+    darwin-component-type: datastore
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9042
+      targetPort: cql
+      protocol: TCP
+      name: cql
+  selector:
+    {{- include "darwin.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: cassandra
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-cassandra-headless
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cassandra
+    darwin-component-type: datastore
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 9042
+      targetPort: cql
+      protocol: TCP
+      name: cql
+  selector:
+    {{- include "darwin.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: cassandra
+{{- end }}

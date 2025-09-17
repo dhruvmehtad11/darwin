@@ -1,0 +1,12 @@
+apiVersion: v2
+name: services
+description: Darwin Platform Services - Application services and microservices
+type: application
+version: 1.0.0
+appVersion: "2.0.0"
+
+dependencies:
+  - name: feature-store
+    version: 1.0.0
+    repository: "file://./feature-store"
+    condition: services.feature-store.enabled

@@ -1,42 +1,40 @@
-🎉 Darwin Platform Successfully Deployed!
+🎉 Darwin Platform Umbrella Chart Successfully Deployed!
 
-1. Darwin Platform Components:
-{{- range $serviceName, $config := .Values.services }}
-{{- if $config.enabled }}
-{{- if $config.ingress.enabled }}
-{{- range $config.ingress.hosts }}
-   🚀 {{ $serviceName | title }}: http://{{ .host }}
-{{- end }}
+1. Deployment Architecture:
+   📦 Chart Type: Umbrella (Database-first deployment)
+   🗂️  Subcharts Deployed:
+{{- if .Values.datastores.enabled }}
+     ✅ Datastores (MySQL, Cassandra, Kafka, Zookeeper)
 {{- else }}
-   🚀 {{ $serviceName | title }}: {{ include "darwin.fullname" $ }}-{{ $serviceName }}:{{ $config.service.port }}
+     ❌ Datastores (disabled)
 {{- end }}
-{{- end }}
+{{- if .Values.services.enabled }}
+     ✅ Services (Feature Store applications)
+{{- else }}
+     ❌ Services (disabled)
 {{- end }}
 
-2. Data Infrastructure:
-{{- if .Values.mysql.enabled }}
-   - MySQL: mysql:3306
-{{- end }}
-{{- if .Values.cassandra.enabled }}
-   - Cassandra: cassandra:9042
-{{- end }}
-{{- if .Values.kafka.enabled }}
-   - Kafka: kafka:9092
-{{- end }}
-{{- if .Values.airflow.enabled }}
-   - Airflow: http://airflow.darwin.local
-{{- end }}
+2. Deployment Order:
+   1️⃣ Datastores deployed first (hook weight: -5)
+   2️⃣ Services deployed after datastores ready (hook weight: 5)
 
 3. Access Information:
-   📊 Airflow Dashboard: http://airflow.darwin.local (admin/admin123)
-   🗄️  MySQL Database: mysql:3306 (darwin_user/darwin-password)
+   🌐 Feature Store: http://darwin-feature-store.local
+   🔧 Feature Store Admin: http://darwin-feature-store-admin.local
+   🗄️ Database Credentials:
+      - MySQL: root/{{ .Values.global.database.mysql.rootPassword }}
+      - Cassandra: {{ .Values.global.database.cassandra.username }}/{{ .Values.global.database.cassandra.password }}
    
 4. Platform Management:
    kubectl get all -n {{ .Release.Namespace }}  # View all resources
    helm status {{ .Release.Name }} -n {{ .Release.Namespace }}  # Check release status
    
-5. Enable Additional Components:
-   helm upgrade {{ .Release.Name }} ./helm/darwin \
-     --set services.workflow.enabled=true \
-     --set services.compute.enabled=true \
-     -n {{ .Release.Namespace }}
+5. Manage Subcharts:
+   # Deploy only databases
+   helm upgrade {{ .Release.Name }} . --set services.enabled=false
+   
+   # Deploy only services
+   helm upgrade {{ .Release.Name }} . --set datastores.enabled=false
+   
+   # Enable all components
+   helm upgrade {{ .Release.Name }} . --set datastores.enabled=true --set services.enabled=true

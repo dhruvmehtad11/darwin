@@ -27,7 +27,4 @@ helm upgrade --install darwin ./helm/darwin \
   --wait \
   --timeout 600s
 
-echo "🚀 Pre-deploying Darwin Platform..."
-sh pre-deploy.sh
-
 echo "✅ Deployment completed!"

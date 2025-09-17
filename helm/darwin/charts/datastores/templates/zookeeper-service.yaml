@@ -1,0 +1,50 @@
+{{- if .Values.zookeeper.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-zookeeper
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+    darwin-component-type: datastore
+spec:
+  type: ClusterIP
+  ports:
+    - port: 2181
+      targetPort: client
+      protocol: TCP
+      name: client
+  selector:
+    {{- include "darwin.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-zookeeper-headless
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+    darwin-component-type: datastore
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 2181
+      targetPort: client
+      protocol: TCP
+      name: client
+    - port: 2888
+      targetPort: server
+      protocol: TCP
+      name: server
+    - port: 3888
+      targetPort: leader-election
+      protocol: TCP
+      name: leader-election
+  selector:
+    {{- include "darwin.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+{{- end }}

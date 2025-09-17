@@ -1,0 +1,106 @@
+# MySQL Database
+mysql:
+  enabled: true
+  architecture: standalone
+  auth:
+    rootPassword: "{{ .Values.global.database.mysql.rootPassword }}"
+    database: "{{ .Values.global.database.mysql.database }}"
+    username: darwin
+    password: "{{ .Values.global.database.mysql.userPassword }}"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 1Gi
+
+# Cassandra Database
+cassandra:
+  enabled: true
+  cluster:
+    name: darwin-cassandra
+    replicaCount: 3
+  dbUser:
+    user: "{{ .Values.global.database.cassandra.username }}"
+    password: "{{ .Values.global.database.cassandra.password }}"
+  persistence:
+    enabled: true
+    size: 50Gi
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+
+# Apache Kafka
+kafka:
+  enabled: true
+  replicaCount: 3
+  auth:
+    enabled: false
+  persistence:
+    enabled: true
+    size: 20Gi
+  zookeeper:
+    enabled: false  # We'll use separate zookeeper
+  externalZookeeper:
+    servers: "{{ $.Release.Name }}-zookeeper:2181"
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+# Apache Zookeeper
+zookeeper:
+  enabled: true
+  replicaCount: 3
+  persistence:
+    enabled: true
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+# Apache Airflow
+airflow:
+  enabled: false
+  executor: CeleryExecutor
+  webserver:
+    defaultUser:
+      enabled: true
+      username: admin
+      password: admin123
+      email: admin@darwin.local
+  postgresql:
+    enabled: true
+    auth:
+      username: airflow
+      password: airflow-password
+      database: airflow
+  redis:
+    enabled: true
+    auth:
+      enabled: false
+  workers:
+    replicas: 2
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi

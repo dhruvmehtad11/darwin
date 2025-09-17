@@ -3,227 +3,24 @@ global:
   imageRegistry: docker.io
   storageClass: standard
   namespace: darwin
+  
+  # Database connection details (shared across subcharts)
+  database:
+    mysql:
+      username: "darwin"
+      rootPassword: "password"
+      database: "darwin"
+      userPassword: "password"
+    cassandra:
+      username: "darwin_user"
+      password: "darwin_password"
 
-# Darwin Platform Services
+# Subchart Configuration
+datastores:
+  enabled: true
+
 services:
-  # Feature Store Service
-  feature-store:
-    enabled: true
-    replicaCount: 1
-    serviceName: darwin-ofs-v2
-    image:
-      registry: localhost:5000
-      name: darwin-ofs-v2
-      tag: latest
-      pullPolicy: IfNotPresent
-    service:
-      type: ClusterIP
-      port: 8080
-    ingress:
-      enabled: true
-      className: nginx
-      annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /
-      hosts:
-        - host: darwin-feature-store.local
-          paths:
-            - path: /
-              pathType: Prefix
-    autoscaling:
-      enabled: false
-              
-  feature-store-admin:
-    enabled: true
-    replicaCount: 1
-    serviceName: darwin-ofs-v2-admin
-    image:
-      registry: localhost:5000
-      name: darwin-ofs-v2-admin
-      tag: latest
-      pullPolicy: IfNotPresent
-    service:
-      type: ClusterIP
-      port: 8080
-    ingress:
-      enabled: true
-      className: nginx
-      hosts:
-        - host: darwin-feature-store-admin.local
-          paths:
-            - path: /
-              pathType: Prefix
-    autoscaling:
-      enabled: false
-
-  feature-store-consumer:
-    enabled: true
-    replicaCount: 1
-    serviceName: darwin-ofs-v2-consumer
-    image:
-      registry: localhost:5000
-      name: darwin-ofs-v2-consumer
-      tag: latest
-      pullPolicy: IfNotPresent
-    service:
-      type: ClusterIP
-      port: 8080
-    ingress:
-      enabled: false
-    autoscaling:
-      enabled: false
-
-  # Workflow Orchestration Service
-  workflow:
-    enabled: false
-    replicaCount: 1
-    image:
-      repository: darwin-workflow
-      tag: latest
-      pullPolicy: IfNotPresent
-    service:
-      type: ClusterIP
-      port: 8081
-    ingress:
-      enabled: true
-      className: nginx
-      hosts:
-        - host: darwin-workflow.local
-          paths:
-            - path: /
-              pathType: Prefix
-    autoscaling:
-      enabled: false
-
-  # Compute Orchestration Service  
-  compute:
-    enabled: false
-    replicaCount: 1
-    image:
-      repository: darwin-compute
-      tag: latest
-      pullPolicy: IfNotPresent
-    service:
-      type: ClusterIP
-      port: 8082
-    ingress:
-      enabled: true
-      className: nginx
-      hosts:
-        - host: darwin-compute.local
-          paths:
-            - path: /
-              pathType: Prefix
-    autoscaling:
-        enabled: false
-
-# Data Infrastructure Components
-
-# MySQL Database
-mysql:
   enabled: true
-  architecture: standalone
-  auth:
-    rootPassword: password
-    database: darwin
-    username: darwin
-    password: password
-  primary:
-    persistence:
-      enabled: true
-      size: 20Gi
-    resources:
-      limits:
-        cpu: 1000m
-        memory: 2Gi
-      requests:
-        cpu: 250m
-        memory: 1Gi
-
-# Cassandra Database
-cassandra:
-  enabled: true
-  cluster:
-    name: darwin-cassandra
-    replicaCount: 3
-  dbUser:
-    user: darwin_user
-    password: darwin-password
-  persistence:
-    enabled: true
-    size: 50Gi
-  resources:
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-    requests:
-      cpu: 500m
-      memory: 2Gi
-
-# Apache Kafka
-kafka:
-  enabled: true
-  replicaCount: 3
-  auth:
-    enabled: false
-  persistence:
-    enabled: true
-    size: 20Gi
-  zookeeper:
-    enabled: false  # We'll use separate zookeeper
-  externalZookeeper:
-    servers: "{{ include \"darwin.fullname\" $ }}-zookeeper:2181"
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 2Gi
-    requests:
-      cpu: 500m
-      memory: 1Gi
-
-# Apache Zookeeper
-zookeeper:
-  enabled: true
-  replicaCount: 3
-  persistence:
-    enabled: true
-    size: 10Gi
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1Gi
-    requests:
-      cpu: 250m
-      memory: 512Mi
-
-# Apache Airflow
-airflow:
-  enabled: false
-  executor: CeleryExecutor
-  webserver:
-    defaultUser:
-      enabled: true
-      username: admin
-      password: admin123
-      email: admin@darwin.local
-  postgresql:
-    enabled: true
-    auth:
-      username: airflow
-      password: airflow-password
-      database: airflow
-  redis:
-    enabled: true
-    auth:
-      enabled: false
-  workers:
-    replicas: 2
-    resources:
-      limits:
-        cpu: 1000m
-        memory: 2Gi
-      requests:
-        cpu: 500m
-        memory: 1Gi
 
 # Monitoring and Observability
 monitoring:

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "darwin.fullname" . }}-config
+  name: {{ .Release.Name }}-config
   labels:
     {{- include "darwin.labels" . | nindent 4 }}
 data:
@@ -10,11 +10,13 @@ data:
   version: "{{ .Chart.AppVersion }}"
   cluster-name: "{{ .Values.global.namespace | default "darwin" }}"
   components: |
-    {{- range $serviceName, $config := .Values.services }}
-    {{ $serviceName }}: {{ $config.enabled }}
-    {{- end }}
-  infrastructure: |
-    mysql: {{ .Values.mysql.enabled }}
-    cassandra: {{ .Values.cassandra.enabled }}
-    kafka: {{ .Values.kafka.enabled }}
-    airflow: {{ .Values.airflow.enabled }}
+    services: {{ .Values.services.enabled }}
+    datastores: {{ .Values.datastores.enabled }}
+  architecture: |
+    type: "umbrella"
+    subcharts: 
+      - datastores
+      - services
+  deployment-order: |
+    1: datastores (databases, messaging)
+    2: services (applications)

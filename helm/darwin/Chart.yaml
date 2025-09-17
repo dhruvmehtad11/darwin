@@ -11,3 +11,23 @@ keywords:
 type: application
 version: 1.0.0
 appVersion: "2.0.0"
+
+dependencies:
+  - name: datastores
+    version: 1.0.0
+    repository: "file://./charts/datastores"
+    condition: datastores.enabled
+    tags:
+      - databases
+    import-values:
+      - child: global
+        parent: global
+  - name: services
+    version: 1.0.0
+    repository: "file://./charts/services"
+    condition: services.enabled
+    tags:
+      - applications
+    import-values:
+      - child: global
+        parent: global

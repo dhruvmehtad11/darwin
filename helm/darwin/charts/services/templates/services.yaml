@@ -1,0 +1,218 @@
+{{- range $serviceName, $config := .Values.services }}
+{{- if $config.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ $serviceName }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $serviceName }}
+spec:
+  {{- if not $config.autoscaling.enabled }}
+  replicas: {{ $config.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "darwin.selectorLabels" $ | nindent 6 }}
+      app.kubernetes.io/component: {{ $serviceName }}
+  template:
+    metadata:
+      labels:
+        {{- include "darwin.selectorLabels" $ | nindent 8 }}
+        app.kubernetes.io/component: {{ $serviceName }}
+    spec:
+      serviceAccountName: {{ $.Release.Name }}-services
+      initContainers:
+      - name: wait-for-datastore-health
+        image: curlimages/curl:latest
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "⏳ Waiting for datastore health check to complete..."
+            namespace="{{ $.Values.global.namespace }}"
+            job_name="{{ $.Release.Name }}-datastore-health-check"
+            
+            # Kubernetes API server
+            APISERVER=https://kubernetes.default.svc
+            TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+            CACERT=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            
+            max_attempts=60
+            attempt=1
+            
+            while [ $attempt -le $max_attempts ]; do
+              # Check job status via Kubernetes API
+              response=$(curl -s --cacert $CACERT --header "Authorization: Bearer $TOKEN" \
+                "$APISERVER/apis/batch/v1/namespaces/$namespace/jobs/$job_name" 2>/dev/null)
+              
+              # Debug: Show what we got (first attempt only)
+              if [ $attempt -eq 1 ]; then
+                echo "🔍 Debug: API response excerpt: $(echo "$response" | head -c 200)..."
+              fi
+              
+              if echo "$response" | grep -q '"succeeded": *1'; then
+                echo "✅ Datastore health check completed - proceeding with {{ $serviceName }} service"
+                exit 0
+              elif echo "$response" | grep -q '"failed": *[1-9]'; then
+                echo "❌ Datastore health check failed - cannot start {{ $serviceName }} service"
+                exit 1
+              elif echo "$response" | grep -q '"kind":"Job"'; then
+                echo "⏳ Health check still running... (attempt $attempt/$max_attempts)"
+              else
+                echo "⏳ Waiting for health check job to start... (attempt $attempt/$max_attempts)"
+              fi
+              
+              sleep 5
+              attempt=$((attempt + 1))
+            done
+            
+            echo "❌ Timeout waiting for datastore health check"
+            exit 1
+      containers:
+        - name: {{ $serviceName }}
+          image: "{{ $config.image.registry }}/{{ $config.image.name }}:{{ $config.image.tag }}"
+          imagePullPolicy: {{ $config.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $config.service.port }}
+              protocol: TCP
+          env:
+            # Common environment variables
+            - name: TEAM_SUFFIX
+              value: "-darwin-local"
+            - name: VPC_SUFFIX
+              value: "-darwin-local"
+            - name: ENV
+              value: "darwin-local"
+            - name: APP_DIR
+              value: "/app"
+            - name: DEPLOYMENT_TYPE
+              value: "container"
+            - name: SERVICE_NAME
+              value: "{{ $config.serviceName }}"
+            # Database connections
+            - name: DARWIN_MYSQL_HOST
+              value: "{{ $.Release.Name }}-mysql"
+            - name: DARWIN_MYSQL_USERNAME
+              value: "root"
+            - name: DARWIN_MYSQL_PASSWORD
+              value: "{{ $.Values.global.database.mysql.rootPassword }}"
+            - name: DARWIN_CASSANDRA_HOST
+              value: "{{ $.Release.Name }}-cassandra"
+            - name: DARWIN_KAFKA_HOST
+              value: "{{ $.Release.Name }}-kafka"
+            # Feature Store Service URLs
+            - name: DARWIN_FEATURE_STORE_ADMIN_HOST
+              value: "{{ $.Release.Name }}-feature-store-admin"
+            - name: DARWIN_FEATURE_STORE_HOST
+              value: "{{ $.Release.Name }}-feature-store"
+            - name: DARWIN_ZOOKEEPER_HOST
+              value: "{{ $.Release.Name }}-zookeeper"
+            {{- if $config.extraEnvVars }}
+            {{- toYaml $config.extraEnvVars | nindent 12 }}
+            {{- end }}
+          {{- if $config.healthcheck }}
+          livenessProbe:
+            httpGet:
+              path: {{ $config.healthcheck.path }}
+              port: http
+            initialDelaySeconds: {{ $config.healthcheck.initialDelaySeconds | default 60 }}
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: {{ $config.healthcheck.path }}
+              port: http
+            initialDelaySeconds: {{ $config.healthcheck.readinessDelay | default 30 }}
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          {{- end }}
+          resources:
+            {{- toYaml $config.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Release.Name }}-{{ $serviceName }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $serviceName }}
+    darwin-component-type: service
+spec:
+  type: {{ $config.service.type }}
+  ports:
+    - port: {{ $config.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "darwin.selectorLabels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $serviceName }}
+{{- if $config.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $.Release.Name }}-{{ $serviceName }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $serviceName }}
+  {{- with $config.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if $config.ingress.className }}
+  ingressClassName: {{ $config.ingress.className }}
+  {{- end }}
+  rules:
+    {{- range $config.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $.Release.Name }}-{{ $serviceName }}
+                port:
+                  number: {{ $config.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}
+{{- if $config.autoscaling.enabled }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $.Release.Name }}-{{ $serviceName }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $serviceName }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $.Release.Name }}-{{ $serviceName }}
+  minReplicas: {{ $config.autoscaling.minReplicas }}
+  maxReplicas: {{ $config.autoscaling.maxReplicas }}
+  metrics:
+    {{- if $config.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ $config.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
