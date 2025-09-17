@@ -22,6 +22,7 @@ spec:
       labels:
         {{- include "darwin.selectorLabels" $ | nindent 8 }}
         app.kubernetes.io/component: {{ $serviceName }}
+        component-name: {{ $config.serviceName }}
     spec:
       serviceAccountName: {{ $.Release.Name }}-services
       initContainers:
@@ -142,6 +143,7 @@ metadata:
   labels:
     {{- include "darwin.labels" $ | nindent 4 }}
     app.kubernetes.io/component: {{ $serviceName }}
+    component-name: {{ $config.serviceName }}
     darwin-component-type: service
 spec:
   type: {{ $config.service.type }}

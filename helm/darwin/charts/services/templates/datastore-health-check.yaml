@@ -269,15 +269,16 @@ spec:
 
             # Function to run pre-deploy for an application (similar to pre-deploy.sh)
             run_application_pre_deploy() {
-              local app_name=$1
-              local image=$2
-              shift 2
-              local pod_name="$app_name-pre-deploy"
+              local service_name=$1
+              local component_name=$2
+              local image=$3
+              shift 3
+              local pod_name="$service_name-pre-deploy"
               
-              echo "🚀 Running pre-deploy for $app_name..."
+              echo "🚀 Running pre-deploy for $component_name (service: $service_name)..."
               
               # Clean up any existing pre-deploy pod first
-              cleanup_pre_deploy_pod "$app_name"
+              cleanup_pre_deploy_pod "$service_name"
               
               # Build environment variables JSON
               local env_json=""
@@ -292,7 +293,7 @@ spec:
               env_json="$env_json{\"name\":\"DARWIN_MYSQL_PASSWORD\",\"value\":\"$DARWIN_MYSQL_PASSWORD\"},"
               env_json="$env_json{\"name\":\"DARWIN_KAFKA_HOST\",\"value\":\"$DARWIN_KAFKA_HOST\"},"
               env_json="$env_json{\"name\":\"DARWIN_ZOOKEEPER_HOST\",\"value\":\"$DARWIN_ZOOKEEPER_HOST\"},"
-              env_json="$env_json{\"name\":\"SERVICE_NAME\",\"value\":\"$app_name\"}"
+              env_json="$env_json{\"name\":\"SERVICE_NAME\",\"value\":\"$component_name\"}"
               
               # Add extra environment variables
               for kv in "$@"; do
@@ -305,7 +306,7 @@ spec:
               env_json="[${env_json}]"
               
               # Run pre-deploy pod
-              /shared/kubectl run "$app_name-pre-deploy" \
+              /shared/kubectl run "$service_name-pre-deploy" \
                 --namespace="$namespace" \
                 --image="$image" \
                 --restart=Never \
@@ -313,7 +314,7 @@ spec:
                 --overrides="{
                   \"spec\": {
                     \"containers\": [{
-                      \"name\": \"$app_name-pre-deploy\",
+                      \"name\": \"$service_name-pre-deploy\",
                       \"image\": \"$image\",
                       \"imagePullPolicy\": \"IfNotPresent\",
                       \"command\": [\"bash\", \"-c\", \".odin/pre-deploy.sh\"],
@@ -336,7 +337,7 @@ spec:
               # Note: We use explicit cleanup calls instead of traps to avoid variable scope issues
               
               if [ $? -eq 0 ]; then
-                echo "✅ Pre-deploy pod created for $app_name, waiting for completion..."
+                echo "✅ Pre-deploy pod created for $component_name, waiting for completion..."
                 
                 # Wait for pod to complete with timeout
                 echo "⏳ Waiting for pre-deploy pod to complete..."
@@ -353,7 +354,7 @@ spec:
                   
                   if [ "$phase" = "NotFound" ]; then
                     echo "❌ Pre-deploy pod not found"
-                    cleanup_pre_deploy_pod "$app_name"
+                    cleanup_pre_deploy_pod "$service_name"
                     return 1
                   fi
                   
@@ -361,7 +362,7 @@ spec:
                   elapsed=$((elapsed + interval))
                   if [ $elapsed -ge $timeout ]; then
                     echo "❌ Pre-deploy pod timed out after ${timeout}s (status: $phase)"
-                    cleanup_pre_deploy_pod "$app_name"
+                    cleanup_pre_deploy_pod "$service_name"
                     return 1
                   fi
                   
@@ -373,27 +374,27 @@ spec:
                 status=$(/shared/kubectl get pod "$pod_name" --namespace="$namespace" -o jsonpath='{.status.phase}')
                 
                 if [ "$status" = "Succeeded" ]; then
-                  echo "✅ Pre-deploy completed successfully for $app_name"
+                  echo "✅ Pre-deploy completed successfully for $component_name"
                   # Show logs (limited output)
-                  echo "📋 Pre-deploy logs for $app_name (last 20 lines):"
+                  echo "📋 Pre-deploy logs for $component_name (last 20 lines):"
                   /shared/kubectl logs "$pod_name" --namespace="$namespace" --tail=20
                   
                   # Clean up the pod
-                  cleanup_pre_deploy_pod "$app_name"
+                  cleanup_pre_deploy_pod "$service_name"
                   return 0
                 else
-                  echo "❌ Pre-deploy failed for $app_name (status: $status)"
-                  echo "📋 Pre-deploy logs for $app_name:"
+                  echo "❌ Pre-deploy failed for $component_name (status: $status)"
+                  echo "📋 Pre-deploy logs for $component_name:"
                   /shared/kubectl logs "$pod_name" --namespace="$namespace" --tail=50
                   
                   # Clean up the pod before returning failure
-                  cleanup_pre_deploy_pod "$app_name"
+                  cleanup_pre_deploy_pod "$service_name"
                   return 1
                 fi
               else
-                echo "❌ Failed to create pre-deploy pod for $app_name"
+                echo "❌ Failed to create pre-deploy pod for $component_name"
                 # Ensure cleanup even if pod creation failed
-                cleanup_pre_deploy_pod "$app_name"
+                cleanup_pre_deploy_pod "$service_name"
                 return 1
               fi
             }
@@ -466,7 +467,7 @@ spec:
                   
                   echo ">>> Running pre deploy for $app with image $image (fallback)"
                   eval "set -- $extra_envs"
-                  run_application_pre_deploy "$app" "$image" "$@"
+                  run_application_pre_deploy "$app" "$app" "$image" "$@"
                   
                   if [ $? -eq 0 ]; then
                     echo ">>> Completed processing $app"
@@ -487,7 +488,7 @@ spec:
               # Convert services to a space-separated list to avoid subshell issues
               service_list=$(echo "$application_services" | sed 's|service/||g' | tr '\n' ' ')
               
-              # Process each labeled service to find backing deployments/statefulsets
+              # Process each labeled service to find backing deployments
               for service_name in $service_list; do
                 echo "🔍 Processing application service: $service_name"
                 
@@ -496,15 +497,17 @@ spec:
                 if [ -n "$deployment" ]; then
                   # Extract image from deployment
                   image=$(/shared/kubectl get deployment "$service_name" --namespace="$namespace" -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null || echo "")
+                  # Extract component-name from service labels
+                  component_name=$(/shared/kubectl get service "$service_name" --namespace="$namespace" -o jsonpath='{.metadata.labels.component-name}' 2>/dev/null || echo "$service_name")
                   if [ -n "$image" ]; then
-                    echo "📦 Found deployment $service_name with image: $image"
+                    echo "📦 Found deployment $service_name with image: $image, component-name: $component_name"
                     
                     # Default environment variables for discovered services
                     extra_envs="VAULT_SERVICE_MYSQL_USERNAME=dummy VAULT_SERVICE_MYSQL_PASSWORD=dummy DARWIN_FEATURE_STORE_HOST=darwin-feature-store DARWIN_FEATURE_STORE_ADMIN_HOST=darwin-feature-store-admin"
                     
-                    echo ">>> Running pre deploy for $service_name with image $image"
+                    echo ">>> Running pre deploy for $component_name with image $image"
                     eval "set -- $extra_envs"
-                    run_application_pre_deploy "$service_name" "$image" "$@"
+                    run_application_pre_deploy "$service_name" "$component_name" "$image" "$@"
                     
                     if [ $? -eq 0 ]; then
                       echo ">>> Completed processing $service_name"
@@ -513,33 +516,13 @@ spec:
                       echo ">>> Failed processing $service_name"
                       failed=1
                     fi
+                  else
+                    echo "⚠️  Skipping $service_name - no image found in deployment"
                   fi
+                else
+                  echo "⚠️  Skipping $service_name - no deployment found"
                 fi
                 
-                # Try to find corresponding statefulset
-                statefulset=$(/shared/kubectl get statefulset "$service_name" --namespace="$namespace" -o name 2>/dev/null || echo "")
-                if [ -n "$statefulset" ]; then
-                  # Extract image from statefulset
-                  image=$(/shared/kubectl get statefulset "$service_name" --namespace="$namespace" -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null || echo "")
-                  if [ -n "$image" ]; then
-                    echo "📦 Found statefulset $service_name with image: $image"
-                    
-                    # Default environment variables for discovered services
-                    extra_envs="VAULT_SERVICE_MYSQL_USERNAME=dummy VAULT_SERVICE_MYSQL_PASSWORD=dummy DARWIN_FEATURE_STORE_HOST=darwin-feature-store DARWIN_FEATURE_STORE_ADMIN_HOST=darwin-feature-store-admin"
-                    
-                    echo ">>> Running pre deploy for $service_name with image $image"
-                    eval "set -- $extra_envs"
-                    run_application_pre_deploy "$service_name" "$image" "$@"
-                    
-                    if [ $? -eq 0 ]; then
-                      echo ">>> Completed processing $service_name"
-                      found_services=$((found_services + 1))
-                    else
-                      echo ">>> Failed processing $service_name"
-                      failed=1
-                    fi
-                  fi
-                fi
                 
                 # Exit early if any pre-deploy failed
                 if [ $failed -eq 1 ]; then
