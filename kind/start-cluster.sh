@@ -18,13 +18,17 @@ if kind get clusters | grep -q "^${CLUSTER_NAME}$"; then
 else
   echo "🚀 Creating kind cluster '${CLUSTER_NAME}'..."
   
-  docker run -d --restart=always -p 5000:5000 --name kind-registry registry:2
   kind create cluster \
     --name "${CLUSTER_NAME}" \
     --config "${KIND_CONFIG}" \
     --kubeconfig "${KUBECONFIG}"
 
-  docker network connect "${CLUSTER_NAME}" kind-registry
+  if docker ps | grep -q "kind-registry"; then
+    echo "✅ kind-registry is already running"
+  else
+    echo "🚀 Starting kind-registry..."
+    docker run -d --restart=always -p 5000:5000 --network $CLUSTER_NAME --name kind-registry registry:2
+  fi
 
   # Install cert-manager with CRDs
   helm install cert-manager jetstack/cert-manager \

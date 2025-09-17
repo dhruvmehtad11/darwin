@@ -67,14 +67,6 @@ services:
     service:
       type: ClusterIP
       port: 8080
-    ingress:
-      enabled: true
-      className: nginx
-      hosts:
-        - host: darwin-feature-store-consumer.local
-          paths:
-            - path: /
-              pathType: Prefix
     autoscaling:
       enabled: false
 
@@ -131,7 +123,7 @@ mysql:
   auth:
     rootPassword: password
     database: darwin
-    username: root
+    username: darwin
     password: password
   primary:
     persistence:

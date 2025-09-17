@@ -49,9 +49,9 @@ spec:
             - name: DARWIN_MYSQL_HOST
               value: "{{ include "darwin.fullname" $ }}-mysql"
             - name: DARWIN_MYSQL_USERNAME
-              value: "{{ $.Values.mysql.auth.username }}"
+              value: "root"
             - name: DARWIN_MYSQL_PASSWORD
-              value: "{{ $.Values.mysql.auth.password }}"
+              value: "{{ $.Values.mysql.auth.rootPassword }}"
             - name: DARWIN_CASSANDRA_HOST
               value: "{{ include "darwin.fullname" $ }}-cassandra"
             - name: DARWIN_KAFKA_HOST
