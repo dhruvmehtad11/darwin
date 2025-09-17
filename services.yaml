@@ -1,0 +1,30 @@
+applications:
+  - application: darwin-ofs-v2
+    base-path: feature-store
+    path: app
+    image: darwin/java:11-maven-bookworm-slim
+    env:
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "dummy"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "dummy"
+
+  - application: darwin-ofs-v2-admin
+    base-path: feature-store
+    path: admin
+    image: darwin/java:11-maven-bookworm-slim
+    env:
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "dummy"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "dummy"
+
+  - application: darwin-ofs-v2-consumer
+    base-path: feature-store
+    path: consumer
+    image: darwin/java:11-maven-bookworm-slim
+    env:
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "dummy"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "dummy"

@@ -2,7 +2,7 @@
 set -e
 
 mkdir -p tmp
-sudo cp $HOME/.m2/settings.xml tmp/settings.xml
+cp $HOME/.m2/settings.xml tmp/settings.xml
 
 docker build \
   --build-arg JAVA_DOWNLOAD_URL_AMD64="https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.25%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.25_9.tar.gz" \
@@ -10,4 +10,4 @@ docker build \
   -t darwin/java:11-maven-bookworm-slim \
   --load .
 
-sudo rm -r ./tmp
+rm -r ./tmp

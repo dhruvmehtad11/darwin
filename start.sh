@@ -3,7 +3,7 @@ set -e
 
 # Source the config.env file
 set -o allexport
-source config.env
+. config.env
 set +o allexport
 
 echo "🔧 Setting up KUBECONFIG: $KUBECONFIG"

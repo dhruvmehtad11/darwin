@@ -140,7 +140,7 @@ cassandra:
 
 # Apache Kafka
 kafka:
-  enabled: false
+  enabled: true
   replicaCount: 3
   auth:
     enabled: false
