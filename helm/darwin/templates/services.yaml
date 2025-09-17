@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: {{ $serviceName }}
-          image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+          image: "{{ $config.image.registry }}/{{ $config.image.name }}:{{ $config.image.tag }}"
           imagePullPolicy: {{ $config.image.pullPolicy }}
           ports:
             - name: http
@@ -44,7 +44,7 @@ spec:
             - name: DEPLOYMENT_TYPE
               value: "container"
             - name: SERVICE_NAME
-              value: "{{ $config.image.repository }}"
+              value: "{{ $config.serviceName }}"
             # Database connections
             - name: DARWIN_MYSQL_HOST
               value: "{{ include "darwin.fullname" $ }}-mysql"
@@ -56,6 +56,13 @@ spec:
               value: "{{ include "darwin.fullname" $ }}-cassandra"
             - name: DARWIN_KAFKA_HOST
               value: "{{ include "darwin.fullname" $ }}-kafka"
+            # Feature Store Service URLs
+            - name: DARWIN_FEATURE_STORE_ADMIN_HOST
+              value: "{{ include "darwin.fullname" $ }}-feature-store-admin"
+            - name: DARWIN_FEATURE_STORE_HOST
+              value: "{{ include "darwin.fullname" $ }}-feature-store"
+            - name: DARWIN_ZOOKEEPER_HOST
+              value: "{{ include "darwin.fullname" $ }}-zookeeper"
             {{- if $config.extraEnvVars }}
             {{- toYaml $config.extraEnvVars | nindent 12 }}
             {{- end }}

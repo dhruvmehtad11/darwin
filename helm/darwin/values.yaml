@@ -9,9 +9,11 @@ services:
   # Feature Store Service
   feature-store:
     enabled: true
-    replicaCount: 2
+    replicaCount: 1
+    serviceName: darwin-ofs-v2
     image:
-      repository: darwin-ofs-v2
+      registry: localhost:5000
+      name: darwin-ofs-v2
       tag: latest
       pullPolicy: IfNotPresent
     service:
@@ -33,8 +35,10 @@ services:
   feature-store-admin:
     enabled: true
     replicaCount: 1
+    serviceName: darwin-ofs-v2-admin
     image:
-      repository: darwin-ofs-v2-admin
+      registry: localhost:5000
+      name: darwin-ofs-v2-admin
       tag: latest
       pullPolicy: IfNotPresent
     service:
@@ -45,6 +49,29 @@ services:
       className: nginx
       hosts:
         - host: darwin-feature-store-admin.local
+          paths:
+            - path: /
+              pathType: Prefix
+    autoscaling:
+      enabled: false
+
+  feature-store-consumer:
+    enabled: true
+    replicaCount: 1
+    serviceName: darwin-ofs-v2-consumer
+    image:
+      registry: localhost:5000
+      name: darwin-ofs-v2-consumer
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8080
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-feature-store-consumer.local
           paths:
             - path: /
               pathType: Prefix
@@ -104,8 +131,8 @@ mysql:
   auth:
     rootPassword: password
     database: darwin
-    username: darwin
-    password: darwin
+    username: root
+    password: password
   primary:
     persistence:
       enabled: true
@@ -150,7 +177,7 @@ kafka:
   zookeeper:
     enabled: false  # We'll use separate zookeeper
   externalZookeeper:
-    servers: zookeeper:2181
+    servers: "{{ include \"darwin.fullname\" $ }}-zookeeper:2181"
   resources:
     limits:
       cpu: 1000m

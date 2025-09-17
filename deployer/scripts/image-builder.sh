@@ -50,3 +50,7 @@ docker build \
   --build-arg APP_DIR=$path \
   -t $application:latest \
   -f deployer/images/Dockerfile .
+  
+docker tag "$application":latest 127.0.0.1:5000/"$application":latest
+docker push 127.0.0.1:5000/"$application":latest
+

@@ -22,9 +22,12 @@ if [ "$ENV" = "local" ]; then
         
         sh ./kind/start-cluster.sh
         ENV_CREATION=true
+        echo "DOCKER_REGISTRY=localhost:5000" >> config.env
+
         rm ./kind/kind-config-tmp.yaml
     else
         echo "\nSkipping kind cluster setup"
+        echo "DOCKER_REGISTRY=docker.io" >> config.env
     fi
 else
     echo "ENV is not set to 'local' (current value: '$ENV'), skipping local k8s cluster setup"
@@ -107,20 +110,18 @@ popd
 # Path to your YAML
 YAML_FILE="services.yaml"
 
-# Loop through YAML using yq  
-yq eval '.applications[] | @json' "$YAML_FILE" | while read -r app; do
-  application=$(echo "$app" | yq eval '.application' - -p json)
-  base_path=$(echo "$app" | yq eval '.["base-path"]' - -p json)
-  path=$(echo "$app" | yq eval '.path' - -p json)
-  image=$(echo "$app" | yq eval '.image' - -p json)
+# Loop through YAML using array approach
+app_count=$(yq eval '.applications | length' "$YAML_FILE")
+i=0
+while [ $i -lt $app_count ]; do
+  application=$(yq eval ".applications[$i].application" "$YAML_FILE")
+  base_path=$(yq eval ".applications[$i].base-path" "$YAML_FILE")
+  path=$(yq eval ".applications[$i].path" "$YAML_FILE")
+  base_image=$(yq eval ".applications[$i].base-image" "$YAML_FILE")
 
   echo ">>> Building image for $application..."
-  sh deployer/scripts/image-builder.sh -a "$application" -t "$base_path" -p "$path" -e "$image"
-
-  # if [ "$ENV_CREATION" = "true" ]; then
-  #   echo ">>> Loading image $application:latest into kind cluster $CLUSTER_NAME..."
-  #   kind load docker-image "$application:latest" --name "$CLUSTER_NAME"
-  # fi
+  sh deployer/scripts/image-builder.sh -a "$application" -t "$base_path" -p "$path" -e "$base_image"
   
   echo ">>> Completed processing $application"
+  i=$((i + 1))
 done

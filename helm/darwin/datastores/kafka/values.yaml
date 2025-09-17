@@ -30,7 +30,7 @@ zookeeper:
   enabled: false
   
 externalZookeeper:
-  servers: "zookeeper:2181"
+  servers: "{{ include \"darwin.fullname\" $ }}-zookeeper:2181"
 
 resources:
   limits:

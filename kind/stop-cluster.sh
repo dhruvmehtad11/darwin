@@ -27,6 +27,13 @@ else
   echo "ℹ️  Kind cluster '${CLUSTER_NAME}' does not exist or is already stopped"
 fi
 
+
+if docker ps | grep -q "kind-registry"; then
+  echo "🛑 Stopping kind-registry..."
+  docker stop kind-registry
+  docker rm kind-registry
+fi
+
 # Unset the KUBECONFIG environment variable
 unset KUBECONFIG
 echo "🔧 KUBECONFIG environment variable has been unset"

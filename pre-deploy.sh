@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 YAML_FILE="services.yaml"
 
@@ -17,6 +18,8 @@ DARWIN_MYSQL_HOST="darwin-mysql"
 DARWIN_CASSANDRA_HOST="darwin-cassandra"
 DARWIN_MYSQL_USERNAME="root"
 DARWIN_MYSQL_PASSWORD="password"
+DARWIN_KAFKA_HOST="darwin-kafka"
+DARWIN_ZOOKEEPER_HOST="darwin-zookeeper"
 
 
 run_pre_deploy_pod() {
@@ -31,7 +34,7 @@ if [ $# -lt 3 ]; then
   shift 3
   # Store remaining args for extra env vars
 
-  pod_name="test-pod"
+  pod_name="$service_name-pre-deploy"
 
   # Start env JSON array with predefined vars
   env_json="
@@ -44,6 +47,8 @@ if [ $# -lt 3 ]; then
     {\"name\":\"DARWIN_CASSANDRA_HOST\",\"value\":\"$DARWIN_CASSANDRA_HOST\"},
     {\"name\":\"DARWIN_MYSQL_USERNAME\",\"value\":\"$DARWIN_MYSQL_USERNAME\"},
     {\"name\":\"DARWIN_MYSQL_PASSWORD\",\"value\":\"$DARWIN_MYSQL_PASSWORD\"},
+    {\"name\":\"DARWIN_KAFKA_HOST\",\"value\":\"$DARWIN_KAFKA_HOST\"},
+    {\"name\":\"DARWIN_ZOOKEEPER_HOST\",\"value\":\"$DARWIN_ZOOKEEPER_HOST\"},
     {\"name\":\"SERVICE_NAME\",\"value\":\"$service_name\"}
   "
 
@@ -84,84 +89,21 @@ if [ $# -lt 3 ]; then
     }"
 }
 
-yq eval '.applications[] | @json' "$YAML_FILE" | while read -r app; do
-  application=$(echo "$app" | yq eval '.application' - -p json)
-  image=$(echo "$app" | yq eval '.image' - -p json)
+# Loop through YAML using array approach
+app_count=$(yq eval '.applications | length' "$YAML_FILE")
+i=0
+while [ $i -lt $app_count ]; do
+  application=$(yq eval ".applications[$i].application" "$YAML_FILE")
+  image="$DOCKER_REGISTRY/$application:latest"
 
   # Build extra envs string from YAML
-  extra_envs=$(echo "$app" | yq eval '.env[] | .name + "=" + .value' - -p json | tr '\n' ' ')
+  extra_envs=$(yq eval ".applications[$i].env[] | .name + \"=\" + .value" "$YAML_FILE" | tr '\n' ' ')
 
-  echo ">>> Running test pod for $application"
+  echo ">>> Running pre deploy for $application"
   # Use eval to properly expand the env vars as separate arguments
   eval "set -- $extra_envs"
   run_pre_deploy_pod "darwin" "$image" "$application" "$@"
+  
+  echo ">>> Completed processing $application"
+  i=$((i + 1))
 done
-
-
-# SERVICE_NAME="darwin-ofs-v2"
-# kubectl run ${SERVICE_NAME}-pre-deploy --rm -it \
-#   --image=darwin-ofs-v2:latest \
-#   --image-pull-policy=IfNotPresent \
-#   --restart=Never \
-#   --env="APP_DIR=${APP_DIR}" \
-#   --env="ENV=${ENV}" \
-#   --env="VPC_SUFFIX=${VPC_SUFFIX}" \
-#   --env="TEAM_SUFFIX=${TEAM_SUFFIX}" \
-#   --env="SERVICE_NAME=${SERVICE_NAME}" \
-#   --env="DEPLOYMENT_TYPE=${DEPLOYMENT_TYPE}" \
-#   --command -- bash -c ".odin/pre-deploy.sh"
-
-# kubectl run test-pod --rm -it \
-#   --image=darwin-ofs-v2:latest \
-#   --restart=Never \
-#   --image-pull-policy=IfNotPresent \
-#   --env="APP_DIR=/app" \
-#   --env="ENV=local" \
-#   --env="VPC_SUFFIX=" \
-#   --env="TEAM_SUFFIX=" \
-#   --env="SERVICE_NAME=darwin-ofs-v2" \
-#   --env="DEPLOYMENT_TYPE=container" \
-#   --command -- bash -c ".odin/pre-deploy.sh" 
-
-# kubectl run test-pod --rm -it \
-#   --namespace=darwin \
-#   --image=darwin-ofs-v2-admin:latest \
-#   --restart=Never \
-#   --image-pull-policy=IfNotPresent \
-#   --overrides='
-# {
-#   "spec": {
-#     "containers": [{
-#       "name": "test-pod",
-#       "image": "darwin-ofs-v2-admin:latest",
-#       "imagePullPolicy": "IfNotPresent",
-#       "command": ["bash", "-c", ".odin/pre-deploy.sh"],
-#       "env": [
-#         {"name":"APP_DIR","value":"/app"},
-#         {"name":"ENV","value":"darwin-local"},
-#         {"name":"VPC_SUFFIX","value":"-darwin-local"},
-#         {"name":"TEAM_SUFFIX","value":"-darwin-local"},
-#         {"name":"SERVICE_NAME","value":"darwin-ofs-v2"},
-#         {"name":"DEPLOYMENT_TYPE","value":"container"},
-#         {"name":"DARWIN_MYSQL_HOST","value":"darwin-mysql"},
-#         {"name":"DARWIN_CASSANDRA_HOST","value":"darwin-cassandra"},
-#         {"name":"DARWIN_MYSQL_USERNAME","value":"root"},
-#         {"name":"DARWIN_MYSQL_PASSWORD","value":"password"},
-#         {"name":"VAULT_SERVICE_MYSQL_PASSWORD","value":"username"},
-#         {"name":"VAULT_SERVICE_MYSQL_USERNAME","value":"password"}
-#       ],
-#       "volumeMounts": [{
-#         "mountPath": "/root/.m2/",
-#         "name": "host-data"
-#       }]
-#     }],
-#     "volumes": [{
-#       "name": "host-data",
-#       "hostPath": {
-#         "path": "/mnt/shared-data/.m2/", 
-#         "type": "Directory"
-#       }
-#     }]
-#   }
-# }'
-
