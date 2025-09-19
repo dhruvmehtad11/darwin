@@ -91,16 +91,14 @@ spec:
             - name: AIRFLOW__WEBSERVER__BASE_URL
               value: "http://localhost/airflow"
           livenessProbe:
-            httpGet:
-              path: /health
+            tcpSocket:
               port: airflow-web
             initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
-            httpGet:
-              path: /health
+            tcpSocket:
               port: airflow-web
             initialDelaySeconds: 60
             periodSeconds: 10
