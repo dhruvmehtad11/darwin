@@ -23,13 +23,6 @@ else
     --config "${KIND_CONFIG}" \
     --kubeconfig "${KUBECONFIG}"
 
-  if docker ps | grep -q "kind-registry"; then
-    echo "✅ kind-registry is already running"
-  else
-    echo "🚀 Starting kind-registry..."
-    docker run -d --restart=always -p 5000:5000 --network $CLUSTER_NAME --name kind-registry registry:2
-  fi
-
   # Install cert-manager with CRDs
   helm install cert-manager jetstack/cert-manager \
     --namespace cert-manager \
@@ -41,4 +34,13 @@ else
 
   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/kind/deploy.yaml
   kubectl label node kind-control-plane ingress-ready=true
+fi
+
+chmod 600 $KUBECONFIG
+
+if docker ps | grep -q "kind-registry"; then
+  echo "✅ kind-registry is already running"
+else
+  echo "🚀 Starting kind-registry..."
+  docker run -d --restart=always -p 5000:5000 --network $CLUSTER_NAME --name kind-registry registry:2
 fi

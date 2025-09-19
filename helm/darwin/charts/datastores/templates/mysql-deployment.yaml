@@ -69,7 +69,13 @@ spec:
       {{- if .Values.mysql.primary.persistence.enabled }}
       volumes:
         - name: data
+          {{- if index .Values.global "local-k8s" }}
+          hostPath:
+            path: /mnt/shared-data/mysql-0
+            type: DirectoryOrCreate
+          {{- else }}
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-mysql-pvc
+          {{- end }}
       {{- end }}
 {{- end }}

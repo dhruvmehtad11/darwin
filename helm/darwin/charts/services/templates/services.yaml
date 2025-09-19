@@ -111,6 +111,8 @@ spec:
               value: "{{ $.Release.Name }}-feature-store"
             - name: DARWIN_ZOOKEEPER_HOST
               value: "{{ $.Release.Name }}-zookeeper"
+            - name: AWS_ENDPOINT_OVERRIDE
+              value: "http://{{ $.Release.Name }}-localstack:4566"
             {{- if $config.extraEnvVars }}
             {{- toYaml $config.extraEnvVars | nindent 12 }}
             {{- end }}

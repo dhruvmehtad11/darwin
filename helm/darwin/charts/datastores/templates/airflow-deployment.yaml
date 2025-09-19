@@ -1,0 +1,197 @@
+{{- if .Values.airflow.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-airflow-webserver
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: airflow-webserver
+spec:
+  replicas: {{ .Values.airflow.webserver.replicas | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "darwin.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: airflow-webserver
+  template:
+    metadata:
+      labels:
+        {{- include "darwin.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: airflow-webserver
+    spec:
+      initContainers:
+        - name: airflow-init-db
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          command: ['airflow', 'db', 'init']
+          env:
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: "CeleryExecutor"
+            - name: AIRFLOW__CELERY__BROKER_URL
+              value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
+            - name: AIRFLOW__CELERY__RESULT_BACKEND
+              value: "rpc://"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
+        - name: airflow-create-user
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          command: 
+            - airflow
+            - users
+            - create
+            - --username
+            - "{{ .Values.airflow.webserver.defaultUser.username }}"
+            - --firstname
+            - "{{ .Values.airflow.webserver.defaultUser.firstName | default "Darwin" }}"
+            - --lastname  
+            - "{{ .Values.airflow.webserver.defaultUser.lastName | default "User" }}"
+            - --role
+            - "{{ .Values.airflow.webserver.defaultUser.role | default "Admin" }}"
+            - --email
+            - "{{ .Values.airflow.webserver.defaultUser.email }}"
+            - --password
+            - "{{ .Values.airflow.webserver.defaultUser.password }}"
+          env:
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: "CeleryExecutor"
+            - name: AIRFLOW__CELERY__BROKER_URL
+              value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
+            - name: AIRFLOW__CELERY__RESULT_BACKEND
+              value: "rpc://"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
+      containers:
+        - name: airflow-webserver
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          command: ['airflow', 'webserver']
+          ports:
+            - name: airflow-web
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: "CeleryExecutor"
+            - name: AIRFLOW__CELERY__BROKER_URL
+              value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
+            - name: AIRFLOW__CELERY__RESULT_BACKEND
+              value: "rpc://"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
+            - name: AIRFLOW__CORE__DAGS_FOLDER
+              value: "/opt/airflow/dags"
+            - name: AIRFLOW__CORE__LOAD_EXAMPLES
+              value: "false"
+            - name: AIRFLOW__WEBSERVER__EXPOSE_CONFIG
+              value: "true"
+            - name: AIRFLOW__WEBSERVER__BASE_URL
+              value: "http://localhost/airflow"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: airflow-web
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: airflow-web
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.airflow.webserver.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-airflow-scheduler
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: airflow-scheduler
+spec:
+  replicas: {{ .Values.airflow.scheduler.replicas | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "darwin.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: airflow-scheduler
+  template:
+    metadata:
+      labels:
+        {{- include "darwin.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: airflow-scheduler
+    spec:
+      containers:
+        - name: airflow-scheduler
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          command: ['airflow', 'scheduler']
+          env:
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: "CeleryExecutor"
+            - name: AIRFLOW__CELERY__BROKER_URL
+              value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
+            - name: AIRFLOW__CELERY__RESULT_BACKEND
+              value: "rpc://"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
+            - name: AIRFLOW__CORE__DAGS_FOLDER
+              value: "/opt/airflow/dags"
+            - name: AIRFLOW__CORE__LOAD_EXAMPLES
+              value: "false"
+          resources:
+            {{- toYaml .Values.airflow.scheduler.resources | nindent 12 }}
+---
+{{- if .Values.airflow.workers }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-airflow-worker
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: airflow-worker
+spec:
+  replicas: {{ .Values.airflow.workers.replicas | default 2 }}
+  selector:
+    matchLabels:
+      {{- include "darwin.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: airflow-worker
+  template:
+    metadata:
+      labels:
+        {{- include "darwin.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: airflow-worker
+    spec:
+      containers:
+        - name: airflow-worker
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          command: ['airflow', 'celery', 'worker']
+          env:
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: "CeleryExecutor"
+            - name: AIRFLOW__CELERY__BROKER_URL
+              value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
+            - name: AIRFLOW__CELERY__RESULT_BACKEND
+              value: "rpc://"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
+            - name: AIRFLOW__CORE__DAGS_FOLDER
+              value: "/opt/airflow/dags"
+            - name: AIRFLOW__CORE__LOAD_EXAMPLES
+              value: "false"
+          resources:
+            {{- toYaml .Values.airflow.workers.resources | nindent 12 }}
+{{- end }}
+{{- end }}

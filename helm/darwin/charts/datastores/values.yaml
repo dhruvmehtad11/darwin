@@ -10,7 +10,7 @@ mysql:
   primary:
     persistence:
       enabled: true
-      size: 20Gi
+      size: 8Gi
     resources:
       limits:
         cpu: 1000m
@@ -30,73 +30,66 @@ cassandra:
     password: "{{ .Values.global.database.cassandra.password }}"
   persistence:
     enabled: true
-    size: 50Gi
+    size: 2Gi
   resources:
     limits:
-      cpu: 2000m
-      memory: 4Gi
+      cpu: 200m
+      memory: 512Mi
     requests:
-      cpu: 500m
-      memory: 2Gi
+      cpu: 100m
+      memory: 256Mi
 
 # Apache Kafka
 kafka:
   enabled: true
-  replicaCount: 3
-  auth:
-    enabled: false
+  image:
+    repository: confluentinc/cp-kafka
+    tag: "7.4.0"
+  replicaCount: 1
   persistence:
     enabled: true
-    size: 20Gi
-  zookeeper:
-    enabled: false  # We'll use separate zookeeper
-  externalZookeeper:
-    servers: "{{ $.Release.Name }}-zookeeper:2181"
+    size: 2Gi
   resources:
     limits:
-      cpu: 1000m
-      memory: 2Gi
+      cpu: 200m
+      memory: 512Mi
     requests:
-      cpu: 500m
-      memory: 1Gi
+      cpu: 100m
+      memory: 256Mi
 
-# Apache Zookeeper
+# Apache Zookeeper (for Helix)
 zookeeper:
   enabled: true
   replicaCount: 3
   persistence:
-    enabled: true
-    size: 10Gi
+    enabled: false
+    size: 1Gi
   resources:
     limits:
-      cpu: 500m
-      memory: 1Gi
+      cpu: 200m
+      memory: 256Mi
     requests:
-      cpu: 250m
-      memory: 512Mi
+      cpu: 100m
+      memory: 128Mi
 
 # Apache Airflow
 airflow:
-  enabled: false
+  enabled: true
   executor: CeleryExecutor
+  image:
+    repository: apache/airflow
+    tag: "2.7.0"
+    pullPolicy: IfNotPresent
   webserver:
+    replicas: 1
     defaultUser:
       enabled: true
-      username: admin
-      password: admin123
+      username: darwin
+      password: darwin
+      firstName: Darwin
+      lastName: User
       email: admin@darwin.local
-  postgresql:
-    enabled: true
-    auth:
-      username: airflow
-      password: airflow-password
-      database: airflow
-  redis:
-    enabled: true
-    auth:
-      enabled: false
-  workers:
-    replicas: 2
+      role: Admin
     resources:
       limits:
         cpu: 1000m
@@ -104,3 +97,56 @@ airflow:
       requests:
         cpu: 500m
         memory: 1Gi
+  postgresql:
+    enabled: false
+  redis:
+    enabled: false
+  rabbitmq:
+    enabled: true
+    auth:
+      username: airflow
+      password: airflow
+    persistence:
+      enabled: true
+      size: 1Gi
+  mysql:
+    enabled: false  # Use existing MySQL service
+  workers:
+         replicas: 1
+         resources:
+           limits:
+             cpu: 200m
+             memory: 512Mi
+           requests:
+             cpu: 100m
+             memory: 256Mi
+  scheduler:
+    replicas: 1
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+# LocalStack (S3 Mock)
+localstack:
+  enabled: true
+  image:
+    repository: localstack/localstack
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    size: 2Gi
+  services: "s3"
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  env:
+    awsEndpointOverride: "http://{{ $.Release.Name }}-localstack:4566"

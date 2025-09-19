@@ -3,15 +3,15 @@ image:
   tag: "2.7.0"
   pullPolicy: IfNotPresent
 
-executor: CeleryExecutor
+executor: LocalExecutor
 
 webserver:
   replicas: 1
   defaultUser:
     enabled: true
-    username: admin
-    password: admin123
-    firstName: Admin
+    username: darwin
+    password: darwin
+    firstName: Darwin
     lastName: User
     email: admin@darwin.local
     role: Admin
@@ -50,30 +50,29 @@ workers:
     size: 10Gi
 
 postgresql:
+  enabled: false
+
+redis:
+  enabled: false
+
+rabbitmq:
   enabled: true
   auth:
     username: airflow
-    password: airflow-password
-    database: airflow
-  primary:
-    persistence:
-      enabled: true
-      size: 20Gi
+    password: airflow
+  persistence:
+    enabled: true
+    size: 5Gi
 
-redis:
-  enabled: true
-  auth:
-    enabled: false
-  master:
-    persistence:
-      enabled: true
-      size: 5Gi
+mysql:
+  enabled: false  # Use existing MySQL service
 
 config:
   core:
     dags_folder: /opt/airflow/dags
     load_examples: false
     logging_level: INFO
+    executor: CeleryExecutor
   celery:
     worker_concurrency: 4
   webserver:
@@ -104,8 +103,16 @@ ingress:
 env:
   - name: AIRFLOW__CORE__FERNET_KEY
     value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
-  - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-    value: "postgresql://airflow:airflow-password@darwin-postgresql:5432/airflow"
+  - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+    value: "mysql://root:password@darwin-mysql:3306/airflow"
+  - name: AIRFLOW__CORE__EXECUTOR
+    value: "CeleryExecutor"
+  - name: AIRFLOW__CELERY__BROKER_URL
+    value: "pyamqp://airflow:airflow@darwin-airflow-rabbitmq:5672//"
+  - name: AIRFLOW__CELERY__RESULT_BACKEND
+    value: "rpc://"
+  - name: AIRFLOW__WEBSERVER__BASE_URL
+    value: "http://localhost/airflow"
 
 extraVolumes:
   - name: darwin-scripts

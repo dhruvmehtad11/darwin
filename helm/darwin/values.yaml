@@ -3,6 +3,8 @@ global:
   imageRegistry: docker.io
   storageClass: standard
   namespace: darwin
+  # Use local Kind storage (hostPath) vs real K8s storage (PVCs)
+  local-k8s: true
   
   # Database connection details (shared across subcharts)
   database:
@@ -18,9 +20,15 @@ global:
 # Subchart Configuration
 datastores:
   enabled: true
+  localstack:
+    enabled: true
+  airflow:
+    enabled: true
 
 services:
   enabled: true
+  # Ingress provides centralized routing at localhost
+  # Routes: /feature-store, /feature-store-admin, /feature-store-consumer
 
 # Monitoring and Observability
 monitoring:

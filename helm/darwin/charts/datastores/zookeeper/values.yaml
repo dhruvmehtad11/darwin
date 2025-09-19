@@ -37,7 +37,7 @@ config: |
   autopurge.purgeInterval=1
 
 jvm:
-  heap: 512m
+  heap: 128m
 
 metrics:
   enabled: true

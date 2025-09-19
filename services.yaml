@@ -12,6 +12,8 @@ applications:
         value: "darwin-feature-store"
       - name: DARWIN_FEATURE_STORE_ADMIN_HOST
         value: "darwin-feature-store-admin"
+      - name: AWS_ENDPOINT_OVERRIDE
+        value: "http://darwin-localstack:4566"
 
   - application: darwin-ofs-v2-admin
     base-path: feature-store
@@ -26,6 +28,8 @@ applications:
         value: "darwin-feature-store"
       - name: DARWIN_FEATURE_STORE_ADMIN_HOST
         value: "darwin-feature-store-admin"
+      - name: AWS_ENDPOINT_OVERRIDE
+        value: "http://darwin-localstack:4566"
 
   - application: darwin-ofs-v2-consumer
     base-path: feature-store
@@ -40,3 +44,5 @@ applications:
         value: "darwin-feature-store"
       - name: DARWIN_FEATURE_STORE_ADMIN_HOST
         value: "darwin-feature-store-admin"
+      - name: AWS_ENDPOINT_OVERRIDE
+        value: "http://darwin-localstack:4566"

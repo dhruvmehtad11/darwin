@@ -1,12 +1,12 @@
-{{- if and .Values.mysql.enabled .Values.mysql.primary.persistence.enabled (not (index .Values.global "local-k8s")) }}
+{{- if and .Values.airflow.enabled .Values.airflow.rabbitmq.enabled .Values.airflow.rabbitmq.persistence.enabled (not (index .Values.global "local-k8s")) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-mysql-pvc
+  name: {{ .Release.Name }}-airflow-rabbitmq-pvc
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "darwin.labels" . | nindent 4 }}
-    app.kubernetes.io/component: mysql
+    app.kubernetes.io/component: airflow-rabbitmq
 spec:
   accessModes:
     - ReadWriteOnce
@@ -15,5 +15,5 @@ spec:
   {{- end }}
   resources:
     requests:
-      storage: {{ .Values.mysql.primary.persistence.size }}
+      storage: {{ .Values.airflow.rabbitmq.persistence.size }}
 {{- end }}

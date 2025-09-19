@@ -91,6 +91,8 @@ env:
     value: "kafka:9092"
   - name: JVM_OPTS
     value: "-Xms2g -Xmx2g"
+  - name: AWS_ENDPOINT_OVERRIDE
+    value: "http://darwin-localstack:4566"
 
 configMap:
   enabled: true

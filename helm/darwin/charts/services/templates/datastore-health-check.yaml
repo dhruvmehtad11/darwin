@@ -109,6 +109,8 @@ spec:
           value: "{{ .Release.Name }}-kafka"
         - name: DARWIN_ZOOKEEPER_HOST
           value: "{{ .Release.Name }}-zookeeper"
+        - name: DARWIN_LOCALSTACK_HOST
+          value: "{{ .Release.Name }}-localstack"
         {{- if .Values.global.dockerRegistry }}
         - name: DOCKER_REGISTRY
           value: "{{ .Values.global.dockerRegistry }}"
@@ -157,6 +159,36 @@ spec:
                   return 0
                 fi
                 echo "⏳ $service not ready yet (attempt $attempt/$max_attempts) - checking again in 5s..."
+                sleep 5
+                attempt=$((attempt + 1))
+              done
+              
+              echo "❌ $service health check failed after $max_attempts attempts"
+              return 1
+            }
+            
+            # Function to check LocalStack HTTP health endpoint
+            check_localstack_health() {
+              local service=$1
+              local port=$2
+              local max_attempts=60
+              local attempt=1
+              
+              echo "🔍 Checking $service:$port HTTP health endpoint..."
+              
+              while [ $attempt -le $max_attempts ]; do
+                # First check if port is open
+                if nc -z $service.$namespace.svc.cluster.local $port 2>/dev/null; then
+                  # Then check HTTP health endpoint  
+                  if wget -q -O - --timeout=5 "http://$service.$namespace.svc.cluster.local:$port/_localstack/health" >/dev/null 2>&1; then
+                    echo "✅ $service HTTP health endpoint is responsive!"
+                    return 0
+                  else
+                    echo "⏳ $service port is open but health endpoint not ready yet (attempt $attempt/$max_attempts)..."
+                  fi
+                else
+                  echo "⏳ $service port not ready yet (attempt $attempt/$max_attempts)..."
+                fi
                 sleep 5
                 attempt=$((attempt + 1))
               done
@@ -411,9 +443,13 @@ spec:
               echo "⚠️  No services with label 'darwin-component-type=datastore' found, falling back to known services"
               # Fallback to hardcoded services
             check_datastore_health "{{ .Release.Name }}-mysql" 3306 || exit 1
-            check_datastore_health "{{ .Release.Name }}-zookeeper" 2181 || exit 1  
             check_datastore_health "{{ .Release.Name }}-cassandra" 9042 || exit 1
             check_datastore_health "{{ .Release.Name }}-kafka" 9092 || exit 1
+            check_localstack_health "{{ .Release.Name }}-localstack" 4566 || exit 1
+            # Check Airflow if enabled in datastores
+            if /shared/kubectl get service "{{ .Release.Name }}-airflow" --namespace="$namespace" >/dev/null 2>&1; then
+              check_datastore_health "{{ .Release.Name }}-airflow" 8080 || exit 1
+            fi
             else
               echo "📋 Found labeled datastore services:"
               echo "$datastore_services" | while read service_name; do

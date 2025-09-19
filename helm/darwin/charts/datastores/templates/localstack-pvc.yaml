@@ -1,0 +1,17 @@
+{{- if and .Values.localstack.enabled .Values.localstack.persistence.enabled (not (index .Values.global "local-k8s")) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-localstack-pvc
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: localstack
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.global.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.localstack.persistence.size }}
+{{- end }}

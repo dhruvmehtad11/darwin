@@ -42,7 +42,6 @@ else
     source config.env
 fi
 
-
 if kubectl version >/dev/null 2>&1; then
   echo "✅ Cluster is up"
 else
