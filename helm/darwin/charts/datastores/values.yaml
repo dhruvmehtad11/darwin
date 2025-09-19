@@ -33,11 +33,11 @@ cassandra:
     size: 2Gi
   resources:
     limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
       cpu: 200m
       memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 256Mi
 
 # Apache Kafka
 kafka:
@@ -45,17 +45,17 @@ kafka:
   image:
     repository: confluentinc/cp-kafka
     tag: "7.4.0"
-  replicaCount: 1
+  replicaCount: 3
   persistence:
     enabled: true
     size: 2Gi
   resources:
     limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
       cpu: 200m
       memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 256Mi
 
 # Apache Zookeeper (for Helix)
 zookeeper:
@@ -66,11 +66,11 @@ zookeeper:
     size: 1Gi
   resources:
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 300m
+      memory: 512Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 150m
+      memory: 256Mi
 
 # Apache Airflow
 airflow:
@@ -115,19 +115,19 @@ airflow:
          replicas: 1
          resources:
            limits:
-             cpu: 200m
-             memory: 512Mi
+             cpu: 500m
+             memory: 2Gi
            requests:
-             cpu: 100m
-             memory: 256Mi
+             cpu: 200m
+             memory: 1Gi
   scheduler:
     replicas: 1
     resources:
       limits:
-        cpu: 1000m
+        cpu: 500m
         memory: 2Gi
       requests:
-        cpu: 500m
+        cpu: 200m
         memory: 1Gi
 
 # LocalStack (S3 Mock)

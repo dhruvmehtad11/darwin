@@ -25,9 +25,9 @@ spec:
           image: cassandra:5.0
           env:
             - name: MAX_HEAP_SIZE
-              value: "256M"
+              value: "512M"
             - name: HEAP_NEWSIZE
-              value: "128M"
+              value: "256M"
             - name: CASSANDRA_CLUSTER_NAME
               value: {{ .Values.cassandra.cluster.name | quote }}
             - name: CASSANDRA_DC

@@ -22,8 +22,8 @@ resources:
     memory: 2Gi
 
 jvm:
-  maxHeapSize: 256M
-  newHeapSize: 128M
+  maxHeapSize: 512M
+  newHeapSize: 256M
 
 service:
   type: ClusterIP
