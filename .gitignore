@@ -1,0 +1,257 @@
+# Darwin Project .gitignore
+
+# ===========================
+# Specific Darwin files
+# ===========================
+config.env
+kind/shared-storage/*
+kind/config/*
+
+# ===========================
+# OS generated files
+# ===========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ===========================
+# IDE files
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ===========================
+# Java/Maven
+# ===========================
+target/
+*.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.class
+*.log
+*.ctxt
+.mtj.tmp/
+hs_err_pid*
+replay_pid*
+
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ===========================
+# Node.js (if used)
+# ===========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ===========================
+# Docker
+# ===========================
+.dockerignore
+
+# ===========================
+# Kubernetes
+# ===========================
+*.kubeconfig
+kubeconfig*
+.kube/
+
+# ===========================
+# Helm
+# ===========================
+charts/*.tgz
+*.tgz
+
+# ===========================
+# Logs
+# ===========================
+*.log
+logs/
+*.out
+
+# ===========================
+# Temporary files
+# ===========================
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+
+# ===========================
+# Archives
+# ===========================
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
+
+# ===========================
+# Environment & secrets
+# ===========================
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+secrets.yaml
+*-secrets.yaml
+
+# ===========================
+# Build artifacts
+# ===========================
+*.war
+*.nar
+*.ear
+*.sar
+*.class
+
+# ===========================
+# Database
+# ===========================
+*.db
+*.sqlite
+*.sqlite3
+
+# ===========================
+# JetBrains
+# ===========================
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# ===========================
+# Eclipse
+# ===========================
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.externalToolBuilders/
+*.launch
+.pydevproject
+.cproject
+.factorypath
+.buildpath
+.target
+.tern-project
+.texlipse
+.springBeans
+.recommenders/
+.apt_generated/
+.apt_generated_test/
+
+# ===========================
+# NetBeans
+# ===========================
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ===========================
+# Visual Studio Code
+# ===========================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# ===========================
+# Local History for Visual Studio Code
+# ===========================
+.history/
+.ionide/
