@@ -148,7 +148,6 @@ metadata:
     {{- include "darwin.labels" $ | nindent 4 }}
     app.kubernetes.io/component: {{ $serviceName }}
     component-name: {{ $config.serviceName }}
-    darwin-component-type: service
 spec:
   type: {{ $config.service.type }}
   ports:
