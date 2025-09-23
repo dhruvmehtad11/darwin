@@ -7,9 +7,9 @@ metadata:
   name: {{ $.Release.Name }}-{{ $serviceName }}
   namespace: {{ $.Values.global.namespace }}
   labels:
+    darwin-component-type: service
     {{- include "darwin.labels" $ | nindent 4 }}
     app.kubernetes.io/component: {{ $serviceName }}
-    darwin-component-type: service
 spec:
   {{- if not $config.autoscaling.enabled }}
   replicas: {{ $config.replicaCount }}
@@ -144,6 +144,7 @@ metadata:
   name: {{ $.Release.Name }}-{{ $serviceName }}
   namespace: {{ $.Values.global.namespace }}
   labels:
+    darwin-component-type: service
     {{- include "darwin.labels" $ | nindent 4 }}
     app.kubernetes.io/component: {{ $serviceName }}
     component-name: {{ $config.serviceName }}
