@@ -9,6 +9,7 @@ metadata:
   labels:
     {{- include "darwin.labels" $ | nindent 4 }}
     app.kubernetes.io/component: {{ $serviceName }}
+    darwin-component-type: service
 spec:
   {{- if not $config.autoscaling.enabled }}
   replicas: {{ $config.replicaCount }}
