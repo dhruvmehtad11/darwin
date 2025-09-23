@@ -61,13 +61,15 @@ spec:
             timeoutSeconds: 1
           resources:
             {{- toYaml .Values.mysql.primary.resources | nindent 12 }}
-          {{- if .Values.mysql.primary.persistence.enabled }}
           volumeMounts:
+          {{- if .Values.mysql.primary.persistence.enabled }}
             - name: data
               mountPath: /var/lib/mysql
           {{- end }}
-      {{- if .Values.mysql.primary.persistence.enabled }}
+            - name: mysql-init-scripts
+              mountPath: /docker-entrypoint-initdb.d
       volumes:
+        {{- if .Values.mysql.primary.persistence.enabled }}
         - name: data
           {{- if index .Values.global "local-k8s" }}
           hostPath:
@@ -77,5 +79,8 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-mysql-pvc
           {{- end }}
-      {{- end }}
+        {{- end }}
+        - name: mysql-init-scripts
+          configMap:
+            name: {{ .Release.Name }}-mysql-init
 {{- end }}

@@ -1,0 +1,15 @@
+{{- if .Values.mysql.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-mysql-init
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mysql
+data:
+  01-create-airflow-db.sql: |
+    CREATE DATABASE IF NOT EXISTS airflow;
+    GRANT ALL PRIVILEGES ON airflow.* TO 'root'@'%';
+    FLUSH PRIVILEGES;
+{{- end }}
