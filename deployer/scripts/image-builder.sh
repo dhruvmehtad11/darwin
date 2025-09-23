@@ -48,7 +48,7 @@ cd $cur_dir
 docker build \
   --build-arg BASE_IMAGE=$base_image \
   --build-arg APP_NAME=$application \
-  --build-arg APP_BASE_DIR=feature-store \
+  --build-arg APP_BASE_DIR=$base_path \
   --build-arg APP_DIR=$path \
   -t $application:latest \
   -f deployer/images/Dockerfile .
