@@ -22,8 +22,7 @@ if [ "$ENV" = "local" ]; then
         
         sh ./kind/start-cluster.sh
         ENV_CREATION=true
-        echo "DOCKER_REGISTRY=localhost:5000" >> config.env
-
+        
         rm ./kind/kind-config-tmp.yaml
     else
         echo "\nSkipping kind cluster setup"
@@ -119,7 +118,7 @@ while [ $i -lt $app_count ]; do
   base_image=$(yq eval ".applications[$i].base-image" "$YAML_FILE")
 
   echo ">>> Building image for $application..."
-  sh deployer/scripts/image-builder.sh -a "$application" -t "$base_path" -p "$path" -e "$base_image"
+  sh deployer/scripts/image-builder.sh -a "$application" -t "$base_path" -p "$path" -e "$base_image" -r "$DOCKER_REGISTRY"
   
   echo ">>> Completed processing $application"
   i=$((i + 1))

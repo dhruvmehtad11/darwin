@@ -1,13 +1,14 @@
 #!/bin/sh
 set -e
 
-while getopts a:p:t:e: flag
+while getopts a:p:t:e:r: flag
 do
     case "${flag}" in
         a) application=${OPTARG};;
         p) path=${OPTARG};;
         t) base_path=${OPTARG};;
         e) base_image=${OPTARG};;
+        r) registry=${OPTARG};;
     esac
 done
 
@@ -33,6 +34,7 @@ echo "application: $application";
 echo "path: $path";
 echo "base_path: $base_path";
 echo "base_image: $base_image";
+echo "registry: $registry";
 
 rm -rf $path/target
 mkdir -p -m 755 $path/target/$application/.odinst
@@ -51,6 +53,6 @@ docker build \
   -t $application:latest \
   -f deployer/images/Dockerfile .
   
-docker tag "$application":latest 127.0.0.1:5000/"$application":latest
-docker push 127.0.0.1:5000/"$application":latest
+docker tag "$application":latest "$registry/$application":latest
+docker push "$registry/$application":latest
 
