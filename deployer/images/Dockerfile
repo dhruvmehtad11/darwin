@@ -9,13 +9,10 @@ WORKDIR /app/
 
 COPY ${APP_BASE_DIR}/${APP_DIR}/target/${APP_NAME}/. /app/
 
-# Setup
-# RUN --mount=type=cache,target=/root/.m2/repository \
-#   sh ./.odin/${APP_NAME}/setup.sh
-
-# if [[ -f "/app/.odin/setup.sh" ]]; then
-#     bash /app/.odin/setup.sh
-# fi
+# Run setup.sh if it exists
+RUN if [ -f "/app/.odin/setup.sh" ]; then \
+      bash /app/.odin/setup.sh; \
+    fi
 
 # Entrypoint
 ENTRYPOINT ["bash", "-c", "/app/.odin/start.sh"]
