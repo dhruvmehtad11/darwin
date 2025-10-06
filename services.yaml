@@ -1,52 +1,96 @@
 applications:
-  Feature Store Services - DISABLED (Lombok compilation issue)
-  - application: darwin-ofs-v2
-    base-path: feature-store
-    path: app
-    base-image: darwin/java:11-maven-bookworm-slim
-    env:
-      - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "dummy"
-      - name: VAULT_SERVICE_MYSQL_PASSWORD
-        value: "dummy"
-      - name: DARWIN_FEATURE_STORE_HOST
-        value: "darwin-feature-store"
-      - name: DARWIN_FEATURE_STORE_ADMIN_HOST
-        value: "darwin-feature-store-admin"
-      - name: AWS_ENDPOINT_OVERRIDE
-        value: "http://darwin-localstack:4566"
+  # Feature Store Services - DISABLED (Lombok compilation issue)
+  # - application: darwin-ofs-v2
+  #   base-path: feature-store
+  #   path: app
+  #   base-image: darwin/java:11-maven-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "dummy"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "dummy"
+  #     - name: DARWIN_FEATURE_STORE_HOST
+  #       value: "darwin-feature-store"
+  #     - name: DARWIN_FEATURE_STORE_ADMIN_HOST
+  #       value: "darwin-feature-store-admin"
+  #     - name: AWS_ENDPOINT_OVERRIDE
+  #       value: "http://darwin-localstack:4566"
 
-  - application: darwin-ofs-v2-admin
-    base-path: feature-store
-    path: admin
-    base-image: darwin/java:11-maven-bookworm-slim
-    env:
-      - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "dummy"
-      - name: VAULT_SERVICE_MYSQL_PASSWORD
-        value: "dummy"
-      - name: DARWIN_FEATURE_STORE_HOST
-        value: "darwin-feature-store"
-      - name: DARWIN_FEATURE_STORE_ADMIN_HOST
-        value: "darwin-feature-store-admin"
-      - name: AWS_ENDPOINT_OVERRIDE
-        value: "http://darwin-localstack:4566"
+  # - application: darwin-ofs-v2-admin
+  #   base-path: feature-store
+  #   path: admin
+  #   base-image: darwin/java:11-maven-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "dummy"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "dummy"
+  #     - name: DARWIN_FEATURE_STORE_HOST
+  #       value: "darwin-feature-store"
+  #     - name: DARWIN_FEATURE_STORE_ADMIN_HOST
+  #       value: "darwin-feature-store-admin"
+  #     - name: AWS_ENDPOINT_OVERRIDE
+  #       value: "http://darwin-localstack:4566"
 
-  - application: darwin-ofs-v2-consumer
-    base-path: feature-store
-    path: consumer
-    base-image: darwin/java:11-maven-bookworm-slim
+  # - application: darwin-ofs-v2-consumer
+  #   base-path: feature-store
+  #   path: consumer
+  #   base-image: darwin/java:11-maven-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "dummy"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "dummy"
+  #     - name: DARWIN_FEATURE_STORE_HOST
+  #       value: "darwin-feature-store"
+  #     - name: DARWIN_FEATURE_STORE_ADMIN_HOST
+  #       value: "darwin-feature-store-admin"
+  #     - name: AWS_ENDPOINT_OVERRIDE
+  #       value: "http://darwin-localstack:4566"
+
+  - application: darwin-mlflow
+    base-path: mlflow
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
     env:
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+        value: "admin"
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
+        value: "password"
+      - name: CONFIG_SERVICE_MYSQL_DATABASE
+        value: "darwin"
+      - name: TEAM_SUFFIX
+        value: "-darwin-local"
+      - name: VPC_SUFFIX
+        value: "-darwin-local"
       - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "dummy"
+        value: "darwin"
       - name: VAULT_SERVICE_MYSQL_PASSWORD
-        value: "dummy"
-      - name: DARWIN_FEATURE_STORE_HOST
-        value: "darwin-feature-store"
-      - name: DARWIN_FEATURE_STORE_ADMIN_HOST
-        value: "darwin-feature-store-admin"
-      - name: AWS_ENDPOINT_OVERRIDE
-        value: "http://darwin-localstack:4566"
+        value: "password"
+      - name: CONFIG_SERVICE_S3_PATH
+        value: "s3://darwin-mlflow-bucket"
+
+  - application: darwin-mlflow-app
+    base-path: mlflow
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    env:
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+        value: "admin"
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
+        value: "password"
+      - name: CONFIG_SERVICE_MYSQL_DATABASE
+        value: "darwin"
+      - name: TEAM_SUFFIX
+        value: "-darwin-local"
+      - name: VPC_SUFFIX
+        value: "-darwin-local"
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "password"
+      - name: CONFIG_SERVICE_S3_PATH
+        value: "s3://darwin-mlflow-bucket"
 
   - application: darwin-workflow
     base-path: workflow

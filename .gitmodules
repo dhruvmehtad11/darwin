@@ -1,6 +1,9 @@
 [submodule "feature-store"]
 	path = feature-store
 	url = https://github.com/dream11/darwin-ofs-v2.git
-[submodule "darwin-workflow"]
-	path = darwin-workflow
+[submodule "workflow"]
+	path = workflow
 	url = https://github.com/dream11/darwin-workflow.git
+[submodule "mlflow"]
+	path = mlflow
+	url = git@github.com:dream11/darwin-mlflow.git

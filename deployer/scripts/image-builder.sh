@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
 
-while getopts a:p:t:e:r: flag
+build_args=""
+
+while getopts a:p:t:e:r:B:d: flag
 do
     case "${flag}" in
         a) application=${OPTARG};;
@@ -9,6 +11,8 @@ do
         t) base_path=${OPTARG};;
         e) base_image=${OPTARG};;
         r) registry=${OPTARG};;
+        B) build_args=${OPTARG};;
+        d) deployment_type=${OPTARG};;
     esac
 done
 
@@ -35,14 +39,25 @@ echo "path: $path";
 echo "base_path: $base_path";
 echo "base_image: $base_image";
 echo "registry: $registry";
+echo "deployment_type: $deployment_type";
+echo "dynamic build_args: $build_args";
 
 rm -rf $path/target
 mkdir -p -m 755 $path/target/$application/.odinst
-bash .odin/$application/build.sh
+echo "Building $application using build.sh"
+bash -x .odin/$application/build.sh
 cd $path;
-cp -r ../.odin/$application/. target/$application/.odin
+echo "realpath $(realpath "$path"): $(realpath .)"
+if [ "$(realpath "$path")" != "$(realpath .)" ]; then
+    echo "Copying ../.odin/$application/. to target/$application/.odin"
+    cp -r ../.odin/$application/. target/$application/.odin
+else
+    echo "Copying ./.odin/$application/. to target/$application/.odin"
+    cp -r ./.odin/$application/. target/$application/.odin
+fi
 
 chmod 755 target/$application/.odin
+chmod +x target/$application/.odin/start.sh
 cd $cur_dir
 
 docker build \
@@ -50,6 +65,8 @@ docker build \
   --build-arg APP_NAME=$application \
   --build-arg APP_BASE_DIR=$base_path \
   --build-arg APP_DIR=$path \
+  --build-arg DEPLOYMENT_TYPE=$deployment_type \
+  --build-arg EXTRA_ENV_VARS="$build_args" \
   -t $application:latest \
   -f deployer/images/Dockerfile .
   
