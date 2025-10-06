@@ -1,0 +1,5 @@
+---
+description: You have to use ./setup.sh and ./start.sh for building and deploying helm in kubernetes. . We are using image builder in setup.sh.
+globs:
+alwaysApply: true
+---

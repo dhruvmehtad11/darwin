@@ -97,7 +97,7 @@ services:
       enabled: false
 
     # Compute Orchestration Service
-  mlflow:
+  mlflow-lib:
     serviceName: darwin-mlflow
     enabled: true
     replicaCount: 1
@@ -109,7 +109,7 @@ services:
       pullPolicy: Always
     service:
       type: ClusterIP
-      port: 8000
+      port: 8080
     ingress:
       enabled: true
       className: nginx
@@ -120,6 +120,62 @@ services:
               pathType: Prefix
     autoscaling:
       enabled: false
+    extraEnvVars:
+      - name: CONFIG_SERVICE_S3_PATH
+        value: "s3://darwin-mlflow-bucket"
+      - name: CONFIG_SERVICE_MYSQL_MASTERHOST
+        value: "localhost"
+      - name: CONFIG_SERVICE_MYSQL_DATABASE
+        value: "darwin"
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "password"
+      - name: VAULT_SERVICE_ADMIN_USERNAME
+        value: "admin"
+      - name: VAULT_SERVICE_ADMIN_PASSWORD
+        value: "password"
+      - name: CONFIG_SERVICE_MYSQL_AUTH_DATABASE
+        value: "darwin"
+
+  mlflow-app:
+    serviceName: darwin-mlflow-app
+    enabled: true
+    replicaCount: 1
+    image:
+      name: darwin-mlflow-app
+      repository: darwin-mlflow
+      registry: localhost:5000
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-mlflow-app.local
+          paths:
+            - path: /
+              pathType: Prefix
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: CONFIG_SERVICE_S3_PATH
+        value: "s3://darwin-mlflow-bucket"
+      - name: CONFIG_SERVICE_MYSQL_MASTERHOST
+        value: "localhost"
+      - name: CONFIG_SERVICE_MYSQL_DATABASE
+        value: "darwin"
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "password"
+      - name: VAULT_SERVICE_ADMIN_USERNAME
+        value: "admin"
+      - name: VAULT_SERVICE_ADMIN_PASSWORD
+        value: "password"
 
 # Ingress Configuration
 ingress:
@@ -139,6 +195,9 @@ ingress:
     - path: "/feature-store-consumer(/|$)(.*)"
       service: "feature-store-consumer"
       port: 8080
-    - path: "/mlflow(/|$)(.*)"
-      service: "mlflow"
+    - path: "/mlflow-lib(/|$)(.*)"
+      service: "mlflow-lib"
+      port: 8080
+    - path: "/mlflow-app(/|$)(.*)"
+      service: "mlflow-app"
       port: 8000
