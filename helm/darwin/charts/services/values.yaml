@@ -36,7 +36,7 @@ services:
       enabled: false
 
   feature-store-consumer:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2-consumer
     image:
@@ -54,10 +54,12 @@ services:
 
   # Workflow Orchestration Service
   workflow:
-    enabled: false
+    enabled: true
     replicaCount: 1
+    serviceName: darwin-workflow
     image:
-      repository: darwin-workflow
+      registry: localhost:5000
+      name: darwin-workflow
       tag: latest
       pullPolicy: IfNotPresent
     service:
@@ -71,8 +73,20 @@ services:
           paths:
             - path: /
               pathType: Prefix
+    healthcheck:
+      path: /healthcheck
+      initialDelaySeconds: 60
+      readinessDelay: 30
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
     autoscaling:
       enabled: false
+    extraEnvVars: []
 
   # Compute Orchestration Service  
   compute:
@@ -114,3 +128,6 @@ ingress:
     - path: "/feature-store-consumer(/|$)(.*)"
       service: "feature-store-consumer"
       port: 8080
+    - path: "/workflow(/|$)(.*)"
+      service: "workflow"
+      port: 8081
