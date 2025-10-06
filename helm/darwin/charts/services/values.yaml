@@ -2,7 +2,7 @@
 services:
   # Feature Store Service
   feature-store:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2
     image:
@@ -17,9 +17,9 @@ services:
       enabled: false
     autoscaling:
       enabled: false
-              
+
   feature-store-admin:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2-admin
     image:
@@ -36,7 +36,7 @@ services:
       enabled: false
 
   feature-store-consumer:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2-consumer
     image:
@@ -74,7 +74,7 @@ services:
     autoscaling:
       enabled: false
 
-  # Compute Orchestration Service  
+  # Compute Orchestration Service
   compute:
     enabled: false
     replicaCount: 1
@@ -94,7 +94,32 @@ services:
             - path: /
               pathType: Prefix
     autoscaling:
-        enabled: false
+      enabled: false
+
+    # Compute Orchestration Service
+  mlflow:
+    serviceName: darwin-mlflow
+    enabled: true
+    replicaCount: 1
+    image:
+      name: darwin-mlflow
+      repository: darwin-mlflow
+      registry: localhost:5000
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-mlflow.local
+          paths:
+            - path: /
+              pathType: Prefix
+    autoscaling:
+      enabled: false
 
 # Ingress Configuration
 ingress:
@@ -114,3 +139,6 @@ ingress:
     - path: "/feature-store-consumer(/|$)(.*)"
       service: "feature-store-consumer"
       port: 8080
+    - path: "/mlflow(/|$)(.*)"
+      service: "mlflow"
+      port: 8000
