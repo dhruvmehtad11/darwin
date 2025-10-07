@@ -113,7 +113,7 @@ services:
     # Compute Orchestration Service
   mlflow-lib:
     serviceName: darwin-mlflow
-    enabled: true
+    enabled: false
     replicaCount: 1
     image:
       name: darwin-mlflow
@@ -138,7 +138,7 @@ services:
       - name: CONFIG_SERVICE_S3_PATH
         value: "s3://darwin-mlflow-bucket"
       - name: CONFIG_SERVICE_MYSQL_MASTERHOST
-        value: "localhost"
+        value: "localhost" 
       - name: CONFIG_SERVICE_MYSQL_DATABASE
         value: "darwin"
       - name: VAULT_SERVICE_MYSQL_USERNAME
@@ -154,7 +154,7 @@ services:
 
   mlflow-app:
     serviceName: darwin-mlflow-app
-    enabled: true
+    enabled: false
     replicaCount: 1
     image:
       name: darwin-mlflow-app

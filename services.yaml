@@ -48,57 +48,58 @@ applications:
   #     - name: AWS_ENDPOINT_OVERRIDE
   #       value: "http://darwin-localstack:4566"
 
-  - application: darwin-mlflow
-    base-path: mlflow
-    path: .
-    base-image: darwin/python:3.9.7-pip-bookworm-slim
-    env:
-      - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
-        value: "admin"
-      - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
-        value: "password"
-      - name: CONFIG_SERVICE_MYSQL_DATABASE
-        value: "darwin"
-      - name: TEAM_SUFFIX
-        value: "-darwin-local"
-      - name: VPC_SUFFIX
-        value: "-darwin-local"
-      - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "darwin"
-      - name: VAULT_SERVICE_MYSQL_PASSWORD
-        value: "password"
-      - name: CONFIG_SERVICE_S3_PATH
-        value: "s3://darwin-mlflow-bucket"
+  # MLflow Services - DISABLED (submodule not initialized)
+  # - application: darwin-mlflow
+  #   base-path: mlflow
+  #   path: .
+  #   base-image: darwin/python:3.9.7-pip-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+  #       value: "admin"
+  #     - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
+  #       value: "password"
+  #     - name: CONFIG_SERVICE_MYSQL_DATABASE
+  #       value: "darwin"
+  #     - name: TEAM_SUFFIX
+  #       value: "-darwin-local"
+  #     - name: VPC_SUFFIX
+  #       value: "-darwin-local"
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "darwin"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "password"
+  #     - name: CONFIG_SERVICE_S3_PATH
+  #       value: "s3://darwin-mlflow-bucket"
 
-  - application: darwin-mlflow-app
-    base-path: mlflow
-    path: .
-    base-image: darwin/python:3.9.7-pip-bookworm-slim
-    env:
-      - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
-        value: "admin"
-      - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
-        value: "password"
-      - name: CONFIG_SERVICE_MYSQL_DATABASE
-        value: "darwin"
-      - name: TEAM_SUFFIX
-        value: "-darwin-local"
-      - name: VPC_SUFFIX
-        value: "-darwin-local"
-      - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "darwin"
-      - name: VAULT_SERVICE_MYSQL_PASSWORD
-        value: "password"
-      - name: CONFIG_SERVICE_S3_PATH
-        value: "s3://darwin-mlflow-bucket"
+  # - application: darwin-mlflow-app
+  #   base-path: mlflow
+  #   path: .
+  #   base-image: darwin/python:3.9.7-pip-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+  #       value: "admin"
+  #     - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
+  #       value: "password"
+  #     - name: CONFIG_SERVICE_MYSQL_DATABASE
+  #       value: "darwin"
+  #     - name: TEAM_SUFFIX
+  #       value: "-darwin-local"
+  #     - name: VPC_SUFFIX
+  #       value: "-darwin-local"
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "darwin"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "password"
+  #     - name: CONFIG_SERVICE_S3_PATH
+  #       value: "s3://darwin-mlflow-bucket"
 
   - application: darwin-workflow
     base-path: workflow
     path: .
-    base-image: darwin/python:3.9.7
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
     env:
       - name: ENV
-        value: "local"
+        value: "darwin-local"
       - name: DEV
         value: "true"
       - name: TEAM_SUFFIX
@@ -126,7 +127,7 @@ applications:
       - name: VAULT_SERVICE_ES_PASSWORD
         value: "local-password"
       - name: VAULT_SERVICE_AIRFLOW_TOKEN
-        value: "Basic YWRtaW46YWRtaW5AMTIz"
+        value: "Basic_YWRtaW46YWRtaW5AMTIz"
       - name: AWS_ACCESS_KEY_ID
         value: "minioadmin"
       - name: AWS_SECRET_ACCESS_KEY
