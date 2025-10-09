@@ -52,6 +52,54 @@ services:
     autoscaling:
       enabled: false
 
+  chronos:
+    enabled: true
+    replicaCount: 1
+    serviceName: chronos
+    image:
+      registry: localhost:5000
+      name: chronos
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: false
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: ENV
+        value: "local"
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: QUEUE_STRATEGY
+        value: "KAFKA"
+
+  chronos-consumer:
+    enabled: true
+    replicaCount: 1
+    serviceName: chronos-consumer
+    image:
+      registry: localhost:5000
+      name: chronos-consumer
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: false
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: ENV
+        value: "local"
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: QUEUE_STRATEGY
+        value: "KAFKA"
+
   # Workflow Orchestration Service
   workflow:
     enabled: false
