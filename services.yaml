@@ -50,7 +50,7 @@ applications:
   - application: darwin-mlflow
     base-path: mlflow
     path: .
-    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    base-image: darwin/mlflow:2.2.0
     env:
       - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
         value: "admin"
@@ -72,7 +72,7 @@ applications:
   - application: darwin-mlflow-app
     base-path: mlflow
     path: .
-    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    base-image: python:3.9-slim-bookworm
     env:
       - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
         value: "admin"

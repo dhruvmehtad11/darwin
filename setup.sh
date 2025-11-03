@@ -101,7 +101,11 @@ pushd deployer/images/java-11
 sh build.sh
 popd
 
-pushd deployer/images/python-3.9.7
+# pushd deployer/images/python-3.9.7
+# sh build.sh
+# popd
+
+pushd deployer/images/mlflow-2.2.0
 sh build.sh
 popd
 
