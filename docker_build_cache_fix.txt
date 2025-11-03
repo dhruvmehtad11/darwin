@@ -1,0 +1,114 @@
+Preventive fix to avoid deleting the Docker cache each time:
+
+- Modifying the base image Dockerfiles to clear APT cache before `apt-get update`. Add this before the first `apt-get update` in the Java 11 Dockerfile.
+
+**Update `deployer/images/java-11/Dockerfile`:**
+
+```dockerfile
+FROM debian:bookworm-slim AS base
+
+# Clean apt cache to avoid signature errors
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean
+
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y \
+      curl wget unzip gnupg ca-certificates bash \
+      && rm -rf /var/lib/apt/lists/*
+```
+
+And for the final stage (around lines 49-53):
+
+```dockerfile
+FROM debian:bookworm-slim
+
+# Clean apt cache to avoid signature errors
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean
+
+RUN apt-get update && \
+    apt-get install -y ca-certificates bash curl wget unzip && \
+    rm -rf /var/lib/apt/lists/*
+```
+
+Option 2: Switch base images to avoid APT issues.
+
+
+[1 tool called]
+
+Fixes are already applied in the Java 11 Dockerfile. Making the build resilient to APT failures without cache deletion.
+
+Updates:
+
+Update `deployer/images/java-11/Dockerfile` to make APT update resilient:
+
+```dockerfile
+# Clean apt cache to avoid signature errors and retry if needed
+RUN rm -rf /var/lib/apt/lists/* && \
+    apt-get clean && \
+    apt-get update --allow-releaseinfo-change || \
+    (rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update)
+```
+
+Apply the same pattern at line 53 (second stage).
+
+
+[1 tool called]
+
+Building with `--no-cache` each time is unnecessary. Recommended changes:
+
+- Make APT operations resilient (lines 6-10 in `deployer/images/java-11/Dockerfile`):
+
+```dockerfile
+# Clean apt cache to avoid signature errors
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean || true
+
+# Install dependencies with retry
+RUN apt-get update -y && \
+    apt-get install -y --fix-missing \
+      curl wget unzip gnupg ca-certificates bash \
+      && rm -rf /var/lib/apt/lists/*
+```
+
+Explanation:
+- `|| true` prevents Docker from failing if cache cleaning errors
+- `--fix-missing` handles missing/broken packages
+- Removes cached lists to avoid stale data
+
+- Update your `setup.sh` (around line 25-29) to be more resilient:
+
+```bash
+# This is to install git in the containers for the deployment type container
+if [[ "$DEPLOYMENT_TYPE" == "container" ]]; then
+  # Clean apt cache to avoid signature errors with retry logic
+  rm -rf /var/lib/apt/lists/* || true
+  apt-get clean || true
+  apt-get update -y --allow-releaseinfo-change || apt-get update -y
+  apt-get install --assume-yes --fix-missing git
+```
+
+- Remove `--no-cache` from the build script to re-enable caching.
+
+
+[1 tool called]
+
+Change line 64 in `deployer/scripts/image-builder.sh` to make `--no-cache` conditional:
+
+```bash
+# Remove the hard-coded --no-cache and make it optional via environment variable
+docker build \
+  ${NO_CACHE:+--no-cache} \
+  --build-arg BASE_IMAGE=$base_image \
+  --build-arg APP_NAME=$application \
+  --build-arg APP_BASE_DIR=$base_path \
+  --build-arg APP_DIR=$path \
+  --build-arg DEPLOYMENT_TYPE=$deployment_type \
+  --build-arg EXTRA_ENV_VARS="$build_args" \
+  -t $application:latest \
+  -f deployer/images/Dockerfile .
+```
+
+Build:
+- Normal: `bash image-builder.sh -a mlflow ...`
+- Without cache: `NO_CACHE=1 bash image-builder.sh -a mlflow ...`
+
+This keeps caching enabled while allowing a cache-free build when needed. The apt cache-clearing steps prevent signature errors from recurring.

@@ -121,6 +121,8 @@ services:
     autoscaling:
       enabled: false
     extraEnvVars:
+      - name: ENV
+        value: "darwin-local"
       - name: CONFIG_SERVICE_S3_PATH
         value: "s3://darwin-mlflow-bucket"
       - name: CONFIG_SERVICE_MYSQL_MASTERHOST
@@ -162,6 +164,8 @@ services:
     autoscaling:
       enabled: false
     extraEnvVars:
+      - name: ENV
+        value: "darwin-local"
       - name: CONFIG_SERVICE_S3_PATH
         value: "s3://darwin-mlflow-bucket"
       - name: CONFIG_SERVICE_MYSQL_MASTERHOST
@@ -183,18 +187,19 @@ ingress:
   className: "nginx"
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
   host: "localhost"
   # Path-based routing: /service/endpoint -> service:port/endpoint
   paths:
-    - path: "/feature-store(/|$)(.*)"
-      service: "feature-store"
-      port: 8080
-    - path: "/feature-store-admin(/|$)(.*)"
-      service: "feature-store-admin"
-      port: 8080
-    - path: "/feature-store-consumer(/|$)(.*)"
-      service: "feature-store-consumer"
-      port: 8080
+    # - path: "/feature-store(/|$)(.*)"
+    #   service: "feature-store"
+    #   port: 8080
+    # - path: "/feature-store-admin(/|$)(.*)"
+    #   service: "feature-store-admin"
+    #   port: 8080
+    # - path: "/feature-store-consumer(/|$)(.*)"
+    #   service: "feature-store-consumer"
+    #   port: 8080
     - path: "/mlflow-lib(/|$)(.*)"
       service: "mlflow-lib"
       port: 8080

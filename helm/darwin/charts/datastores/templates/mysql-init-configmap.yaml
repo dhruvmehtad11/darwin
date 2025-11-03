@@ -12,4 +12,10 @@ data:
     CREATE DATABASE IF NOT EXISTS airflow;
     GRANT ALL PRIVILEGES ON airflow.* TO 'root'@'%';
     FLUSH PRIVILEGES;
+  02-create-mlflow-db.sql: |
+    CREATE DATABASE IF NOT EXISTS darwin_mlflow;
+    CREATE DATABASE IF NOT EXISTS darwin_mlflow_auth;
+    GRANT ALL PRIVILEGES ON darwin_mlflow.* TO 'darwin'@'%';
+    GRANT ALL PRIVILEGES ON darwin_mlflow_auth.* TO 'darwin'@'%';
+    FLUSH PRIVILEGES;
 {{- end }}

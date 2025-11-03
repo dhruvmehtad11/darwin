@@ -1,0 +1,113 @@
+{{- if .Values.ingressController.ensureInstalled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "darwin.fullname" . }}-ingress-controller-setup
+  namespace: {{ .Values.global.namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ingress-controller-setup
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "darwin.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: ingress-controller-setup
+    spec:
+      serviceAccountName: {{ include "darwin.fullname" . }}-ingress-setup
+      restartPolicy: OnFailure
+      containers:
+      - name: ingress-setup
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "🔍 Checking if ingress-nginx controller is installed..."
+          
+          # Check if ingress-nginx namespace exists
+          if kubectl get namespace ingress-nginx >/dev/null 2>&1; then
+            echo "✅ ingress-nginx namespace exists"
+            
+            # Check if ingress controller pod is running
+            if kubectl get pods -n ingress-nginx -l app.kubernetes.io/component=controller --field-selector=status.phase=Running 2>/dev/null | grep -q ingress-nginx-controller; then
+              echo "✅ ingress-nginx controller is already running"
+              exit 0
+            else
+              echo "⚠️  ingress-nginx namespace exists but controller is not running. Installing..."
+            fi
+          else
+            echo "📦 ingress-nginx namespace not found. Installing ingress-nginx controller..."
+          fi
+          
+          # Install ingress-nginx controller
+          echo "🚀 Installing ingress-nginx controller..."
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-{{ .Values.ingressController.version }}/deploy/static/provider/kind/deploy.yaml
+          
+          # Label the control plane node for ingress (required for Kind)
+          echo "🏷️  Labeling control plane node for ingress..."
+          if kubectl get nodes -l node-role.kubernetes.io/control-plane 2>/dev/null | grep -q "control-plane"; then
+            kubectl label node $(kubectl get nodes -l node-role.kubernetes.io/control-plane -o jsonpath='{.items[0].metadata.name}') ingress-ready=true --overwrite 2>/dev/null || true
+          fi
+          
+          # Wait for ingress controller to be ready
+          echo "⏳ Waiting for ingress-nginx controller to be ready..."
+          kubectl wait --namespace ingress-nginx \
+            --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller \
+            --timeout=180s
+          
+          echo "✅ ingress-nginx controller is ready!"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "darwin.fullname" . }}-ingress-setup
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ingress-controller-setup
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "darwin.fullname" . }}-ingress-setup
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ingress-controller-setup
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["apps"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "darwin.fullname" . }}-ingress-setup
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ingress-controller-setup
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "darwin.fullname" . }}-ingress-setup
+subjects:
+- kind: ServiceAccount
+  name: {{ include "darwin.fullname" . }}-ingress-setup
+  namespace: {{ .Values.global.namespace }}
+{{- end }}
+
