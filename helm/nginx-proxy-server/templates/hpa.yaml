@@ -1,0 +1,96 @@
+{{- if .Values.nginx.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "nginx-proxy-server.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "nginx-proxy-server.labels" . | nindent 4 }}
+  {{- with .Values.nginx.hpa.annotations }}
+  annotations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "nginx-proxy-server.fullname" . }}
+  minReplicas: {{ .Values.nginx.hpa.minReplicas }}
+  maxReplicas: {{ .Values.nginx.hpa.maxReplicas }}
+  metrics:
+    {{- if .Values.nginx.hpa.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.nginx.hpa.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.nginx.hpa.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.nginx.hpa.targetMemoryUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.nginx.hpa.customMetrics }}
+    {{- range .Values.nginx.hpa.customMetrics }}
+    - type: {{ .type }}
+      {{- if eq .type "Pods" }}
+      pods:
+        metric:
+          name: {{ .name }}
+          {{- with .selector }}
+          selector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        target:
+          type: {{ .target.type }}
+          {{- if .target.averageValue }}
+          averageValue: {{ .target.averageValue }}
+          {{- end }}
+          {{- if .target.value }}
+          value: {{ .target.value }}
+          {{- end }}
+      {{- else if eq .type "Object" }}
+      object:
+        metric:
+          name: {{ .name }}
+          {{- with .selector }}
+          selector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        target:
+          type: {{ .target.type }}
+          {{- if .target.averageValue }}
+          averageValue: {{ .target.averageValue }}
+          {{- end }}
+          {{- if .target.value }}
+          value: {{ .target.value }}
+          {{- end }}
+        describedObject:
+          apiVersion: {{ .describedObject.apiVersion }}
+          kind: {{ .describedObject.kind }}
+          name: {{ .describedObject.name }}
+      {{- else if eq .type "External" }}
+      external:
+        metric:
+          name: {{ .name }}
+          {{- with .selector }}
+          selector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        target:
+          type: {{ .target.type }}
+          {{- if .target.averageValue }}
+          averageValue: {{ .target.averageValue }}
+          {{- end }}
+          {{- if .target.value }}
+          value: {{ .target.value }}
+          {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.nginx.hpa.behavior }}
+  behavior: {{ toYaml .Values.nginx.hpa.behavior | nindent 4 }}
+  {{- end }}
+{{- end }}

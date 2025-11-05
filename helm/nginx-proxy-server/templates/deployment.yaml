@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nginx-proxy-server.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "nginx-proxy-server.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.nginx.hpa.enabled }}
+  replicas: {{ .Values.nginx.replicas | default 3 }}
+  {{- end }}
+  selector:
+    matchLabels: {{ include "nginx-proxy-server.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels: {{ include "nginx-proxy-server.labels" . | nindent 8 }}
+      annotations:
+        # Force pod restarts on config changes
+        checksum/config: {{ include (print $.Template.BasePath "/nginx-config.yaml") . | sha256sum }}
+        {{- with .Values.nginx.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.nginx.affinity }}
+      affinity: {{ toYaml .Values.nginx.affinity | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels: {{ include "nginx-proxy-server.selectorLabels" . | nindent 20 }}
+      {{- end }}
+      {{- if .Values.nginx.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.nginx.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nginx.tolerations }}
+      tolerations: {{ toYaml .Values.nginx.tolerations | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nginx.imagePullSecrets }}
+      imagePullSecrets: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "nginx-proxy-server.serviceAccountName" . }}
+      {{- end }}
+      containers:
+        - name: nginx
+          image: {{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}
+          imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            {{- if .Values.nginx.extraVolumeMounts }}
+            {{- toYaml .Values.nginx.extraVolumeMounts | nindent 12 }}
+            {{- end }}
+          resources: {{ toYaml .Values.nginx.resources | nindent 12 }}
+          {{- if .Values.nginx.securityContext }}
+          securityContext: {{ toYaml .Values.nginx.securityContext | nindent 12 }}
+          {{- end }}
+          # Health checks
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: {{ .Values.nginx.livenessProbe.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ .Values.nginx.livenessProbe.periodSeconds | default 10 }}
+            timeoutSeconds: {{ .Values.nginx.livenessProbe.timeoutSeconds | default 5 }}
+            failureThreshold: {{ .Values.nginx.livenessProbe.failureThreshold | default 3 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: {{ .Values.nginx.readinessProbe.initialDelaySeconds | default 5 }}
+            periodSeconds: {{ .Values.nginx.readinessProbe.periodSeconds | default 5 }}
+            timeoutSeconds: {{ .Values.nginx.readinessProbe.timeoutSeconds | default 3 }}
+            failureThreshold: {{ .Values.nginx.readinessProbe.failureThreshold | default 3 }}
+          {{- if .Values.nginx.env }}
+          env: {{ toYaml .Values.nginx.env | nindent 12 }}
+          {{- end }}
+          {{- if .Values.nginx.lifecycle }}
+          lifecycle: {{ toYaml .Values.nginx.lifecycle | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ include "nginx-proxy-server.nginx-config.fullname" . }}
+        {{- if .Values.nginx.extraVolumes }}
+        {{- toYaml .Values.nginx.extraVolumes | nindent 8 }}
+        {{- end }}
+      {{- if .Values.nginx.priorityClassName }}
+      priorityClassName: {{ .Values.nginx.priorityClassName }}
+      {{- end }}
+      {{- if .Values.nginx.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.nginx.terminationGracePeriodSeconds }}
+      {{- end }}

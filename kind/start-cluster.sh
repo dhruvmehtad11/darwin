@@ -29,10 +29,24 @@ else
   helm install cert-manager jetstack/cert-manager \
     --namespace cert-manager \
     --create-namespace \
-    --set installCRDs=true
+    --set crds.enabled=true
 
   # Wait for cert-manager pods to be ready
   kubectl wait --for=condition=Available --timeout=120s deployment/cert-manager -n cert-manager
+
+  # Install kuberay operator
+  echo "🚀 Installing kuberay-operator..."
+  helm repo add kuberay https://ray-project.github.io/kuberay-helm/
+  helm install kuberay-operator kuberay/kuberay-operator --version 1.1.0 -n ray-system --create-namespace
+  kubectl wait --for=condition=Available --timeout=120s deployment/kuberay-operator -n ray-system
+  echo "✅ kuberay-operator installed successfully"
+
+  # Install nginx-proxy-server
+  echo "🚀 Installing nginx-proxy-server..."
+  helm install nginx-proxy-server ./helm/nginx-proxy-server -n ray-system --create-namespace
+
+  kubectl wait --for=condition=Available --timeout=120s deployment/nginx-proxy-server -n ray-system
+  echo "✅ nginx-proxy-server installed successfully"
 
   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/kind/deploy.yaml
   kubectl label node kind-control-plane ingress-ready=true

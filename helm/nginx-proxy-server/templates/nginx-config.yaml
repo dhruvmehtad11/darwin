@@ -1,0 +1,266 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nginx-proxy-server.nginx-config.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "nginx-proxy-server.labels" . | nindent 4 }}
+data:
+  nginx.conf: |
+    events {
+      worker_connections 1024;
+    }
+    http {
+      # Define upstream resolver for dynamic service discovery
+      resolver kube-dns.kube-system.svc.cluster.local valid=10s;
+
+      server {
+        listen 80;
+
+        # Default location block - dynamic welcome message
+        location = / {
+          return 200 'Welcome to Ray Cluster Services. URL Pattern: /{kube_cluster_key}/{cluster_id}/{service_path}\n
+            Available paths:\n
+            /{kube_cluster_key}/{cluster_id}-jupyter - Jupyterlab - 8888\n
+            /{kube_cluster_key}/{cluster_id}-dashboard - Ray Dashboard - 8265\n
+            /{kube_cluster_key}/{cluster_id}-metrics - Grafana - 3000\n
+            /{kube_cluster_key}/{cluster_id}-sparkui - Spark UI - 4040\n
+            /{kube_cluster_key}/{cluster_id}/sparkui/{port} - Spark UI - {port}\n
+            /{kube_cluster_key}/{cluster_id}-vscode - VSCode - 3000\n
+            /{kube_cluster_key}/{cluster_id}-livy - Livy - 8998\n
+            /{kube_cluster_key}/{cluster_id}-thrift - Thrift - 10000\n
+            /{kube_cluster_key}/{cluster_id}-custom-1 - Custom 1 - 8001\n
+            /{kube_cluster_key}/{cluster_id}-custom-2 - Custom 2 - 8002\n
+            /{kube_cluster_key}/{cluster_id}-custom-3 - Custom 3 - 8003';
+          add_header Content-Type text/plain;
+        }
+
+        # Simple healthcheck endpoint for ALB
+        location = /health {
+          return 200 'OK';
+          add_header Content-Type text/plain;
+        }
+
+        # Dynamic service routing based on URL pattern
+        # Pattern: /{kube_cluster_key}/{cluster_id}-{service_path}
+
+        # Jupyterlab - dynamic routing
+        location ~ ^/([^/]+)/([^/]+)-jupyter {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+
+          proxy_pass http://$cluster_id-kuberay-head-svc.{{ .Values.global.rayClusterNamespace }}.svc.cluster.local:8888;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_redirect      off;
+          proxy_buffering     off;
+          proxy_read_timeout  86400;
+        }
+
+        # Redirect without trailing slash to with trailing slash for ray dashboard
+        location ~ ^/([^/]+)/([^/]+)-dashboard$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          return 301 $scheme://$host/$kube_cluster_key/$cluster_id-dashboard/;
+        }
+
+        # Ray Dashboard - dynamic routing
+        location ~ ^/([^/]+)/([^/]+)-dashboard/(.*)$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          set $path $3;
+
+          proxy_pass http://$cluster_id-kuberay-head-svc.{{ .Values.global.rayClusterNamespace }}.svc.cluster.local:8265/$path$is_args$args;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_redirect      off;
+          proxy_buffering     off;
+          proxy_read_timeout 86400;
+          proxy_send_timeout 86400;
+        }
+
+        # Spark UI - dynamic routing
+        location ~ ^/([^/]+)/([^/]+)-sparkui(.*)$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          set $path $3;
+
+          proxy_pass http://$cluster_id-kuberay-head-svc.{{ .Values.global.rayClusterNamespace }}.svc.cluster.local:4040$path$is_args$args;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_redirect      off;
+          proxy_buffering     off;
+        }
+
+        # Spark UI - dynamic multi port routing
+        location ~ ^/([^/]+)/([^/]+)/sparkui/([^/]+)/(.*)$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          set $port $3;
+          set $path $4;
+
+          proxy_pass http://$cluster_id-kuberay-head-svc.{{ .Values.global.rayClusterNamespace }}.svc.cluster.local:$port/$path$is_args$args;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_redirect      off;
+          proxy_buffering     off;
+        }
+
+        # Redirect without trailing slash to with trailing slash for vscode
+        location ~ ^/([^/]+)/([^/]+)-vscode$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          return 301 $scheme://$host/$kube_cluster_key/$cluster_id-vscode/;
+        }
+
+        # VSCode - dynamic routing
+        location ~ ^/([^/]+)/([^/]+)-vscode(.*)$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          set $path $3;
+
+          proxy_pass http://$cluster_id-kuberay-head-svc.{{ .Values.global.rayClusterNamespace }}.svc.cluster.local:3000$path$is_args$args;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_set_header X-Forwarded-Path   /$kube_cluster_key/$cluster_id-vscode;
+          proxy_set_header X-Forwarded-Prefix /$kube_cluster_key/$cluster_id-vscode;
+          proxy_redirect      off;
+          proxy_buffering     off;
+          proxy_request_buffering off;
+        }
+
+        # Grafana - dynamic routing (different service pattern)
+        location ~ ^/([^/]+)/([^/]+)-metrics(.*)$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          set $path $3;
+
+          proxy_pass http://$cluster_id-grafana.prometheus.svc.cluster.local:3000$path$is_args$args;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_redirect      off;
+          proxy_buffering     off;
+        }
+
+        # Livy - dynamic routing
+        location ~ ^/([^/]+)/([^/]+)-livy(.*)$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          set $path $3;
+
+          proxy_pass http://$cluster_id-kuberay-head-svc.{{ .Values.global.rayClusterNamespace }}.svc.cluster.local:8998$path$is_args$args;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_redirect      off;
+          proxy_buffering     off;
+        }
+
+        # Thrift - dynamic routing
+        location ~ ^/([^/]+)/([^/]+)-thrift(.*)$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          set $path $3;
+
+          proxy_pass http://$cluster_id-kuberay-head-svc.{{ .Values.global.rayClusterNamespace }}.svc.cluster.local:10000$path$is_args$args;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_redirect      off;
+          proxy_buffering     off;
+        }
+
+        # Custom services - dynamic routing with port mapping
+        location ~ ^/([^/]+)/([^/]+)-custom-([1-3])(.*)$ {
+          set $kube_cluster_key $1;
+          set $cluster_id $2;
+          set $custom_number $3;
+          set $path $4;
+
+          # Map custom number to port
+          set $port 8001;
+          if ($custom_number = "2") {
+            set $port 8002;
+          }
+          if ($custom_number = "3") {
+            set $port 8003;
+          }
+
+          set $upstream_host $cluster_id-kuberay-head-svc.{{ .Values.global.rayClusterNamespace }}.svc.cluster.local;
+          proxy_pass http://$upstream_host:$port$path$is_args$args;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_redirect      off;
+          proxy_buffering     off;
+        }
+
+        # Spark History Server - dynamic routing
+        location ~ ^/([^/]+)/shs-([^/]+)/(.*)$ {
+          set $kube_cluster_key $1;
+          set $id $2;
+          set $path $3;
+
+          proxy_pass http://shs-$id.{{ .Values.global.rayClusterNamespace }}.svc.cluster.local:18080/$path$is_args$args;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade            $http_upgrade;
+          proxy_set_header Connection         "upgrade";
+          proxy_set_header Host               $host;
+          proxy_set_header X-Real-IP          $remote_addr;
+          proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto  $scheme;
+          proxy_redirect      off;
+          proxy_buffering     off;
+        }
+      }
+    }
