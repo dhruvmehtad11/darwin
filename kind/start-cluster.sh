@@ -50,6 +50,12 @@ else
 
   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/kind/deploy.yaml
   kubectl label node kind-control-plane ingress-ready=true
+
+  # Create service account with RBAC permissions
+  echo "🚀 Creating service account..."
+  kubectl create namespace ray
+  kubectl create serviceaccount darwin-ds-role -n ray || echo "Service account already exists"
+
 fi
 
 chmod 600 $KUBECONFIG
