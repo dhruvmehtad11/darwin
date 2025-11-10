@@ -1,0 +1,12 @@
+apiVersion: v2
+name: elasticsearch
+description: Elasticsearch for Darwin metadata store
+type: application
+version: 1.0.0
+appVersion: "8.11.0"
+keywords:
+  - elasticsearch
+  - search
+  - metadata
+
+

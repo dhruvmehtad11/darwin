@@ -86,7 +86,80 @@ services:
         memory: 512Mi
     autoscaling:
       enabled: false
-    extraEnvVars: []
+    extraEnvVars:
+      # Elasticsearch Configuration (new from feat/refactor-configs)
+      - name: ELASTICSEARCH_URL
+        value: "http://{{ $.Release.Name }}-elasticsearch:9200"
+      - name: ELASTICSEARCH_USERNAME
+        value: ""
+      - name: ELASTICSEARCH_PASSWORD
+        value: ""
+      # Airflow Configuration (new variable names)
+      - name: AIRFLOW_URL
+        value: "http://{{ $.Release.Name }}-airflow-webserver:8080"
+      - name: AIRFLOW_AUTH_TOKEN
+        value: "Basic YWRtaW46YWRtaW5AMTIz"
+      # Airflow MySQL Configuration (new variable names)
+      - name: AIRFLOW_MYSQL_HOST
+        value: "{{ $.Release.Name }}-mysql"
+      - name: AIRFLOW_MYSQL_USERNAME
+        value: "root"
+      - name: AIRFLOW_MYSQL_PASSWORD
+        value: "{{ $.Values.global.database.mysql.rootPassword }}"
+      - name: AIRFLOW_MYSQL_DATABASE
+        value: "darwin_workflow"
+      - name: AIRFLOW_MYSQL_PORT
+        value: "3306"
+      # Workflow Database Configuration (new variable names)
+      - name: WORKFLOW_DB_HOST
+        value: "{{ $.Release.Name }}-mysql"
+      - name: WORKFLOW_DB_USERNAME
+        value: "root"
+      - name: WORKFLOW_DB_PASSWORD
+        value: "{{ $.Values.global.database.mysql.rootPassword }}"
+      - name: WORKFLOW_DB_NAME
+        value: "darwin_workflow"
+      - name: WORKFLOW_DB_PORT
+        value: "3306"
+      # Compute Service (new variable names)
+      - name: COMPUTE_SERVICE_URL
+        value: "http://{{ $.Release.Name }}-compute:8082"
+      - name: COMPUTE_APP_LAYER_URL
+        value: "http://{{ $.Release.Name }}-compute:8082/cluster"
+      # Commuter (Notebook Viewer)
+      - name: COMMUTER_URL
+        value: "http://{{ $.Release.Name }}-commuter:8888/view"
+      # Application URLs (new variable names)
+      - name: WORKFLOW_APP_LAYER_URL
+        value: "http://{{ $.Release.Name }}-workflow:8081"
+      - name: WORKFLOW_APP_LAYER_PUBLIC_URL
+        value: "http://darwin-workflow.local"
+      - name: WORKFLOW_UI_BASE_URL
+        value: "http://darwin-workflow.local/workflows/"
+      # AWS/S3 Configuration (LocalStack)
+      - name: AWS_ACCESS_KEY_ID
+        value: "minioadmin"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "minioadmin"
+      - name: AWS_ENDPOINT_URL
+        value: "http://darwin-localstack:4566"
+      - name: S3_BUCKET_NAME
+        value: "darwin-local-bucket"
+      - name: AIRFLOW_S3_FOLDER
+        value: "darwin_workflow_local/airflow_artifacts"
+      # Events and Callbacks (new variable names)
+      - name: DEFAULT_CALLBACK_URL
+        value: "http://{{ $.Release.Name }}-workflow:8081/events"
+      - name: EVENTS_SERVICE_URL
+        value: "http://{{ $.Release.Name }}-events:8080"
+      # PyPI Configuration (for internal packages)
+      - name: PYPI_INDEX_URL
+        value: ""
+      - name: PYPI_TRUSTED_HOST
+        value: ""
+      # Other
+      - name: LOG_FILE
+        value: "./workflow.log"
 
   # Compute Orchestration Service
   compute:

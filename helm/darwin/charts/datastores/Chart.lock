@@ -1,0 +1,18 @@
+dependencies:
+- name: elasticsearch
+  repository: file://./elasticsearch
+  version: 1.0.0
+- name: cassandra
+  repository: file://./cassandra
+  version: 1.0.0
+- name: zookeeper
+  repository: file://./zookeeper
+  version: 1.0.0
+- name: kafka
+  repository: file://./kafka
+  version: 1.0.0
+- name: airflow
+  repository: file://./airflow
+  version: 1.0.0
+digest: sha256:76019e470db29146a33a3ba182c4d9d3bacaeb13d1db6f434e51c575fbad33c0
+generated: "2025-11-05T13:57:02.984058+05:30"

@@ -29,5 +29,9 @@ RUN if [ -f "/app/.odin/setup.sh" ]; then \
       env $(echo ${EXTRA_ENV_VARS_FINAL} | tr '|' ' ') bash -x /app/.odin/setup.sh; \
     fi
 
+# Create static directory for workflow (if it doesn't exist)
+RUN mkdir -p /app/app_layer/src/workflow_app_layer/static 2>/dev/null || true
+RUN mkdir -p /app/static 2>/dev/null || true
+
 # Entrypoint
 ENTRYPOINT ["bash", "-c", "/app/.odin/start.sh"]

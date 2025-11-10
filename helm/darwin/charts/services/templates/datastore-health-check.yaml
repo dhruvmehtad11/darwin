@@ -111,6 +111,8 @@ spec:
           value: "{{ .Release.Name }}-zookeeper"
         - name: DARWIN_LOCALSTACK_HOST
           value: "{{ .Release.Name }}-localstack"
+        - name: DARWIN_ELASTICSEARCH_HOST
+          value: "{{ .Release.Name }}-elasticsearch"
         {{- if .Values.global.dockerRegistry }}
         - name: DOCKER_REGISTRY
           value: "{{ .Values.global.dockerRegistry }}"
@@ -446,6 +448,10 @@ spec:
             check_datastore_health "{{ .Release.Name }}-cassandra" 9042 || exit 1
             check_datastore_health "{{ .Release.Name }}-kafka" 9092 || exit 1
             check_localstack_health "{{ .Release.Name }}-localstack" 4566 || exit 1
+            # Check Elasticsearch if enabled in datastores
+            if /shared/kubectl get service "{{ .Release.Name }}-elasticsearch" --namespace="$namespace" >/dev/null 2>&1; then
+              check_datastore_health "{{ .Release.Name }}-elasticsearch" 9200 || exit 1
+            fi
             # Check Airflow if enabled in datastores
             if /shared/kubectl get service "{{ .Release.Name }}-airflow" --namespace="$namespace" >/dev/null 2>&1; then
               check_datastore_health "{{ .Release.Name }}-airflow" 8080 || exit 1
