@@ -61,7 +61,6 @@ chmod +x target/$application/.odin/start.sh
 cd $cur_dir
 
 docker build \
-  --no-cache \
   --build-arg BASE_IMAGE=$base_image \
   --build-arg APP_NAME=$application \
   --build-arg APP_BASE_DIR=$base_path \

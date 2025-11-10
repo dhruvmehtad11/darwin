@@ -126,19 +126,19 @@ services:
       - name: CONFIG_SERVICE_S3_PATH
         value: "s3://darwin-mlflow-bucket"
       - name: CONFIG_SERVICE_MYSQL_MASTERHOST
-        value: "localhost"
+        value: "darwin-mysql"
       - name: CONFIG_SERVICE_MYSQL_DATABASE
-        value: "darwin"
+        value: "darwin_mlflow"
       - name: VAULT_SERVICE_MYSQL_USERNAME
         value: "darwin"
       - name: VAULT_SERVICE_MYSQL_PASSWORD
         value: "password"
       - name: VAULT_SERVICE_ADMIN_USERNAME
-        value: "admin"
+        value: "darwin"
       - name: VAULT_SERVICE_ADMIN_PASSWORD
         value: "password"
       - name: CONFIG_SERVICE_MYSQL_AUTH_DATABASE
-        value: "darwin"
+        value: "darwin_mlflow_auth"
 
   mlflow-app:
     serviceName: darwin-mlflow-app
@@ -169,16 +169,20 @@ services:
       - name: CONFIG_SERVICE_S3_PATH
         value: "s3://darwin-mlflow-bucket"
       - name: CONFIG_SERVICE_MYSQL_MASTERHOST
-        value: "localhost"
+        value: "darwin-mysql"
       - name: CONFIG_SERVICE_MYSQL_DATABASE
-        value: "darwin"
+        value: "darwin_mlflow"
       - name: VAULT_SERVICE_MYSQL_USERNAME
         value: "darwin"
       - name: VAULT_SERVICE_MYSQL_PASSWORD
         value: "password"
       - name: VAULT_SERVICE_ADMIN_USERNAME
-        value: "admin"
+        value: "darwin"
       - name: VAULT_SERVICE_ADMIN_PASSWORD
+        value: "password"
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
         value: "password"
 
 # Ingress Configuration
