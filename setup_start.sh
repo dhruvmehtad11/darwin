@@ -2,8 +2,10 @@
 
 set -x
 
-sh setup.sh
-
-sh start.sh
-
-sh start.sh
+if sh setup.sh; then
+  helm uninstall darwin -n darwin || true
+  sleep 10
+  sh start.sh
+else
+  exit 1
+fi
