@@ -184,6 +184,20 @@ services:
         value: "darwin"
       - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
         value: "password"
+      - name: MLFLOW_UI_URL
+        value: "http://darwin-mlflow-lib:8080"
+      - name: MLFLOW_APP_LAYER_URL
+        value: "http://darwin-mlflow-lib:8080"
+      - name: MLFLOW_APP_BASE_PATH
+        value: ""
+      - name: DARWIN_MYSQL_HOST
+        value: "darwin-mysql"
+      - name: DARWIN_MYSQL_USERNAME
+        value: "darwin"
+      - name: DARWIN_MYSQL_PASSWORD
+        value: "password"
+      - name: MYSQL_PORT
+        value: "3306"
 
 # Ingress Configuration
 ingress:
