@@ -21,9 +21,9 @@ global:
 datastores:
   enabled: true
   localstack:
-    enabled: false
+    enabled: true
   airflow:
-    enabled: false
+    enabled: true
 
 services:
   enabled: true

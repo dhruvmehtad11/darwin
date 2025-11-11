@@ -2,7 +2,7 @@
 services:
   # Feature Store Service
   feature-store:
-    enabled: false
+    enabled: true
     replicaCount: 1
     serviceName: darwin-ofs-v2
     image:
@@ -19,7 +19,7 @@ services:
       enabled: false
 
   feature-store-admin:
-    enabled: false
+    enabled: true
     replicaCount: 1
     serviceName: darwin-ofs-v2-admin
     image:
@@ -36,7 +36,7 @@ services:
       enabled: false
 
   feature-store-consumer:
-    enabled: false
+    enabled: true
     replicaCount: 1
     serviceName: darwin-ofs-v2-consumer
     image:
@@ -54,7 +54,7 @@ services:
 
   # Workflow Orchestration Service
   workflow:
-    enabled: false
+    enabled: true
     replicaCount: 1
     image:
       repository: darwin-workflow
@@ -76,7 +76,7 @@ services:
 
   # Compute Orchestration Service
   compute:
-    enabled: false
+    enabled: true
     replicaCount: 1
     image:
       repository: darwin-compute
