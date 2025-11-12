@@ -108,9 +108,6 @@ popd
 # Path to your YAML
 YAML_FILE="services.yaml"
 
-# Set default deployment type
-deployment_type="container"
-
 dynamic_build_args=""
 
 # Loop through YAML using array approach
@@ -138,7 +135,7 @@ while [ $i -lt $app_count ]; do
   done
 
   echo ">>> Building image for $application..."
-  sh deployer/scripts/image-builder.sh -a "$application" -t "$base_path" -p "$path" -e "$base_image" -r "$DOCKER_REGISTRY" -d "$deployment_type" -B "$dynamic_build_args"
+  sh deployer/scripts/image-builder.sh -a "$application" -t "$base_path" -p "$path" -e "$base_image" -r "$DOCKER_REGISTRY" -B "$dynamic_build_args"
   
   echo ">>> Completed processing $application"
   i=$((i + 1))
