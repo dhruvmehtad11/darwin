@@ -422,7 +422,7 @@ spec:
                   /shared/kubectl logs "$pod_name" --namespace="$namespace"
                   
                   # Clean up the pod before returning failure
-                  # cleanup_pre_deploy_pod "$service_name"
+                  cleanup_pre_deploy_pod "$service_name"
                   return 1
                 fi
               else

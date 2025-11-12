@@ -21,7 +21,7 @@ mysql:
 
 # Cassandra Database
 cassandra:
-  enabled: true
+  enabled: false
   cluster:
     name: darwin-cassandra
     replicaCount: 1
@@ -41,7 +41,7 @@ cassandra:
 
 # Apache Kafka
 kafka:
-  enabled: true
+  enabled: false
   image:
     repository: confluentinc/cp-kafka
     tag: "7.4.0"
@@ -59,7 +59,7 @@ kafka:
 
 # Apache Zookeeper (for Helix)
 zookeeper:
-  enabled: true
+  enabled: false
   replicaCount: 1
   persistence:
     enabled: false
@@ -74,7 +74,7 @@ zookeeper:
 
 # Apache Airflow
 airflow:
-  enabled: true
+  enabled: false
   executor: CeleryExecutor
   image:
     repository: apache/airflow
@@ -102,7 +102,7 @@ airflow:
   redis:
     enabled: false
   rabbitmq:
-    enabled: true
+    enabled: false
     auth:
       username: airflow
       password: airflow
@@ -132,7 +132,7 @@ airflow:
 
 # LocalStack (S3 Mock)
 localstack:
-  enabled: true
+  enabled: false
   image:
     repository: localstack/localstack
     tag: "latest"
