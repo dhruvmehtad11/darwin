@@ -20,23 +20,35 @@ global:
 # Subchart Configuration
 datastores:
   enabled: true
+  # Only enable datastores required for darwin-workflow
+  mysql:
+    enabled: true
+  elasticsearch:
+    enabled: true
   localstack:
     enabled: true
   airflow:
     enabled: true
+  # Disable unnecessary datastores
+  cassandra:
+    enabled: false
+  kafka:
+    enabled: false
+  zookeeper:
+    enabled: false
 
 services:
   enabled: true
-  # Ingress provides centralized routing at localhost
-  # Routes: /feature-store, /feature-store-admin, /feature-store-consumer
+  # Only darwin-workflow service is enabled
+  # See charts/services/values.yaml for service-specific configuration
 
-# Monitoring and Observability
+# Monitoring and Observability - DISABLED for minimal darwin-workflow setup
 monitoring:
-  enabled: true
+  enabled: false
   prometheus:
-    enabled: true
+    enabled: false
   grafana:
-    enabled: true
+    enabled: false
     admin:
       user: admin
       password: admin123

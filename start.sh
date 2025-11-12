@@ -28,6 +28,6 @@ helm upgrade --install darwin ./helm/darwin \
   --namespace darwin \
   --create-namespace \
   --wait \
-  --timeout 600s
+  --timeout 120s
 
 echo "✅ Deployment completed!"

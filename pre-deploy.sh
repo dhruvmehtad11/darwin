@@ -10,9 +10,9 @@ set +o allexport
 
 # Variables
 APP_DIR="/app"
-ENV="darwin-local"
-TEAM_SUFFIX="-darwin-local"
-VPC_SUFFIX="-darwin-local"
+ENV="local"
+TEAM_SUFFIX="-local"
+VPC_SUFFIX="-local"
 DEPLOYMENT_TYPE="container"
 DARWIN_MYSQL_HOST="darwin-mysql"
 DARWIN_CASSANDRA_HOST="darwin-cassandra"
