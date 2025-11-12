@@ -101,11 +101,7 @@ pushd deployer/images/java-11
 sh build.sh
 popd
 
-# pushd deployer/images/python-3.9.7
-# sh build.sh
-# popd
-
-pushd deployer/images/mlflow-2.2.0
+pushd deployer/images/python-3.9.7
 sh build.sh
 popd
 
@@ -121,6 +117,10 @@ dynamic_build_args=""
 app_count=$(yq eval '.applications | length' "$YAML_FILE")
 i=0
 while [ $i -lt $app_count ]; do
+  if [ $(yq eval ".applications[$i].enabled" "$YAML_FILE") = "false" ]; then
+    i=$((i + 1))
+    continue
+  fi
   application=$(yq eval ".applications[$i].application" "$YAML_FILE")
   base_path=$(yq eval ".applications[$i].base-path" "$YAML_FILE")
   path=$(yq eval ".applications[$i].path" "$YAML_FILE")
