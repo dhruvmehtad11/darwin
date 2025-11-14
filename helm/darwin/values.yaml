@@ -5,6 +5,8 @@ global:
   namespace: darwin
   # Use local Kind storage (hostPath) vs real K8s storage (PVCs)
   local-k8s: true
+  # Environment: local, darwin-local, dev, stag, uat, prod
+  environment: darwin-local
   
   # Database connection details (shared across subcharts)
   database:

@@ -98,9 +98,9 @@ services:
         value: ""
       # Airflow Configuration (new variable names)
       - name: AIRFLOW_URL
-        value: "http://darwin-airflow-webserver:8080"
+        value: "http://darwin-airflow:8080/airflow"
       - name: AIRFLOW_AUTH_TOKEN
-        value: "Basic YWRtaW46YWRtaW5AMTIz"
+        value: "Basic ZGFyd2luOmRhcndpbg=="
       # Airflow MySQL Configuration (new variable names)
       - name: AIRFLOW_MYSQL_HOST
         value: "darwin-mysql"
@@ -133,7 +133,7 @@ services:
         value: "http://{{ $.Release.Name }}-commuter:8888/view"
       # Application URLs (new variable names)
       - name: WORKFLOW_APP_LAYER_URL
-        value: "http://{{ $.Release.Name }}-workflow:8000"
+        value: "http://darwin-workflow:8000"
       - name: WORKFLOW_APP_LAYER_PUBLIC_URL
         value: "http://darwin-workflow.local"
       - name: WORKFLOW_UI_BASE_URL
@@ -144,6 +144,8 @@ services:
       - name: AWS_SECRET_ACCESS_KEY
         value: "minioadmin"
       - name: AWS_ENDPOINT_URL
+        value: "http://darwin-localstack:4566"
+      - name: AWS_ENDPOINT_OVERRIDE
         value: "http://darwin-localstack:4566"
       - name: S3_BUCKET_NAME
         value: "darwin-local-bucket"
