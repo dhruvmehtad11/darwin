@@ -37,7 +37,7 @@ echo "base_image: $base_image";
 echo "registry: $registry";
 
 rm -rf $path/target
-
+mkdir -p -m 755 $path/target/$application/.odin
 bash .odin/$application/build.sh
 
 cp -r .odin/$application/. $path/target/$application/.odin
