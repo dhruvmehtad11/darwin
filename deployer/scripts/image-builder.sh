@@ -40,8 +40,8 @@ echo "base_image: $base_image";
 echo "registry: $registry";
 echo "dynamic env_vars: $env_vars";
 
-rm -rf $path/target
 mkdir -p -m 755 $path/target/$application/.odinst
+mkdir -p -m 755 $path/target/$application/.odin
 echo "Building $application using build.sh"
 bash -x .odin/$application/build.sh
 echo "Copying ./.odin/$application/. to $path/target/$application/.odin"

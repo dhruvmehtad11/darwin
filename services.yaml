@@ -95,3 +95,22 @@ applications:
         value: "password"
       - name: CONFIG_SERVICE_S3_PATH
         value: "s3://darwin-mlflow-bucket"
+  - application: chronos
+    base-path: chronos
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    env:
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: SERVICE_NAME
+        value: "chronos"
+
+  - application: chronos-consumer
+    base-path: chronos
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    env:
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: SERVICE_NAME
+        value: "chronos-consumer"

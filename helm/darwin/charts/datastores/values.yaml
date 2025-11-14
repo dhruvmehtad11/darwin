@@ -140,7 +140,7 @@ localstack:
   persistence:
     enabled: true
     size: 2Gi
-  services: "s3"
+  services: "s3,sqs"
   resources:
     limits:
       cpu: 1000m

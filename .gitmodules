@@ -4,3 +4,6 @@
 [submodule "mlflow"]
 	path = mlflow
 	url = git@github.com:dream11/darwin-mlflow.git
+[submodule "chronos"]
+	path = chronos
+	url = https://github.com/dream11/chronos.git

@@ -15,10 +15,10 @@ RUN echo "EXTRA_ENV_VARS_FINAL: ${EXTRA_ENV_VARS_FINAL}"
 
 COPY ${APP_BASE_DIR}/${APP_DIR}/target/${APP_NAME}/. /app/
 
-
 RUN echo "EXTRA_ENV_VARS_FINAL: ${EXTRA_ENV_VARS_FINAL}"
 
 ENV DEPLOYMENT_TYPE="container"
+RUN chmod +x /app/.odin/*.sh 2>/dev/null || true
 # Run setup.sh if it exists
 RUN if [ -f "/app/.odin/setup.sh" ]; then \
       env $(echo ${EXTRA_ENV_VARS_FINAL} | tr '|' ' ') bash -x /app/.odin/setup.sh; \
