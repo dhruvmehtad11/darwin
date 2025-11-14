@@ -52,6 +52,78 @@ services:
     autoscaling:
       enabled: false
 
+  chronos:
+    enabled: true
+    replicaCount: 1
+    serviceName: chronos
+    image:
+      registry: localhost:5000
+      name: chronos
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+      hosts:
+        - host: localhost
+          paths:
+            - path: /chronos(/|$)(.*)
+              pathType: ImplementationSpecific
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: ENV
+        value: "local"
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: AWS_ACCESS_KEY_ID
+        value: "test"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "test"
+      - name: AWS_DEFAULT_REGION
+        value: "us-east-1"
+
+  chronos-consumer:
+    enabled: true
+    replicaCount: 1
+    serviceName: chronos-consumer
+    image:
+      registry: localhost:5000
+      name: chronos-consumer
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+      hosts:
+        - host: localhost
+          paths:
+            - path: /chronos-consumer(/|$)(.*)
+              pathType: ImplementationSpecific
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: ENV
+        value: "local"
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: AWS_ACCESS_KEY_ID
+        value: "test"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "test"
+      - name: AWS_DEFAULT_REGION
+        value: "us-east-1"
+
   # Workflow Orchestration Service
   workflow:
     enabled: false

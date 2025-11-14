@@ -15,6 +15,7 @@ nodes:
     protocol: TCP
   - containerPort: 6443
     hostPort: 6443
+    listenAddress: "127.0.0.1"
     protocol: TCP
   extraMounts:
   - hostPath: ./kind/shared-storage

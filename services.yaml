@@ -46,3 +46,23 @@ applications:
         value: "darwin-feature-store-admin"
       - name: AWS_ENDPOINT_OVERRIDE
         value: "http://darwin-localstack:4566"
+
+  - application: chronos
+    base-path: chronos
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    env:
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: SERVICE_NAME
+        value: "chronos"
+
+  - application: chronos-consumer
+    base-path: chronos
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    env:
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: SERVICE_NAME
+        value: "chronos-consumer"

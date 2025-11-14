@@ -1,3 +1,6 @@
 [submodule "feature-store"]
 	path = feature-store
 	url = https://github.com/dream11/darwin-ofs-v2.git
+[submodule "chronos"]
+	path = chronos
+	url = https://github.com/dream11/chronos.git
