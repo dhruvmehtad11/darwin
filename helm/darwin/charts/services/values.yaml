@@ -76,25 +76,69 @@ services:
 
   # Compute Orchestration Service  
   compute:
-    enabled: false
+    enabled: true
     replicaCount: 1
+    serviceName: darwin-compute
     image:
-      repository: darwin-compute
+      registry: localhost:5000
+      name: darwin-compute
       tag: latest
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
     service:
       type: ClusterIP
-      port: 8082
+      port: 8000
     ingress:
-      enabled: true
-      className: nginx
-      hosts:
-        - host: darwin-compute.local
-          paths:
-            - path: /
-              pathType: Prefix
+      enabled: false
     autoscaling:
-        enabled: false
+      enabled: false
+    extraEnvVars:
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "root"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "password"
+      - name: DARWIN_COMPUTE_HOST
+        value: "darwin-compute"
+      - name: CONFIG_SERVICE_MYSQL_DATABASE
+        value: "main"
+      - name: VAULT_SERVICE_ES_USERNAME
+        value: "admin"
+      - name: VAULT_SERVICE_ES_PASSWORD
+        value: "admin"
+      - name: VAULT_SERVICE_SLACK_TOKEN
+        value: "dummy"
+      - name: VAULT_SERVICE_SLACK_USERNAME
+        value: "darwin-bot"
+      - name: OTEL_DISABLED
+        value: "true"
+
+  cluster-manager:
+    enabled: true
+    replicaCount: 1
+    serviceName: darwin-cluster-manager
+    image:
+      registry: localhost:5000
+      name: darwin-cluster-manager
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8080
+    ingress:
+      enabled: false
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: ARTIFACT_VERSION
+        value: "1.0.0"
+      - name: AWS_ACCESS_KEY_ID
+        value: "dummy"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "dummy"
+      - name: AWS_DEFAULT_REGION
+        value: "us-east-1"
+      - name: AWS_ENDPOINT_URL_S3
+        value: "http://darwin-localstack:4566"
+
 
 # Ingress Configuration
 ingress:
@@ -113,4 +157,10 @@ ingress:
       port: 8080
     - path: "/feature-store-consumer(/|$)(.*)"
       service: "feature-store-consumer"
+      port: 8080
+    - path: "/compute(/|$)(.*)"
+      service: "compute"
+      port: 8000
+    - path: "/cluster-manager(/|$)(.*)"
+      service: "cluster-manager"
       port: 8080

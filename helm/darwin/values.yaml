@@ -9,13 +9,16 @@ global:
   # Database connection details (shared across subcharts)
   database:
     mysql:
-      username: "darwin"
+      username: "root"
       rootPassword: "password"
-      database: "darwin"
+      database: "main"
       userPassword: "password"
     cassandra:
       username: "darwin_user"
       password: "darwin_password"
+    elasticsearch:  # OpenSearch deployment but kept as "elasticsearch" for backward compatibility
+      username: "admin"
+      password: "admin"
 
 # Subchart Configuration
 datastores:

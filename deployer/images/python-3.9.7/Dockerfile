@@ -30,6 +30,7 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y \
       ca-certificates curl git \
       libssl3 libffi8 libsqlite3-0 libbz2-1.0 \
+      default-mysql-client \
       && rm -rf /var/lib/apt/lists/*
 
 # Copy Python installation from builder

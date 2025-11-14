@@ -150,3 +150,25 @@ localstack:
       memory: 512Mi
   env:
     awsEndpointOverride: "http://{{ $.Release.Name }}-localstack:4566"
+
+# OpenSearch (Elasticsearch-compatible)
+opensearch:
+  enabled: true
+  clusterName: darwin-opensearch
+  replicaCount: 1  # Single node for local development
+  auth:
+    username: "{{ .Values.global.database.elasticsearch.username }}"
+    password: "{{ .Values.global.database.elasticsearch.password }}"
+  persistence:
+    enabled: true
+    size: 2Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  env:
+    DISABLE_SECURITY_PLUGIN: "true"
+    discovery.type: "single-node"

@@ -1,0 +1,17 @@
+{{ range $k, $v := until (atoi .Values.numVolumes) }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fsx-pv-{{ $v }}
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /mnt/shared-data/efs
+    type: DirectoryOrCreate
+{{ end }}

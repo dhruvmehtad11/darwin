@@ -39,10 +39,9 @@ echo "registry: $registry";
 rm -rf $path/target
 mkdir -p -m 755 $path/target/$application/.odinst
 bash .odin/$application/build.sh
-cd $path;
-cp -r ../.odin/$application/. target/$application/.odin
+cp -r .odin/$application/. $path/target/$application/.odin
 
-chmod 755 target/$application/.odin
+chmod 755 $path/target/$application/.odin
 cd $cur_dir
 
 docker build \

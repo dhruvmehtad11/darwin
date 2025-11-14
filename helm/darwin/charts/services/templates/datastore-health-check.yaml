@@ -111,10 +111,19 @@ spec:
           value: "{{ .Release.Name }}-zookeeper"
         - name: DARWIN_LOCALSTACK_HOST
           value: "{{ .Release.Name }}-localstack"
+        - name: DARWIN_ELASTICSEARCH_HOST
+          value: "{{ .Release.Name }}-elasticsearch"
         {{- if .Values.global.dockerRegistry }}
         - name: DOCKER_REGISTRY
           value: "{{ .Values.global.dockerRegistry }}"
         {{- end }}
+        - name: AWS_ENDPOINT_OVERRIDE
+          value: "http://{{ .Release.Name }}-localstack:4566"
+        - name: COMPUTE_BUCKET_NAME
+          value: "darwin"
+        # Enabled services list (comma-separated serviceName values)
+        - name: ENABLED_SERVICES
+          value: "{{- $services := list -}}{{- range $key, $val := .Values.services -}}{{- if $val.enabled -}}{{- $services = append $services $val.serviceName -}}{{- end -}}{{- end -}}{{- join "," $services -}}"
         volumeMounts:
         - name: shared-tools
           mountPath: /shared
@@ -126,6 +135,24 @@ spec:
             echo ""
             
             namespace="{{ .Values.global.namespace | default .Release.Namespace }}"
+            
+            # Display enabled services from values.yaml
+            echo "📋 Enabled services (from values.yaml): ${ENABLED_SERVICES:-<all services enabled>}"
+            echo ""
+            
+            # Function to check if a service is enabled in values.yaml
+            is_service_enabled() {
+              local service_name=$1
+              
+              # If ENABLED_SERVICES is empty or not set, consider all services enabled (backward compatibility)
+              if [ -z "$ENABLED_SERVICES" ]; then
+                return 0
+              fi
+              
+              # Check if service_name is in the comma-separated ENABLED_SERVICES list
+              echo ",$ENABLED_SERVICES," | grep -q ",$service_name,"
+              return $?
+            }
             
             # Global cleanup function for unexpected exits
             global_cleanup() {
@@ -325,7 +352,14 @@ spec:
               env_json="$env_json{\"name\":\"DARWIN_MYSQL_PASSWORD\",\"value\":\"$DARWIN_MYSQL_PASSWORD\"},"
               env_json="$env_json{\"name\":\"DARWIN_KAFKA_HOST\",\"value\":\"$DARWIN_KAFKA_HOST\"},"
               env_json="$env_json{\"name\":\"DARWIN_ZOOKEEPER_HOST\",\"value\":\"$DARWIN_ZOOKEEPER_HOST\"},"
-              env_json="$env_json{\"name\":\"SERVICE_NAME\",\"value\":\"$component_name\"}"
+              env_json="$env_json{\"name\":\"DARWIN_ELASTICSEARCH_HOST\",\"value\":\"$DARWIN_ELASTICSEARCH_HOST\"},"
+              env_json="$env_json{\"name\":\"SERVICE_NAME\",\"value\":\"$component_name\"},"
+              env_json="$env_json{\"name\":\"AWS_ENDPOINT_OVERRIDE\",\"value\":\"$AWS_ENDPOINT_OVERRIDE\"},"
+              env_json="$env_json{\"name\":\"AWS_ENDPOINT_URL_S3\",\"value\":\"$AWS_ENDPOINT_OVERRIDE\"},"
+              env_json="$env_json{\"name\":\"COMPUTE_BUCKET_NAME\",\"value\":\"$COMPUTE_BUCKET_NAME\"},"
+              env_json="$env_json{\"name\":\"AWS_ACCESS_KEY_ID\",\"value\":\"dummy\"},"
+              env_json="$env_json{\"name\":\"AWS_SECRET_ACCESS_KEY\",\"value\":\"dummy\"},"
+              env_json="$env_json{\"name\":\"AWS_DEFAULT_REGION\",\"value\":\"us-east-1\"}"
               
               # Add extra environment variables
               for kv in "$@"; do
@@ -342,13 +376,13 @@ spec:
                 --namespace="$namespace" \
                 --image="$image" \
                 --restart=Never \
-                --image-pull-policy=IfNotPresent \
+                --image-pull-policy=Always \
                 --overrides="{
                   \"spec\": {
                     \"containers\": [{
                       \"name\": \"$service_name-pre-deploy\",
                       \"image\": \"$image\",
-                      \"imagePullPolicy\": \"IfNotPresent\",
+                      \"imagePullPolicy\": \"Always\",
                       \"command\": [\"bash\", \"-c\", \".odin/pre-deploy.sh\"],
                       \"env\": $env_json,
                       \"volumeMounts\": [{
@@ -446,6 +480,10 @@ spec:
             check_datastore_health "{{ .Release.Name }}-cassandra" 9042 || exit 1
             check_datastore_health "{{ .Release.Name }}-kafka" 9092 || exit 1
             check_localstack_health "{{ .Release.Name }}-localstack" 4566 || exit 1
+            # Check Elasticsearch if enabled in datastores
+            if /shared/kubectl get service "{{ .Release.Name }}-elasticsearch" --namespace="$namespace" >/dev/null 2>&1; then
+              check_datastore_health "{{ .Release.Name }}-elasticsearch" 9200 || exit 1
+            fi
             # Check Airflow if enabled in datastores
             if /shared/kubectl get service "{{ .Release.Name }}-airflow" --namespace="$namespace" >/dev/null 2>&1; then
               check_datastore_health "{{ .Release.Name }}-airflow" 8080 || exit 1
@@ -497,7 +535,18 @@ spec:
                 DOCKER_REGISTRY="${DOCKER_REGISTRY:-localhost:5000}"
                 
                 applications="darwin-ofs-v2 darwin-ofs-v2-admin darwin-ofs-v2-consumer"
+                local processed=0
+                local failed=0
+                
                 for app in $applications; do
+                  # Check if service is enabled in values.yaml
+                  if ! is_service_enabled "$app"; then
+                    echo "⏭️  Skipping $app - disabled in values.yaml (enabled: false)"
+                    continue
+                  fi
+                  
+                  echo "✅ Service $app is enabled in values.yaml, proceeding with pre-deploy"
+                  
                   image="$DOCKER_REGISTRY/$app:latest"
                   extra_envs="VAULT_SERVICE_MYSQL_USERNAME=dummy VAULT_SERVICE_MYSQL_PASSWORD=dummy DARWIN_FEATURE_STORE_HOST=darwin-feature-store DARWIN_FEATURE_STORE_ADMIN_HOST=darwin-feature-store-admin"
                   
@@ -507,13 +556,19 @@ spec:
                   
                   if [ $? -eq 0 ]; then
                     echo ">>> Completed processing $app"
+                    processed=$((processed + 1))
                   else
                     echo ">>> Failed processing $app"
+                    failed=1
                     return 1
                   fi
                 done
                 
-                echo "🏁 Processed 3 fallback applications successfully"
+                if [ $processed -eq 0 ]; then
+                  echo "ℹ️  No fallback applications found to deploy"
+                else
+                  echo "🏁 Processed $processed fallback application(s) successfully"
+                fi
                 return 0
               fi
               
@@ -527,6 +582,14 @@ spec:
               # Process each labeled service to find backing deployments
               for service_name in $service_list; do
                 echo "🔍 Processing application service: $service_name"
+                
+                # Check if service is enabled in values.yaml
+                if ! is_service_enabled "$service_name"; then
+                  echo "⏭️  Skipping $service_name - disabled in values.yaml (enabled: false)"
+                  continue
+                fi
+                
+                echo "✅ Service $service_name is enabled in values.yaml"
                 
                 # Try to find corresponding deployment
                 deployment=$(/shared/kubectl get deployment "$service_name" --namespace="$namespace" -o name 2>/dev/null || echo "")

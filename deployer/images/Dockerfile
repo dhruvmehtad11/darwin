@@ -9,7 +9,12 @@ WORKDIR /app/
 
 COPY ${APP_BASE_DIR}/${APP_DIR}/target/${APP_NAME}/. /app/
 
+RUN chmod +x /app/.odin/*.sh 2>/dev/null || true
+
 # Run setup.sh if it exists
+# Set environment variables needed by setup.sh
+ENV BASE_DIR=/app
+ENV DEPLOYMENT_TYPE=container
 RUN if [ -f "/app/.odin/setup.sh" ]; then \
       bash /app/.odin/setup.sh; \
     fi

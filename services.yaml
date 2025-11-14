@@ -49,26 +49,16 @@ applications:
 
   - application: darwin-compute
     base-path: darwin-compute
-    path: "."
+    path: .
     base-image: darwin/python:3.9.7-pip-bookworm-slim
     env:
-      - name: ENV
-        value: "local"
-      - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "dummy"
-      - name: VAULT_SERVICE_MYSQL_PASSWORD
-        value: "dummy"
-      - name: DARWIN_COMPUTE_HOST
+      - name: SERVICE_NAME
         value: "darwin-compute"
-      - name: CONFIG_SERVICE_MYSQL_DATABASE
-        value: "main"
-      - name: VAULT_SERVICE_ES_USERNAME
-        value: "dummy"
-      - name: VAULT_SERVICE_ES_PASSWORD
-        value: "dummy"
-      - name: VAULT_SERVICE_SLACK_TOKEN
-        value: "dummy"
-      - name: VAULT_SERVICE_SLACK_USERNAME
-        value: "darwin-bot"
-      - name: AWS_ENDPOINT_OVERRIDE
-        value: "http://darwin-localstack:4566"
+  
+  - application: darwin-cluster-manager
+    base-path: darwin-cluster-manager
+    path: .
+    base-image: darwin/golang:1.18-bookworm-slim
+    env:
+      - name: SERVICE_NAME
+        value: "darwin-cluster-manager"

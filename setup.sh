@@ -110,6 +110,10 @@ pushd deployer/images/python-3.9.7
 sh build.sh
 popd
 
+pushd deployer/images/golang-1.18
+sh build.sh
+popd
+
 # Path to your YAML
 YAML_FILE="services.yaml"
 

@@ -1,0 +1,20 @@
+grafana:
+  grafana.ini:
+    security:
+      allow_embedding: true
+    auth.anonymous:
+      enabled: true
+      org_role: Viewer
+  sidecar:
+    datasources:
+      alertmanager:
+        enabled: false
+
+nodeExporter:
+  enabled: false
+
+alertManager:
+  enabled: false
+
+prometheus:
+  enabled: false
