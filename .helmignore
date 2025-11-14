@@ -1,0 +1,14 @@
+# Git files
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.circleci/
+.gitlab-ci.yml
+
+# Packaged charts
+*.tgz
+
+# Other common junk
+.DS_Store

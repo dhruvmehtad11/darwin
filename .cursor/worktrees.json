@@ -1,0 +1,6 @@
+{
+  "setup-worktree": [
+    "export KUBECONFIG=./kind/config/kindkubeconfig.yaml",
+    "git submodule update --init --recursive"
+  ]
+}

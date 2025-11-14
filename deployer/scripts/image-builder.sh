@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
 
-while getopts a:p:t:e:r: flag
+env_vars=""
+
+while getopts a:p:t:e:r:B: flag
 do
     case "${flag}" in
         a) application=${OPTARG};;
@@ -9,6 +11,7 @@ do
         t) base_path=${OPTARG};;
         e) base_image=${OPTARG};;
         r) registry=${OPTARG};;
+        B) env_vars=${OPTARG};;
     esac
 done
 
@@ -35,14 +38,16 @@ echo "path: $path";
 echo "base_path: $base_path";
 echo "base_image: $base_image";
 echo "registry: $registry";
+echo "dynamic env_vars: $env_vars";
 
-rm -rf $path/target
+mkdir -p -m 755 $path/target/$application/.odinst
 mkdir -p -m 755 $path/target/$application/.odin
-bash .odin/$application/build.sh
-
-cp -r .odin/$application/. $path/target/$application/.odin
-
+echo "Building $application using build.sh"
+bash -x .odin/$application/build.sh
+echo "Copying ./.odin/$application/. to $path/target/$application/.odin"
+cp -rf ./.odin/$application/. $path/target/$application/.odin
 chmod 755 $path/target/$application/.odin
+chmod +x $path/target/$application/.odin/start.sh
 
 cd $cur_dir
 
@@ -51,6 +56,7 @@ docker build \
   --build-arg APP_NAME=$application \
   --build-arg APP_BASE_DIR=$base_path \
   --build-arg APP_DIR=$path \
+  --build-arg EXTRA_ENV_VARS="$env_vars" \
   -t $application:latest \
   -f deployer/images/Dockerfile .
   

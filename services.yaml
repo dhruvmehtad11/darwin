@@ -3,6 +3,7 @@ applications:
     base-path: feature-store
     path: app
     base-image: darwin/java:11-maven-bookworm-slim
+    enabled: true
     env:
       - name: VAULT_SERVICE_MYSQL_USERNAME
         value: "dummy"
@@ -19,6 +20,7 @@ applications:
     base-path: feature-store
     path: admin
     base-image: darwin/java:11-maven-bookworm-slim
+    enabled: true
     env:
       - name: VAULT_SERVICE_MYSQL_USERNAME
         value: "dummy"
@@ -35,6 +37,7 @@ applications:
     base-path: feature-store
     path: consumer
     base-image: darwin/java:11-maven-bookworm-slim
+    enabled: true
     env:
       - name: VAULT_SERVICE_MYSQL_USERNAME
         value: "dummy"
@@ -47,6 +50,51 @@ applications:
       - name: AWS_ENDPOINT_OVERRIDE
         value: "http://darwin-localstack:4566"
 
+  - application: darwin-mlflow
+    base-path: mlflow
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    enabled: true
+    env:
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+        value: "admin"
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
+        value: "password"
+      - name: CONFIG_SERVICE_MYSQL_DATABASE
+        value: "darwin"
+      - name: TEAM_SUFFIX
+        value: "-darwin-local"
+      - name: VPC_SUFFIX
+        value: "-darwin-local"
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "password"
+      - name: CONFIG_SERVICE_S3_PATH
+        value: "s3://darwin-mlflow-bucket"
+
+  - application: darwin-mlflow-app
+    base-path: mlflow
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    enabled: true
+    env:
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+        value: "admin"
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
+        value: "password"
+      - name: CONFIG_SERVICE_MYSQL_DATABASE
+        value: "darwin"
+      - name: TEAM_SUFFIX
+        value: "-darwin-local"
+      - name: VPC_SUFFIX
+        value: "-darwin-local"
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "password"
+      - name: CONFIG_SERVICE_S3_PATH
+        value: "s3://darwin-mlflow-bucket"
   - application: chronos
     base-path: chronos
     path: .

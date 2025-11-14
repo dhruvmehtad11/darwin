@@ -5,15 +5,23 @@ FROM ${BASE_IMAGE} AS base
 ARG APP_NAME
 ARG APP_BASE_DIR
 ARG APP_DIR
+ARG EXTRA_ENV_VARS
 WORKDIR /app/
+
+
+# Append BASE_DIR, SERVICE_NAME, DEPLOYMENT_TYPE, APP_DIR to EXTRA_ENV_VARS
+ENV EXTRA_ENV_VARS_FINAL="${EXTRA_ENV_VARS}|BASE_DIR=${APP_BASE_DIR}|SERVICE_NAME=${APP_NAME}|DEPLOYMENT_TYPE=container|APP_DIR=${APP_DIR}"
+RUN echo "EXTRA_ENV_VARS_FINAL: ${EXTRA_ENV_VARS_FINAL}"
 
 COPY ${APP_BASE_DIR}/${APP_DIR}/target/${APP_NAME}/. /app/
 
-RUN chmod +x /app/.odin/*.sh 2>/dev/null || true
+RUN echo "EXTRA_ENV_VARS_FINAL: ${EXTRA_ENV_VARS_FINAL}"
 
+ENV DEPLOYMENT_TYPE="container"
+RUN chmod +x /app/.odin/*.sh 2>/dev/null || true
 # Run setup.sh if it exists
 RUN if [ -f "/app/.odin/setup.sh" ]; then \
-      bash /app/.odin/setup.sh; \
+      env $(echo ${EXTRA_ENV_VARS_FINAL} | tr '|' ' ') bash -x /app/.odin/setup.sh; \
     fi
 
 # Entrypoint

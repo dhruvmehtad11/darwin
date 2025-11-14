@@ -21,7 +21,7 @@ mysql:
 
 # Cassandra Database
 cassandra:
-  enabled: true
+  enabled: false
   cluster:
     name: darwin-cassandra
     replicaCount: 1
@@ -41,11 +41,11 @@ cassandra:
 
 # Apache Kafka
 kafka:
-  enabled: true
+  enabled: false
   image:
     repository: confluentinc/cp-kafka
     tag: "7.4.0"
-  replicaCount: 3
+  replicaCount: 1
   persistence:
     enabled: true
     size: 2Gi
@@ -59,8 +59,8 @@ kafka:
 
 # Apache Zookeeper (for Helix)
 zookeeper:
-  enabled: true
-  replicaCount: 3
+  enabled: false
+  replicaCount: 1
   persistence:
     enabled: false
     size: 1Gi
@@ -74,7 +74,7 @@ zookeeper:
 
 # Apache Airflow
 airflow:
-  enabled: true
+  enabled: false
   executor: CeleryExecutor
   image:
     repository: apache/airflow
@@ -102,7 +102,7 @@ airflow:
   redis:
     enabled: false
   rabbitmq:
-    enabled: true
+    enabled: false
     auth:
       username: airflow
       password: airflow
@@ -110,16 +110,16 @@ airflow:
       enabled: true
       size: 1Gi
   mysql:
-    enabled: false  # Use existing MySQL service
+    enabled: false # Use existing MySQL service
   workers:
-         replicas: 1
-         resources:
-           limits:
-             cpu: 500m
-             memory: 2Gi
-           requests:
-             cpu: 200m
-             memory: 1Gi
+    replicas: 1
+    resources:
+      limits:
+        cpu: 500m
+        memory: 2Gi
+      requests:
+        cpu: 200m
+        memory: 1Gi
   scheduler:
     replicas: 1
     resources:
@@ -132,7 +132,7 @@ airflow:
 
 # LocalStack (S3 Mock)
 localstack:
-  enabled: true
+  enabled: false
   image:
     repository: localstack/localstack
     tag: "latest"

@@ -108,17 +108,34 @@ popd
 # Path to your YAML
 YAML_FILE="services.yaml"
 
+dynamic_build_args=""
+
 # Loop through YAML using array approach
 app_count=$(yq eval '.applications | length' "$YAML_FILE")
 i=0
 while [ $i -lt $app_count ]; do
+  if [ $(yq eval ".applications[$i].enabled" "$YAML_FILE") = "false" ]; then
+    i=$((i + 1))
+    continue
+  fi
   application=$(yq eval ".applications[$i].application" "$YAML_FILE")
   base_path=$(yq eval ".applications[$i].base-path" "$YAML_FILE")
   path=$(yq eval ".applications[$i].path" "$YAML_FILE")
   base_image=$(yq eval ".applications[$i].base-image" "$YAML_FILE")
+  # create key value pair of envs name and value
+  extra_env_vars=$(yq eval ".applications[$i].env" "$YAML_FILE")
+  # Parse the YAML env array into key=value pairs using yq
+  env_count=$(yq eval ".applications[$i].env | length" "$YAML_FILE")
+  j=0
+  while [ $j -lt $env_count ]; do
+    key=$(yq eval ".applications[$i].env[$j].name" "$YAML_FILE")
+    value=$(yq eval ".applications[$i].env[$j].value" "$YAML_FILE")
+    dynamic_build_args="$dynamic_build_args|$key=$value"
+    j=$((j + 1))
+  done
 
   echo ">>> Building image for $application..."
-  sh deployer/scripts/image-builder.sh -a "$application" -t "$base_path" -p "$path" -e "$base_image" -r "$DOCKER_REGISTRY"
+  sh deployer/scripts/image-builder.sh -a "$application" -t "$base_path" -p "$path" -e "$base_image" -r "$DOCKER_REGISTRY" -B "$dynamic_build_args"
   
   echo ">>> Completed processing $application"
   i=$((i + 1))
