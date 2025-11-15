@@ -90,6 +90,8 @@ spec:
               value: "true"
             - name: AIRFLOW__WEBSERVER__BASE_URL
               value: "http://localhost/airflow"
+            - name: AIRFLOW__API__AUTH_BACKENDS
+              value: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
           livenessProbe:
             tcpSocket:
               port: airflow-web
@@ -146,8 +148,50 @@ spec:
               value: "/opt/airflow/dags"
             - name: AIRFLOW__CORE__LOAD_EXAMPLES
               value: "false"
+          volumeMounts:
+            - name: dags
+              mountPath: /opt/airflow/dags
           resources:
             {{- toYaml .Values.airflow.scheduler.resources | nindent 12 }}
+        {{- $env := .Values.global.environment | default "stag" }}
+        {{- if or (eq $env "local") (eq $env "darwin-local") }}
+        - name: s3-dag-sync
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          command: ['python', '/opt/airflow/scripts/sync_dags.py']
+          env:
+            - name: ENV
+              value: "{{ .Values.global.environment | default "stag" }}"
+            - name: S3_DAGS_FOLDER
+              value: "s3://darwin-local-bucket/darwin_workflow_local/airflow_artifacts/dags/"
+            - name: AIRFLOW_DAGS_LOCAL_PATH
+              value: "/opt/airflow/dags"
+            - name: S3_SYNC_INTERVAL
+              value: "30"
+            - name: AWS_ENDPOINT_URL
+              value: "http://darwin-localstack:4566"
+            - name: AWS_ENDPOINT_OVERRIDE
+              value: "http://darwin-localstack:4566"
+            - name: AWS_ACCESS_KEY_ID
+              value: "minioadmin"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "minioadmin"
+            - name: DATADOG_API_KEY
+              value: ""
+          volumeMounts:
+            - name: dags
+              mountPath: /opt/airflow/dags
+            - name: sync-script
+              mountPath: /opt/airflow/scripts
+        {{- end }}
+      volumes:
+        - name: dags
+          emptyDir: {}
+        {{- $env := .Values.global.environment | default "stag" }}
+        {{- if or (eq $env "local") (eq $env "darwin-local") }}
+        - name: sync-script
+          configMap:
+            name: {{ .Release.Name }}-airflow-sync-script
+        {{- end }}
 ---
 {{- if .Values.airflow.workers }}
 apiVersion: apps/v1

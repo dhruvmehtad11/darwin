@@ -16,6 +16,7 @@ spec:
       protocol: TCP
       name: mysql
   selector:
-    {{- include "darwin.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/name: datastores
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: mysql
 {{- end }}

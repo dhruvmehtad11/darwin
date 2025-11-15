@@ -1,0 +1,9 @@
+dependencies:
+- name: datastores
+  repository: file://./charts/datastores
+  version: 1.0.0
+- name: services
+  repository: file://./charts/services
+  version: 1.0.0
+digest: sha256:bf831c01b05671fc0821f3c6a8dfeebc13f5b2d45bd27b3babeb737745d9ad9c
+generated: "2025-11-05T13:57:03.326945+05:30"

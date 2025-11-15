@@ -26,6 +26,7 @@ spec:
         component-name: {{ $config.serviceName }}
     spec:
       serviceAccountName: {{ $.Release.Name }}-services
+      {{- if not $config.skipInitContainer }}
       initContainers:
       - name: wait-for-datastore-health
         image: curlimages/curl:latest
@@ -72,6 +73,7 @@ spec:
             
             echo "❌ Timeout waiting for datastore health check"
             exit 1
+      {{- end }}
       containers:
         - name: {{ $serviceName }}
           image: "{{ $config.image.registry }}/{{ $config.image.name }}:{{ $config.image.tag }}"
@@ -117,7 +119,7 @@ spec:
             {{- if $config.extraEnvVars }}
             {{- toYaml $config.extraEnvVars | nindent 12 }}
             {{- end }}
-          {{- if $config.healthcheck }}
+          {{- if and $config.healthcheck (ne ($config.healthcheck.enabled | toString) "false") }}
           livenessProbe:
             httpGet:
               path: {{ $config.healthcheck.path }}

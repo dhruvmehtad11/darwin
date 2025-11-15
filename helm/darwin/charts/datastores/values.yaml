@@ -3,10 +3,10 @@ mysql:
   enabled: true
   architecture: standalone
   auth:
-    rootPassword: "{{ .Values.global.database.mysql.rootPassword }}"
-    database: "{{ .Values.global.database.mysql.database }}"
-    username: darwin
-    password: "{{ .Values.global.database.mysql.userPassword }}"
+    rootPassword: "password"
+    database: "darwin"
+    username: "darwin"
+    password: "password"
   primary:
     persistence:
       enabled: true
@@ -19,12 +19,33 @@ mysql:
         cpu: 250m
         memory: 1Gi
 
+# Elasticsearch (Metadata Store)
+elasticsearch:
+  enabled: true
+  replicas: 1
+  image:
+    repository: docker.elastic.co/elasticsearch/elasticsearch
+    tag: "8.11.0"
+    pullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 1Gi
+  security:
+    enabled: false
+
 # Cassandra Database
 cassandra:
   enabled: false
   cluster:
     name: darwin-cassandra
-    replicaCount: 3
+    replicaCount: 1
   dbUser:
     user: "{{ .Values.global.database.cassandra.username }}"
     password: "{{ .Values.global.database.cassandra.password }}"
@@ -34,10 +55,10 @@ cassandra:
   resources:
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 1.5Gi
     requests:
       cpu: 200m
-      memory: 512Mi
+      memory: 1Gi
 
 # Apache Kafka
 kafka:
@@ -45,7 +66,7 @@ kafka:
   image:
     repository: confluentinc/cp-kafka
     tag: "7.4.0"
-  replicaCount: 3
+  replicaCount: 1
   persistence:
     enabled: true
     size: 2Gi
@@ -60,7 +81,7 @@ kafka:
 # Apache Zookeeper (for Helix)
 zookeeper:
   enabled: false
-  replicaCount: 3
+  replicaCount: 1
   persistence:
     enabled: false
     size: 1Gi

@@ -17,7 +17,7 @@ services:
       enabled: false
     autoscaling:
       enabled: false
-              
+
   feature-store-admin:
     enabled: false
     replicaCount: 1
@@ -54,15 +54,18 @@ services:
 
   # Workflow Orchestration Service
   workflow:
-    enabled: false
+    enabled: true
     replicaCount: 1
+    serviceName: darwin-workflow
+    skipInitContainer: true
     image:
-      repository: darwin-workflow
+      registry: localhost:5000
+      name: darwin-workflow
       tag: latest
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
     service:
       type: ClusterIP
-      port: 8081
+      port: 8000
     ingress:
       enabled: true
       className: nginx
@@ -71,10 +74,104 @@ services:
           paths:
             - path: /
               pathType: Prefix
+    healthcheck:
+      enabled: false
+      path: /healthcheck
+      initialDelaySeconds: 180
+      readinessDelay: 180
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
     autoscaling:
       enabled: false
+    extraEnvVars:
+      # Elasticsearch Configuration (new from feat/refactor-configs)
+      - name: ELASTICSEARCH_URL
+        value: "http://darwin-elasticsearch:9200"
+      - name: ELASTICSEARCH_USERNAME
+        value: ""
+      - name: ELASTICSEARCH_PASSWORD
+        value: ""
+      # Airflow Configuration (new variable names)
+      - name: AIRFLOW_URL
+        value: "http://darwin-airflow:8080/airflow"
+      - name: AIRFLOW_AUTH_TOKEN
+        value: "Basic ZGFyd2luOmRhcndpbg=="
+      # Airflow MySQL Configuration (new variable names)
+      - name: AIRFLOW_MYSQL_HOST
+        value: "darwin-mysql"
+      - name: AIRFLOW_MYSQL_USERNAME
+        value: "root"
+      - name: AIRFLOW_MYSQL_PASSWORD
+        value: "password"
+      - name: AIRFLOW_MYSQL_DATABASE
+        value: "darwin_workflow"
+      - name: AIRFLOW_MYSQL_PORT
+        value: "3306"
+      # Workflow Database Configuration (new variable names)
+      - name: WORKFLOW_DB_HOST
+        value: "darwin-mysql"
+      - name: WORKFLOW_DB_USERNAME
+        value: "root"
+      - name: WORKFLOW_DB_PASSWORD
+        value: "password"
+      - name: WORKFLOW_DB_NAME
+        value: "darwin_workflow"
+      - name: WORKFLOW_DB_PORT
+        value: "3306"
+      # Compute Service (new variable names)
+      - name: COMPUTE_SERVICE_URL
+        value: "http://{{ $.Release.Name }}-compute:8082"
+      - name: COMPUTE_APP_LAYER_URL
+        value: "http://{{ $.Release.Name }}-compute:8082/cluster"
+      # Commuter (Notebook Viewer)
+      - name: COMMUTER_URL
+        value: "http://{{ $.Release.Name }}-commuter:8888/view"
+      # Application URLs (new variable names)
+      - name: WORKFLOW_APP_LAYER_URL
+        value: "http://darwin-workflow:8000"
+      - name: WORKFLOW_APP_LAYER_PUBLIC_URL
+        value: "http://darwin-workflow.local"
+      - name: WORKFLOW_UI_BASE_URL
+        value: "http://darwin-workflow.local/workflows/"
+      # AWS/S3 Configuration (LocalStack)
+      - name: AWS_ACCESS_KEY_ID
+        value: "minioadmin"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "minioadmin"
+      - name: AWS_ENDPOINT_URL
+        value: "http://darwin-localstack:4566"
+      - name: AWS_ENDPOINT_OVERRIDE
+        value: "http://darwin-localstack:4566"
+      - name: S3_BUCKET_NAME
+        value: "darwin-local-bucket"
+      - name: AIRFLOW_S3_FOLDER
+        value: "darwin_workflow_local/airflow_artifacts"
+      # Events and Callbacks (new variable names)
+      - name: DEFAULT_CALLBACK_URL
+        value: "http://{{ $.Release.Name }}-workflow:8000/events"
+      - name: EVENTS_SERVICE_URL
+        value: "http://{{ $.Release.Name }}-events:8080"
+      # PyPI Configuration (for internal packages)
+      - name: PYPI_INDEX_URL
+        value: ""
+      - name: PYPI_TRUSTED_HOST
+        value: ""
+      # Other
+      - name: LOG_FILE
+        value: "./workflow.log"
+      # Uvicorn worker configuration - use single worker to avoid DB init race conditions
+      - name: CORES
+        value: "1"
+      # Skip Aerich migrations to avoid initialization hang
+      - name: SKIP_AERICH_MIGRATIONS
+        value: "true"
 
-  # Compute Orchestration Service  
+  # Compute Orchestration Service
   compute:
     enabled: true
     replicaCount: 1
@@ -164,3 +261,12 @@ ingress:
     - path: "/cluster-manager(/|$)(.*)"
       service: "cluster-manager"
       port: 8080
+    - path: "/workflow(/|$)(.*)"
+      service: "workflow"
+      port: 8000
+    - path: "/mlflow-lib(/|$)(.*)"
+      service: "mlflow-lib"
+      port: 8080
+    - path: "/mlflow-app(/|$)(.*)"
+      service: "mlflow-app"
+      port: 8000

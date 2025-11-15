@@ -14,3 +14,181 @@ applications:
     env:
       - name: SERVICE_NAME
         value: "darwin-cluster-manager"
+  # Feature Store Services - DISABLED (Lombok compilation issue)
+  # - application: darwin-ofs-v2
+  #   base-path: feature-store
+  #   path: app
+  #   base-image: darwin/java:11-maven-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "dummy"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "dummy"
+  #     - name: DARWIN_FEATURE_STORE_HOST
+  #       value: "darwin-feature-store"
+  #     - name: DARWIN_FEATURE_STORE_ADMIN_HOST
+  #       value: "darwin-feature-store-admin"
+  #     - name: AWS_ENDPOINT_OVERRIDE
+  #       value: "http://darwin-localstack:4566"
+
+  # - application: darwin-ofs-v2-admin
+  #   base-path: feature-store
+  #   path: admin
+  #   base-image: darwin/java:11-maven-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "dummy"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "dummy"
+  #     - name: DARWIN_FEATURE_STORE_HOST
+  #       value: "darwin-feature-store"
+  #     - name: DARWIN_FEATURE_STORE_ADMIN_HOST
+  #       value: "darwin-feature-store-admin"
+  #     - name: AWS_ENDPOINT_OVERRIDE
+  #       value: "http://darwin-localstack:4566"
+
+  # - application: darwin-ofs-v2-consumer
+  #   base-path: feature-store
+  #   path: consumer
+  #   base-image: darwin/java:11-maven-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "dummy"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "dummy"
+  #     - name: DARWIN_FEATURE_STORE_HOST
+  #       value: "darwin-feature-store"
+  #     - name: DARWIN_FEATURE_STORE_ADMIN_HOST
+  #       value: "darwin-feature-store-admin"
+  #     - name: AWS_ENDPOINT_OVERRIDE
+  #       value: "http://darwin-localstack:4566"
+
+  # MLflow Services - DISABLED (submodule not initialized)
+  # - application: darwin-mlflow
+  #   base-path: mlflow
+  #   path: .
+  #   base-image: darwin/python:3.9.7-pip-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+  #       value: "admin"
+  #     - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
+  #       value: "password"
+  #     - name: CONFIG_SERVICE_MYSQL_DATABASE
+  #       value: "darwin"
+  #     - name: TEAM_SUFFIX
+  #       value: "-darwin-local"
+  #     - name: VPC_SUFFIX
+  #       value: "-darwin-local"
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "darwin"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "password"
+  #     - name: CONFIG_SERVICE_S3_PATH
+  #       value: "s3://darwin-mlflow-bucket"
+
+  # - application: darwin-mlflow-app
+  #   base-path: mlflow
+  #   path: .
+  #   base-image: darwin/python:3.9.7-pip-bookworm-slim
+  #   env:
+  #     - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+  #       value: "admin"
+  #     - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
+  #       value: "password"
+  #     - name: CONFIG_SERVICE_MYSQL_DATABASE
+  #       value: "darwin"
+  #     - name: TEAM_SUFFIX
+  #       value: "-darwin-local"
+  #     - name: VPC_SUFFIX
+  #       value: "-darwin-local"
+  #     - name: VAULT_SERVICE_MYSQL_USERNAME
+  #       value: "darwin"
+  #     - name: VAULT_SERVICE_MYSQL_PASSWORD
+  #       value: "password"
+  #     - name: CONFIG_SERVICE_S3_PATH
+  #       value: "s3://darwin-mlflow-bucket"
+
+  - application: darwin-workflow
+    base-path: workflow
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    env:
+      - name: ENV
+        value: "local"
+      - name: DEV
+        value: "true"
+      # Elasticsearch Configuration
+      - name: ELASTICSEARCH_URL
+        value: "http://darwin-elasticsearch:9200"
+      - name: ELASTICSEARCH_USERNAME
+        value: "darwin"
+      - name: ELASTICSEARCH_PASSWORD
+        value: "local-password"
+      # Airflow Configuration
+      - name: AIRFLOW_URL
+        value: "http://darwin-airflow-webserver:8080"
+      - name: AIRFLOW_AUTH_TOKEN
+        value: "Basic YWRtaW46YWRtaW5AMTIz"
+      # Airflow MySQL Configuration
+      - name: AIRFLOW_MYSQL_HOST
+        value: "darwin-mysql"
+      - name: AIRFLOW_MYSQL_USERNAME
+        value: "root"
+      - name: AIRFLOW_MYSQL_PASSWORD
+        value: "password"
+      - name: AIRFLOW_MYSQL_DATABASE
+        value: "darwin_workflow"
+      - name: AIRFLOW_MYSQL_PORT
+        value: "3306"
+      # Workflow Database Configuration
+      - name: WORKFLOW_DB_HOST
+        value: "darwin-mysql"
+      - name: WORKFLOW_DB_USERNAME
+        value: "root"
+      - name: WORKFLOW_DB_PASSWORD
+        value: "password"
+      - name: WORKFLOW_DB_NAME
+        value: "darwin_workflow"
+      - name: WORKFLOW_DB_PORT
+        value: "3306"
+      # Compute Service
+      - name: COMPUTE_SERVICE_URL
+        value: "http://darwin-compute:8082"
+      - name: COMPUTE_APP_LAYER_URL
+        value: "http://darwin-compute:8082/cluster"
+      # Commuter (Notebook Viewer)
+      - name: COMMUTER_URL
+        value: "http://darwin-commuter:8888/view"
+      # Application URLs
+      - name: WORKFLOW_APP_LAYER_URL
+        value: "http://darwin-workflow:8081"
+      - name: WORKFLOW_APP_LAYER_PUBLIC_URL
+        value: "http://darwin-workflow.local"
+      - name: WORKFLOW_UI_BASE_URL
+        value: "http://darwin-workflow.local/workflows/"
+      # AWS/S3 Configuration
+      - name: AWS_ACCESS_KEY_ID
+        value: "minioadmin"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "minioadmin"
+      - name: AWS_ENDPOINT_URL
+        value: "http://darwin-localstack:4566"
+      - name: S3_BUCKET_NAME
+        value: "darwin-local-bucket"
+      - name: AIRFLOW_S3_FOLDER
+        value: "darwin_workflow_local/airflow_artifacts"
+      # Events and Callbacks
+      - name: DEFAULT_CALLBACK_URL
+        value: "http://darwin-workflow:8081/events"
+      - name: EVENTS_SERVICE_URL
+        value: "http://darwin-events:8080"
+      # PyPI Configuration
+      - name: PYPI_INDEX_URL
+        value: "http://darwin-pypi-server:8080/simple/"
+      - name: PYPI_TRUSTED_HOST
+        value: "darwin-pypi-server"
+      # Other
+      - name: LOG_FILE
+        value: "./workflow.log"
+      - name: SERVE
+        value: "true"

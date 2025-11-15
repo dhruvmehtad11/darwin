@@ -9,3 +9,10 @@
 	path = darwin-cluster-manager
 	url = https://github.com/dream11/darwin-cluster-manager/
 	branch = agharsh/feat/localstack
+[submodule "workflow"]
+	path = workflow
+	url = https://github.com/dream11/darwin-workflow.git
+	branch = feat/workflow-onboard
+[submodule "mlflow"]
+	path = mlflow
+	url = git@github.com:dream11/darwin-mlflow.git

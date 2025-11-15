@@ -16,6 +16,7 @@ spec:
       protocol: TCP
       name: airflow-web
   selector:
-    {{- include "darwin.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/name: datastores
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: airflow-webserver
 {{- end }}
