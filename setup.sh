@@ -2,9 +2,9 @@
 set -e
 
 # Initialize and update git submodules
-echo "Initializing git submodules..."
-git submodule update --init --recursive
-echo "✅ Git submodules initialized"
+# echo "Initializing git submodules..."
+# git submodule update --init --recursive
+# echo "✅ Git submodules initialized"
 
 echo '' > config.env
 

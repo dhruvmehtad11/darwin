@@ -2,7 +2,7 @@
 services:
   # Feature Store Service
   feature-store:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2
     image:
@@ -19,7 +19,7 @@ services:
       enabled: false
               
   feature-store-admin:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2-admin
     image:
@@ -36,7 +36,7 @@ services:
       enabled: false
 
   feature-store-consumer:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2-consumer
     image:
