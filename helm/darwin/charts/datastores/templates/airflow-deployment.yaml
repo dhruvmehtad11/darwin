@@ -27,7 +27,7 @@ spec:
             - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
               value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
             - name: AIRFLOW__CORE__EXECUTOR
-              value: "CeleryExecutor"
+              value: "{{ .Values.airflow.executor }}"
             - name: AIRFLOW__CELERY__BROKER_URL
               value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
             - name: AIRFLOW__CELERY__RESULT_BACKEND
@@ -56,7 +56,7 @@ spec:
             - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
               value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
             - name: AIRFLOW__CORE__EXECUTOR
-              value: "CeleryExecutor"
+              value: "{{ .Values.airflow.executor }}"
             - name: AIRFLOW__CELERY__BROKER_URL
               value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
             - name: AIRFLOW__CELERY__RESULT_BACKEND
@@ -75,7 +75,7 @@ spec:
             - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
               value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
             - name: AIRFLOW__CORE__EXECUTOR
-              value: "CeleryExecutor"
+              value: "{{ .Values.airflow.executor }}"
             - name: AIRFLOW__CELERY__BROKER_URL
               value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
             - name: AIRFLOW__CELERY__RESULT_BACKEND
@@ -137,7 +137,7 @@ spec:
             - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
               value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
             - name: AIRFLOW__CORE__EXECUTOR
-              value: "CeleryExecutor"
+              value: "{{ .Values.airflow.executor }}"
             - name: AIRFLOW__CELERY__BROKER_URL
               value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
             - name: AIRFLOW__CELERY__RESULT_BACKEND
@@ -148,6 +148,24 @@ spec:
               value: "/opt/airflow/dags"
             - name: AIRFLOW__CORE__LOAD_EXAMPLES
               value: "false"
+            - name: AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL
+              value: "30"
+            - name: AIRFLOW__SCHEDULER__MIN_FILE_PROCESS_INTERVAL
+              value: "30"
+            # Service URLs for workflow monitoring tasks
+            - name: WORKFLOW_APP_LAYER_URL
+              value: "http://{{ .Release.Name }}-workflow:8001"
+            - name: EVENTS_SERVICE_URL
+              value: "http://{{ .Release.Name }}-events:8080"
+            - name: COMPUTE_SERVICE_URL
+              value: "http://{{ .Release.Name }}-compute:8000"
+            - name: ENV
+              value: {{ .Values.global.environment | default "darwin-local" | quote }}
+            # Fix AIRFLOW_LOGS_BASE_PATH for local environment
+            - name: AIRFLOW_LOGS_BASE_PATH
+              value: "/opt/airflow/logs"
+            - name: FSX_BASE_PATH
+              value: "/opt/airflow/workspace"
           volumeMounts:
             - name: dags
               mountPath: /opt/airflow/dags
@@ -222,7 +240,7 @@ spec:
             - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
               value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
             - name: AIRFLOW__CORE__EXECUTOR
-              value: "CeleryExecutor"
+              value: "{{ .Values.airflow.executor }}"
             - name: AIRFLOW__CELERY__BROKER_URL
               value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
             - name: AIRFLOW__CELERY__RESULT_BACKEND

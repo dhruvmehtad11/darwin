@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-elasticsearch
+  name: {{ .Release.Name }}-workflow-elasticsearch
   labels:
     {{- include "elasticsearch.labels" . | nindent 4 }}
 spec:
@@ -70,7 +70,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-elasticsearch
+            claimName: {{ .Release.Name }}-workflow-elasticsearch
       {{- end }}
 
 

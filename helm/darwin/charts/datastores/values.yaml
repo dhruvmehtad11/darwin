@@ -19,7 +19,8 @@ mysql:
         cpu: 250m
         memory: 1Gi
 
-# Elasticsearch (Metadata Store)
+# Elasticsearch (For Workflow Service)
+# Separate from OpenSearch which is used by other services
 elasticsearch:
   enabled: true
   replicas: 1
@@ -96,11 +97,15 @@ zookeeper:
 # Apache Airflow
 airflow:
   enabled: false
-  executor: CeleryExecutor
+  executor: LocalExecutor  # Changed from CeleryExecutor to LocalExecutor for local development
   image:
-    repository: apache/airflow
-    tag: "2.7.0"
+    repository: darwin-airflow
+    tag: "latest"
     pullPolicy: IfNotPresent
+  config:
+    scheduler:
+      dag_dir_list_interval: 30  # Scan for new DAGs every 30 seconds (default is 300)
+      min_file_process_interval: 30  # Process DAG files every 30 seconds
   webserver:
     replicas: 1
     defaultUser:
