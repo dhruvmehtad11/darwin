@@ -3,7 +3,8 @@ set -e
 
 # Initialize and update git submodules
 echo "Initializing git submodules..."
-git submodule update --init --recursive
+git submodule sync --recursive
+git submodule update --init --recursive --remote
 echo "✅ Git submodules initialized"
 
 echo '' > config.env
