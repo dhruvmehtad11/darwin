@@ -1,0 +1,27 @@
+{{- if .Values.airflow.enabled }}
+{{- $env := .Values.global.environment | default "stag" }}
+{{- if or (eq $env "local") (eq $env "darwin-local") }}
+# For local development with Kind, we need a HostPath volume
+# since Kind doesn't support ReadWriteMany by default
+# This is a workaround for local development only
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-airflow-logs-pv
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: airflow-logs
+spec:
+  capacity:
+    storage: {{ .Values.airflow.logs.storage | default "5Gi" }}
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  hostPath:
+    path: /tmp/airflow-logs
+    type: DirectoryOrCreate
+---
+{{- end }}
+{{- end }}
+

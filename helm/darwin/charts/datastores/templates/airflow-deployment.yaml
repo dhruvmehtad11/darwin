@@ -20,8 +20,15 @@ spec:
         app.kubernetes.io/component: airflow-webserver
     spec:
       initContainers:
+        - name: fix-logs-permissions
+          image: busybox:latest
+          command: ['sh', '-c', 'chmod -R 777 /opt/airflow/logs && chown -R 50000:0 /opt/airflow/logs']
+          volumeMounts:
+            - name: airflow-logs
+              mountPath: /opt/airflow/logs
         - name: airflow-init-db
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
           command: ['airflow', 'db', 'init']
           env:
             - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
@@ -36,6 +43,7 @@ spec:
               value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
         - name: airflow-create-user
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
           command: 
             - airflow
             - users
@@ -66,6 +74,7 @@ spec:
       containers:
         - name: airflow-webserver
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
           command: ['airflow', 'webserver']
           ports:
             - name: airflow-web
@@ -106,8 +115,30 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
+          volumeMounts:
+            - name: airflow-logs
+              mountPath: /opt/airflow/logs
           resources:
             {{- toYaml .Values.airflow.webserver.resources | nindent 12 }}
+      {{- $env := .Values.global.environment | default "stag" }}
+      {{- if or (eq $env "local") (eq $env "darwin-local") }}
+      # For local development, ensure pods are on the same node for hostPath volume sharing
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values:
+                      - airflow-scheduler
+                      - airflow-webserver
+              topologyKey: kubernetes.io/hostname
+      {{- end }}
+      volumes:
+        - name: airflow-logs
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-airflow-logs
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -129,9 +160,17 @@ spec:
         {{- include "darwin.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: airflow-scheduler
     spec:
+      initContainers:
+        - name: fix-logs-permissions
+          image: busybox:latest
+          command: ['sh', '-c', 'chmod -R 777 /opt/airflow/logs && chown -R 50000:0 /opt/airflow/logs']
+          volumeMounts:
+            - name: airflow-logs
+              mountPath: /opt/airflow/logs
       containers:
         - name: airflow-scheduler
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
           command: ['airflow', 'scheduler']
           env:
             - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
@@ -169,12 +208,15 @@ spec:
           volumeMounts:
             - name: dags
               mountPath: /opt/airflow/dags
+            - name: airflow-logs
+              mountPath: /opt/airflow/logs
           resources:
             {{- toYaml .Values.airflow.scheduler.resources | nindent 12 }}
         {{- $env := .Values.global.environment | default "stag" }}
         {{- if or (eq $env "local") (eq $env "darwin-local") }}
         - name: s3-dag-sync
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
           command: ['python', '/opt/airflow/scripts/sync_dags.py']
           env:
             - name: ENV
@@ -201,9 +243,27 @@ spec:
             - name: sync-script
               mountPath: /opt/airflow/scripts
         {{- end }}
+      {{- $env := .Values.global.environment | default "stag" }}
+      {{- if or (eq $env "local") (eq $env "darwin-local") }}
+      # For local development, ensure pods are on the same node for hostPath volume sharing
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values:
+                      - airflow-scheduler
+                      - airflow-webserver
+              topologyKey: kubernetes.io/hostname
+      {{- end }}
       volumes:
         - name: dags
           emptyDir: {}
+        - name: airflow-logs
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-airflow-logs
         {{- $env := .Values.global.environment | default "stag" }}
         {{- if or (eq $env "local") (eq $env "darwin-local") }}
         - name: sync-script
@@ -235,6 +295,7 @@ spec:
       containers:
         - name: airflow-worker
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
           command: ['airflow', 'celery', 'worker']
           env:
             - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN

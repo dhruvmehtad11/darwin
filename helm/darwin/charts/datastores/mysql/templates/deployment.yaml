@@ -27,6 +27,7 @@ spec:
               value: {{ .Values.auth.username | quote }}
             - name: MYSQL_PASSWORD
               value: {{ .Values.auth.password | quote }}
+            {{- end }}
           ports:
             - name: mysql
               containerPort: 3306

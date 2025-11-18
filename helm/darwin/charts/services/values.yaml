@@ -263,7 +263,7 @@ ingress:
       port: 8080
     - path: "/workflow(/|$)(.*)"
       service: "workflow"
-      port: 8000
+      port: 8001
     - path: "/mlflow-lib(/|$)(.*)"
       service: "mlflow-lib"
       port: 8080

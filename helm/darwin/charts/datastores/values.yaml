@@ -137,15 +137,7 @@ airflow:
       size: 1Gi
   mysql:
     enabled: false  # Use existing MySQL service
-  workers:
-    replicas: 1
-    resources:
-      limits:
-        cpu: 500m
-        memory: 2Gi
-      requests:
-        cpu: 200m
-        memory: 1Gi
+  workers: false  # Disable workers when using LocalExecutor
   scheduler:
     replicas: 1
     resources:
@@ -155,6 +147,9 @@ airflow:
       requests:
         cpu: 200m
         memory: 1Gi
+  logs:
+    storage: 5Gi  # Storage size for Airflow logs PVC
+    # storageClassName: ""  # Optional: specify storage class if needed
 
 # LocalStack (S3 Mock)
 localstack:
