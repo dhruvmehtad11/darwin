@@ -82,7 +82,7 @@ nginx:
 # Global configuration
 global:
   # Cluster key for path routing
-  kubeClusterKey: "kind-local"
+  kubeClusterKey: "eks-0"
 
   # Environment
   environment: "local"
