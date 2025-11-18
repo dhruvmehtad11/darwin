@@ -95,6 +95,8 @@ spec:
               value: "/opt/airflow/dags"
             - name: AIRFLOW__CORE__LOAD_EXAMPLES
               value: "false"
+            - name: AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT
+              value: "120"
             - name: AIRFLOW__WEBSERVER__EXPOSE_CONFIG
               value: "true"
             - name: AIRFLOW__WEBSERVER__BASE_URL
@@ -187,6 +189,8 @@ spec:
               value: "/opt/airflow/dags"
             - name: AIRFLOW__CORE__LOAD_EXAMPLES
               value: "false"
+            - name: AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT
+              value: "120"
             - name: AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL
               value: "30"
             - name: AIRFLOW__SCHEDULER__MIN_FILE_PROCESS_INTERVAL
