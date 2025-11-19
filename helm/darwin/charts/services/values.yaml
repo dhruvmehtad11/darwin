@@ -340,6 +340,12 @@ ingress:
     - path: "/feature-store-consumer(/|$)(.*)"
       service: "feature-store-consumer"
       port: 8080
+    - path: "/mlflow-lib(/|$)(.*)"
+      service: "mlflow-lib"
+      port: 8080
+    - path: "/mlflow-app(/|$)(.*)"
+      service: "mlflow-app"
+      port: 8000
     - path: "/compute(/|$)(.*)"
       service: "compute"
       port: 8000
