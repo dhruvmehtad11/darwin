@@ -17,7 +17,7 @@ services:
       enabled: false
     autoscaling:
       enabled: false
-              
+
   feature-store-admin:
     enabled: true
     replicaCount: 1
@@ -52,9 +52,81 @@ services:
     autoscaling:
       enabled: false
 
+  chronos:
+    enabled: true
+    replicaCount: 1
+    serviceName: chronos
+    image:
+      registry: localhost:5000
+      name: chronos
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+      hosts:
+        - host: localhost
+          paths:
+            - path: /chronos(/|$)(.*)
+              pathType: ImplementationSpecific
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: ENV
+        value: "local"
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: AWS_ACCESS_KEY_ID
+        value: "test"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "test"
+      - name: AWS_DEFAULT_REGION
+        value: "us-east-1"
+
+  chronos-consumer:
+    enabled: true
+    replicaCount: 1
+    serviceName: chronos-consumer
+    image:
+      registry: localhost:5000
+      name: chronos-consumer
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+      hosts:
+        - host: localhost
+          paths:
+            - path: /chronos-consumer(/|$)(.*)
+              pathType: ImplementationSpecific
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: ENV
+        value: "local"
+      - name: DEPLOYMENT_TYPE
+        value: "container"
+      - name: AWS_ACCESS_KEY_ID
+        value: "test"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "test"
+      - name: AWS_DEFAULT_REGION
+        value: "us-east-1"
+
   # Workflow Orchestration Service
   workflow:
-    enabled: false
+    enabled: true
     replicaCount: 1
     image:
       repository: darwin-workflow
@@ -74,7 +146,7 @@ services:
     autoscaling:
       enabled: false
 
-  # Compute Orchestration Service  
+  # Compute Orchestration Service
   compute:
     enabled: true
     replicaCount: 1
@@ -147,6 +219,107 @@ services:
       - name: AWS_ENDPOINT_URL_S3
         value: "http://darwin-localstack:4566"
 
+  mlflow-lib:
+    serviceName: darwin-mlflow
+    enabled: true
+    replicaCount: 1
+    image:
+      name: darwin-mlflow
+      repository: darwin-mlflow
+      registry: localhost:5000
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8080
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-mlflow.local
+          paths:
+            - path: /
+              pathType: Prefix
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: ENV
+        value: "darwin-local"
+      - name: CONFIG_SERVICE_S3_PATH
+        value: "s3://darwin-mlflow-bucket"
+      - name: CONFIG_SERVICE_MYSQL_MASTERHOST
+        value: "darwin-mysql"
+      - name: CONFIG_SERVICE_MYSQL_DATABASE
+        value: "darwin_mlflow"
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "password"
+      - name: VAULT_SERVICE_ADMIN_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_ADMIN_PASSWORD
+        value: "password"
+      - name: CONFIG_SERVICE_MYSQL_AUTH_DATABASE
+        value: "darwin_mlflow_auth"
+
+  mlflow-app:
+    serviceName: darwin-mlflow-app
+    enabled: true
+    replicaCount: 1
+    image:
+      name: darwin-mlflow-app
+      repository: darwin-mlflow
+      registry: localhost:5000
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: darwin-mlflow-app.local
+          paths:
+            - path: /
+              pathType: Prefix
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: ENV
+        value: "darwin-local"
+      - name: CONFIG_SERVICE_S3_PATH
+        value: "s3://darwin-mlflow-bucket"
+      - name: CONFIG_SERVICE_MYSQL_MASTERHOST
+        value: "darwin-mysql"
+      - name: CONFIG_SERVICE_MYSQL_DATABASE
+        value: "darwin_mlflow"
+      - name: VAULT_SERVICE_MYSQL_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_MYSQL_PASSWORD
+        value: "password"
+      - name: VAULT_SERVICE_ADMIN_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_ADMIN_PASSWORD
+        value: "password"
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
+        value: "darwin"
+      - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
+        value: "password"
+      - name: MLFLOW_UI_URL
+        value: "http://darwin-mlflow-lib:8080"
+      - name: MLFLOW_APP_LAYER_URL
+        value: "http://darwin-mlflow-lib:8080"
+      - name: MLFLOW_APP_BASE_PATH
+        value: ""
+      - name: DARWIN_MYSQL_HOST
+        value: "darwin-mysql"
+      - name: DARWIN_MYSQL_USERNAME
+        value: "darwin"
+      - name: DARWIN_MYSQL_PASSWORD
+        value: "password"
+      - name: MYSQL_PORT
+        value: "3306"
 
 # Ingress Configuration
 ingress:
@@ -154,6 +327,7 @@ ingress:
   className: "nginx"
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
   host: "localhost"
   # Path-based routing: /service/endpoint -> service:port/endpoint
   paths:

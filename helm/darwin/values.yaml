@@ -5,7 +5,7 @@ global:
   namespace: darwin
   # Use local Kind storage (hostPath) vs real K8s storage (PVCs)
   local-k8s: true
-  
+
   # Database connection details (shared across subcharts)
   database:
     mysql:
@@ -56,3 +56,4 @@ production:
   security:
     networkPolicies: true
     podSecurityStandards: true
+

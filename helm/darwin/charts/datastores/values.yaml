@@ -24,7 +24,7 @@ cassandra:
   enabled: true
   cluster:
     name: darwin-cassandra
-    replicaCount: 3
+    replicaCount: 1
   dbUser:
     user: "{{ .Values.global.database.cassandra.username }}"
     password: "{{ .Values.global.database.cassandra.password }}"
@@ -34,10 +34,10 @@ cassandra:
   resources:
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 1.5Gi
     requests:
       cpu: 200m
-      memory: 512Mi
+      memory: 1Gi
 
 # Apache Kafka
 kafka:
@@ -45,7 +45,7 @@ kafka:
   image:
     repository: confluentinc/cp-kafka
     tag: "7.4.0"
-  replicaCount: 3
+  replicaCount: 1
   persistence:
     enabled: true
     size: 2Gi
@@ -60,7 +60,7 @@ kafka:
 # Apache Zookeeper (for Helix)
 zookeeper:
   enabled: true
-  replicaCount: 3
+  replicaCount: 1
   persistence:
     enabled: false
     size: 1Gi
@@ -112,14 +112,14 @@ airflow:
   mysql:
     enabled: false  # Use existing MySQL service
   workers:
-         replicas: 1
-         resources:
-           limits:
-             cpu: 500m
-             memory: 2Gi
-           requests:
-             cpu: 200m
-             memory: 1Gi
+    replicas: 1
+    resources:
+      limits:
+        cpu: 500m
+        memory: 2Gi
+      requests:
+        cpu: 200m
+        memory: 1Gi
   scheduler:
     replicas: 1
     resources:
@@ -140,7 +140,7 @@ localstack:
   persistence:
     enabled: true
     size: 2Gi
-  services: "s3"
+  services: "s3,sqs"
   resources:
     limits:
       cpu: 1000m

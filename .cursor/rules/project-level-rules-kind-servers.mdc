@@ -1,0 +1,5 @@
+---
+description: For local development we are using kubernetes kind server. You have to export KUBECONFIG ./kind/config/kindkubeconfig.yaml file
+globs:
+alwaysApply: true
+---

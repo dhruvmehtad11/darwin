@@ -451,7 +451,7 @@ spec:
                 else
                   echo "❌ Pre-deploy failed for $component_name (status: $status)"
                   echo "📋 Pre-deploy logs for $component_name:"
-                  /shared/kubectl logs "$pod_name" --namespace="$namespace" --tail=50
+                  /shared/kubectl logs "$pod_name" --namespace="$namespace"
                   
                   # Clean up the pod before returning failure
                   cleanup_pre_deploy_pod "$service_name"
@@ -601,10 +601,45 @@ spec:
                   if [ -n "$image" ]; then
                     echo "📦 Found deployment $service_name with image: $image, component-name: $component_name"
                     
-                    # Default environment variables for discovered services
-                    extra_envs="VAULT_SERVICE_MYSQL_USERNAME=dummy VAULT_SERVICE_MYSQL_PASSWORD=dummy DARWIN_FEATURE_STORE_HOST=darwin-feature-store DARWIN_FEATURE_STORE_ADMIN_HOST=darwin-feature-store-admin"
+                    # Extract environment variables from deployment
+                    echo "🔍 Extracting environment variables from deployment..."
+                    
+                    # Build extra_envs string from deployment env vars
+                    extra_envs=""
+                    
+                    # Get the number of env vars in the deployment
+                    env_count=$(/shared/kubectl get deployment "$service_name" --namespace="$namespace" -o jsonpath='{.spec.template.spec.containers[0].env[*].name}' 2>/dev/null | wc -w || echo "0")
+                    
+                    if [ "$env_count" -gt 0 ]; then
+                      # Extract env vars one by one using index-based jsonpath
+                      i=0
+                      while [ $i -lt $env_count ]; do
+                        env_name=$(/shared/kubectl get deployment "$service_name" --namespace="$namespace" -o jsonpath="{.spec.template.spec.containers[0].env[$i].name}" 2>/dev/null || echo "")
+                        env_value=$(/shared/kubectl get deployment "$service_name" --namespace="$namespace" -o jsonpath="{.spec.template.spec.containers[0].env[$i].value}" 2>/dev/null || echo "")
+                        
+                        if [ -n "$env_name" ] && [ -n "$env_value" ]; then
+                          # Skip base environment variables that are already set by run_application_pre_deploy
+                          case "$env_name" in
+                            APP_DIR|ENV|TEAM_SUFFIX|VPC_SUFFIX|DEPLOYMENT_TYPE|DARWIN_MYSQL_HOST|DARWIN_CASSANDRA_HOST|DARWIN_MYSQL_USERNAME|DARWIN_MYSQL_PASSWORD|DARWIN_KAFKA_HOST|DARWIN_ZOOKEEPER_HOST|SERVICE_NAME|DARWIN_FEATURE_STORE_HOST|DARWIN_FEATURE_STORE_ADMIN_HOST|AWS_ENDPOINT_OVERRIDE)
+                              ;;
+                            *)
+                              # Escape special characters in value for shell safety
+                              env_value=$(printf '%s\n' "$env_value" | sed "s/'/'\\\\''/g")
+                              extra_envs="$extra_envs $env_name=$env_value"
+                              ;;
+                          esac
+                        fi
+                        i=$((i + 1))
+                      done
+                    fi
+                    
+                    # Add default fallback env vars if not already set
+                    if [ -z "$extra_envs" ]; then
+                      extra_envs="VAULT_SERVICE_MYSQL_USERNAME=dummy VAULT_SERVICE_MYSQL_PASSWORD=dummy DARWIN_FEATURE_STORE_HOST=darwin-feature-store DARWIN_FEATURE_STORE_ADMIN_HOST=darwin-feature-store-admin"
+                    fi
                     
                     echo ">>> Running pre deploy for $component_name with image $image"
+                    echo ">>> Environment variables: $extra_envs"
                     eval "set -- $extra_envs"
                     run_application_pre_deploy "$service_name" "$component_name" "$image" "$@"
                     
