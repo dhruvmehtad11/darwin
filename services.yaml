@@ -101,37 +101,25 @@ applications:
     path: .
     base-image: darwin/python:3.9.7-pip-bookworm-slim
     enabled: true
-    env:
-      - name: DEPLOYMENT_TYPE
-        value: "container"
-      - name: SERVICE_NAME
-        value: "chronos"
+    env: []
 
   - application: chronos-consumer
     base-path: chronos
     path: .
     base-image: darwin/python:3.9.7-pip-bookworm-slim
     enabled: true
-    env:
-      - name: DEPLOYMENT_TYPE
-        value: "container"
-      - name: SERVICE_NAME
-        value: "chronos-consumer"
+    env: []
 
   - application: darwin-compute
     base-path: darwin-compute
     path: .
     base-image: darwin/python:3.9.7-pip-bookworm-slim
     enabled: true
-    env:
-      - name: SERVICE_NAME
-        value: "darwin-compute"
+    env: []
   
   - application: darwin-cluster-manager
     base-path: darwin-cluster-manager
     path: .
     base-image: darwin/golang:1.18-bookworm-slim
     enabled: true
-    env:
-      - name: SERVICE_NAME
-        value: "darwin-cluster-manager"
+    env: []
