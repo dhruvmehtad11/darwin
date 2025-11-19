@@ -110,6 +110,14 @@ services:
         value: "darwin-bot"
       - name: OTEL_DISABLED
         value: "true"
+      - name: AWS_ACCESS_KEY_ID
+        value: "dummy"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "dummy"
+      - name: AWS_DEFAULT_REGION
+        value: "us-east-1"
+      - name: AWS_ENDPOINT_URL_S3
+        value: "http://darwin-localstack.darwin.svc.cluster.local:4566"
 
   cluster-manager:
     enabled: true
