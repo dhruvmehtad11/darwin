@@ -110,7 +110,7 @@ airflow:
       enabled: true
       size: 1Gi
   mysql:
-    enabled: false  # Use existing MySQL service
+    enabled: false # Use existing MySQL service
   workers:
     replicas: 1
     resources:
