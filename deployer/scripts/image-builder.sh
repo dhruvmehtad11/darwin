@@ -41,11 +41,13 @@ echo "registry: $registry";
 echo "dynamic env_vars: $env_vars";
 
 mkdir -p -m 755 $path/target/$application/.odinst
-bash .odin/$application/build.sh
-cd $path;
-cp -r ../.odin/$application/. target/$application/.odin
 
-chmod 755 target/$application/.odin
+echo "Building $application using build.sh"
+bash .odin/$application/build.sh
+
+cp -r .odin/$application/. $path/target/$application/.odin
+
+chmod 755 $path/target/$application/.odin
 cd $cur_dir
 
 docker build \
