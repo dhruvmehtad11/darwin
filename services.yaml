@@ -145,6 +145,15 @@ applications:
     enabled: true
     env: []
 
+  - application: darwin-catalog
+    base-path: darwin-catalog
+    path: .
+    base-image: darwin/java:11-maven-bookworm-slim
+    enabled: true
+    env:
+      - name: LOAD_TEST_DATA
+        value: "true"
+
 ray-images:
   - image-name: ray:2.37.0
     dockerfile-path: darwin-compute/runtimes/cpu/New-Lightweight/Ray2.37_Py3.10

@@ -457,6 +457,41 @@ services:
       size: "1Gi"
       accessMode: "ReadWriteOnce"
 
+  # Darwin Catalog Service
+  catalog:
+    enabled: true
+    replicaCount: 1
+    serviceName: darwin-catalog
+    image:
+      registry: localhost:5000
+      name: darwin-catalog
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8081
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+      hosts:
+        - host: localhost
+          paths:
+            - path: /darwin-catalog(/|$)(.*)
+              pathType: ImplementationSpecific
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      - name: MYSQL_URL
+        value: "jdbc:mysql://darwin-mysql:3306/darwincatalog?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      - name: MYSQL_USERNAME
+        value: "darwin"
+      - name: MYSQL_PASSWORD
+        value: "password"
+      # Spring profile for local development inside the Darwin distribution
+      - name: SPRING_PROFILES_ACTIVE
+        value: "local"
 
   mlflow-lib:
     serviceName: darwin-mlflow-lib
@@ -610,6 +645,9 @@ ingress:
     - path: "/artifact-builder(/|$)(.*)"
       service: "artifact-builder"
       port: 8000
+    - path: "/darwin-catalog(/|$)(.*)"
+      service: "catalog"
+      port: 8081
 
 # Shared Storage Configuration for Services
 # This creates a shared PersistentVolume that can be used by multiple services
