@@ -40,6 +40,7 @@ echo "base_image: $base_image";
 echo "registry: $registry";
 echo "dynamic env_vars: $env_vars";
 
+rm -rf $path/target
 mkdir -p -m 755 $path/target/$application/.odinst
 
 echo "Building $application using build.sh"

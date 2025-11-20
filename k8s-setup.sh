@@ -29,6 +29,7 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack --values ./helm/kube-prometheus-stack/values.yaml -n prometheus-system --create-namespace
 kubectl apply -f ./helm/kube-prometheus-stack/prometheus-rbac.yaml
+kubectl apply -f ./helm/kube-prometheus-stack/grafana_dashboards_configmap.yaml
 
 # Create service account with RBAC permissions
 echo "🚀 Creating service account..."
