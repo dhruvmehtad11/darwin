@@ -1,0 +1,114 @@
+{{- if .Values.ingress.enabled }}
+{{- if .Values.ingress.internal.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "nginx-proxy-server.fullname" . }}-internal
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "nginx-proxy-server.labels" . | nindent 4 }}
+    ingress-type: internal
+  annotations:
+    {{- with .Values.ingress.internal.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .Values.ingress.internal.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.internal.ingressClassName }}
+  {{- end }}
+  {{- if .Values.ingress.internal.tls }}
+  tls:
+    {{- range .Values.ingress.internal.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- if .Values.ingress.internal.hosts }}
+    {{- range .Values.ingress.internal.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType | default "Prefix" }}
+            backend:
+              service:
+                name: {{ include "nginx-proxy-server.fullname" $ }}
+                port:
+                  number: {{ $.Values.nginx.service.port }}
+          {{- end }}
+    {{- end }}
+    {{- else }}
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "nginx-proxy-server.fullname" . }}
+                port:
+                  number: {{ .Values.nginx.service.port }}
+    {{- end }}
+{{- end }}
+
+{{- if .Values.ingress.external.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "nginx-proxy-server.fullname" . }}-external
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nginx-proxy-server.labels" . | nindent 4 }}
+    ingress-type: external
+  annotations:
+    {{- with .Values.ingress.external.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .Values.ingress.external.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.external.ingressClassName }}
+  {{- end }}
+  {{- if .Values.ingress.external.tls }}
+  tls:
+    {{- range .Values.ingress.external.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- if .Values.ingress.external.hosts }}
+    {{- range .Values.ingress.external.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType | default "Prefix" }}
+            backend:
+              service:
+                name: {{ include "nginx-proxy-server.fullname" $ }}
+                port:
+                  number: {{ $.Values.nginx.service.port }}
+          {{- end }}
+    {{- end }}
+    {{- else }}
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "nginx-proxy-server.fullname" . }}
+                port:
+                  number: {{ .Values.nginx.service.port }}
+    {{- end }}
+{{- end }}
+{{- end }} 

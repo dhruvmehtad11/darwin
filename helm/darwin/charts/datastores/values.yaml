@@ -21,7 +21,7 @@ mysql:
 
 # Cassandra Database
 cassandra:
-  enabled: false
+  enabled: true
   cluster:
     name: darwin-cassandra
     replicaCount: 1
@@ -41,7 +41,7 @@ cassandra:
 
 # Apache Kafka
 kafka:
-  enabled: false
+  enabled: true
   image:
     repository: confluentinc/cp-kafka
     tag: "7.4.0"
@@ -59,7 +59,7 @@ kafka:
 
 # Apache Zookeeper (for Helix)
 zookeeper:
-  enabled: false
+  enabled: true
   replicaCount: 1
   persistence:
     enabled: false
@@ -74,7 +74,7 @@ zookeeper:
 
 # Apache Airflow
 airflow:
-  enabled: false
+  enabled: true
   executor: CeleryExecutor
   image:
     repository: apache/airflow
@@ -102,7 +102,7 @@ airflow:
   redis:
     enabled: false
   rabbitmq:
-    enabled: false
+    enabled: true
     auth:
       username: airflow
       password: airflow
@@ -132,7 +132,7 @@ airflow:
 
 # LocalStack (S3 Mock)
 localstack:
-  enabled: false
+  enabled: true
   image:
     repository: localstack/localstack
     tag: "latest"
@@ -150,3 +150,25 @@ localstack:
       memory: 512Mi
   env:
     awsEndpointOverride: "http://{{ $.Release.Name }}-localstack:4566"
+
+# OpenSearch (Elasticsearch-compatible)
+opensearch:
+  enabled: true
+  clusterName: darwin-opensearch
+  replicaCount: 1  # Single node for local development
+  auth:
+    username: "{{ .Values.global.database.elasticsearch.username }}"
+    password: "{{ .Values.global.database.elasticsearch.password }}"
+  persistence:
+    enabled: true
+    size: 2Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  env:
+    DISABLE_SECURITY_PLUGIN: "true"
+    discovery.type: "single-node"

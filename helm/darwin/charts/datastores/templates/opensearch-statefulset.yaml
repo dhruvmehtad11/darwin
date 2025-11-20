@@ -1,0 +1,115 @@
+{{- if .Values.opensearch.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-elasticsearch
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "datastores.labels" . | nindent 4 }}
+    app.kubernetes.io/component: opensearch
+spec:
+  serviceName: {{ .Release.Name }}-elasticsearch-headless
+  replicas: {{ .Values.opensearch.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "datastores.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: opensearch
+  template:
+    metadata:
+      labels:
+        {{- include "datastores.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: opensearch
+    spec:
+      containers:
+        - name: opensearch
+          image: opensearchproject/opensearch:2.11.0
+          env:
+            - name: cluster.name
+              value: {{ .Values.opensearch.clusterName | quote }}
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: discovery.type
+              value: {{ index .Values.opensearch.env "discovery.type" | quote }}
+            - name: OPENSEARCH_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+            - name: DISABLE_SECURITY_PLUGIN
+              value: {{ index .Values.opensearch.env "DISABLE_SECURITY_PLUGIN" | quote }}
+            - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+              value: {{ .Values.opensearch.auth.password | quote }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - name: http
+              containerPort: 9200
+              protocol: TCP
+            - name: transport
+              containerPort: 9300
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: 9200
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.opensearch.resources | nindent 12 }}
+          {{- if .Values.opensearch.persistence.enabled }}
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/opensearch/data
+              {{- if index .Values.global "local-k8s" }}
+              subPathExpr: $(POD_NAME)
+              {{- end }}
+          {{- end }}
+      {{- if and .Values.opensearch.persistence.enabled (index .Values.global "local-k8s") }}
+      initContainers:
+        - name: create-data-dir
+          image: busybox:1.36
+          command: ['sh', '-c', 'mkdir -p /data/$(POD_NAME) && chown -R 1000:1000 /data/$(POD_NAME)']
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: data
+              mountPath: /data
+        - name: increase-vm-max-map
+          image: busybox:1.36
+          command: ['sysctl', '-w', 'vm.max_map_count=262144']
+          securityContext:
+            privileged: true
+      volumes:
+        - name: data
+          hostPath:
+            path: /mnt/shared-data/opensearch
+            type: DirectoryOrCreate
+      {{- end }}
+  {{- if and .Values.opensearch.persistence.enabled (not (index .Values.global "local-k8s")) }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        {{- if .Values.global.storageClass }}
+        storageClassName: {{ .Values.global.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.opensearch.persistence.size }}
+  {{- end }}
+{{- end }}
+

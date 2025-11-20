@@ -1,0 +1,88 @@
+🚀 Nginx Proxy Server has been deployed successfully!
+
+📋 DEPLOYMENT INFO:
+  Release Name: {{ .Release.Name }}
+  Namespace: {{ .Release.Namespace }}
+  Chart Version: {{ .Chart.Version }}
+  App Version: {{ .Chart.AppVersion }}
+
+🔗 ACCESS INFORMATION:
+{{- if .Values.ingress.enabled }}
+  {{- if .Values.ingress.internal.enabled }}
+  
+  🏠 Internal Access:
+    URL Pattern: http://<internal-alb>/{{ .Values.global.kubeClusterKey }}/{cluster-name}-{service}
+    Example: http://<internal-alb>/{{ .Values.global.kubeClusterKey }}/id-test-jupyter
+  {{- end }}
+  {{- if .Values.ingress.external.enabled }}
+  
+  🌍 External Access:
+    URL Pattern: http://<external-alb>/{{ .Values.global.kubeClusterKey }}/{cluster-name}/{service}
+    Example: http://<external-alb>/{{ .Values.global.kubeClusterKey }}/id-test-dashboard/
+  {{- end }}
+{{- else }}
+  
+  🔧 Service Access:
+    Service: {{ include "nginx-proxy-server.fullname" . }}
+    Port: {{ .Values.nginx.service.port }}
+    
+    # Port forward to test locally:
+    kubectl port-forward svc/{{ include "nginx-proxy-server.fullname" . }} 8080:{{ .Values.nginx.service.port }}
+    curl http://localhost:8080/{{ .Values.global.kubeClusterKey }}/id-test-jupyter
+{{- end }}
+
+📊 SCALING INFO:
+{{- if .Values.nginx.hpa.enabled }}
+  Auto-scaling: Enabled
+  Min Replicas: {{ .Values.nginx.hpa.minReplicas }}
+  Max Replicas: {{ .Values.nginx.hpa.maxReplicas }}
+  CPU Target: {{ .Values.nginx.hpa.targetCPUUtilizationPercentage }}%
+  Memory Target: {{ .Values.nginx.hpa.targetMemoryUtilizationPercentage }}%
+{{- else }}
+  Static Replicas: {{ .Values.nginx.replicas | default 3 }}
+{{- end }}
+
+🎯 SUPPORTED SERVICES:
+  • jupyter    (port 8888) - Jupyter Lab
+  • dashboard  (port 8265) - Ray Dashboard  
+  • sparkui    (port 4040) - Spark UI
+  • vscode     (port 3000) - VS Code Server
+  • metrics    (port 3000) - Grafana (special routing)
+  • livy       (port 8998) - Livy Server
+  • thrift     (port 10000) - Thrift Server
+  • custom-1   (port 8001) - Custom Service 1
+  • custom-2   (port 8002) - Custom Service 2
+  • custom-3   (port 8003) - Custom Service 3
+
+🚀 QUICK START:
+  1. Deploy a Ray cluster:
+     helm install id-test ./charts/ray-cluster
+
+  2. Access services:
+     - Jupyter: /{{ .Values.global.kubeClusterKey }}/my-cluster-jupyter
+     - Dashboard: /{{ .Values.global.kubeClusterKey }}/my-cluster-dashboard/
+     - Metrics: /{{ .Values.global.kubeClusterKey }}/my-cluster-metrics/
+
+🔍 MONITORING COMMANDS:
+  # Check proxy status
+  kubectl get pods -l app.kubernetes.io/name={{ include "nginx-proxy-server.name" . }}
+  
+  # View logs
+  kubectl logs -l app.kubernetes.io/name={{ include "nginx-proxy-server.name" . }} -f
+  
+  # Test nginx config
+  kubectl exec deployment/{{ include "nginx-proxy-server.fullname" . }} -- nginx -t
+  
+  # Check HPA status
+  {{- if .Values.nginx.hpa.enabled }}
+  kubectl get hpa {{ include "nginx-proxy-server.fullname" . }}
+  {{- end }}
+
+📚 DOCUMENTATION:
+  For more information and troubleshooting:
+  • Chart README: ./charts/nginx-proxy-server/README.md
+  • Custom routing: Modify nginx-config.yaml template
+
+💡 TIP: The proxy automatically routes to any Ray cluster using the pattern:
+     /{{ .Values.global.kubeClusterKey }}/{cluster-name}-{service}
+     No manual configuration required!

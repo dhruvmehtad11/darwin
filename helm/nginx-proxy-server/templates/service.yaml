@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nginx-proxy-server.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "nginx-proxy-server.labels" . | nindent 4 }}
+  {{- with .Values.nginx.service.annotations }}
+  annotations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.nginx.service.type }}
+  {{- if and (eq .Values.nginx.service.type "LoadBalancer") .Values.nginx.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.nginx.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and (eq .Values.nginx.service.type "LoadBalancer") .Values.nginx.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- range .Values.nginx.service.loadBalancerSourceRanges }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  {{- if .Values.nginx.service.externalIPs }}
+  externalIPs:
+    {{- range .Values.nginx.service.externalIPs }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.nginx.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+      {{- if and (or (eq .Values.nginx.service.type "NodePort") (eq .Values.nginx.service.type "LoadBalancer")) .Values.nginx.service.nodePort }}
+      nodePort: {{ .Values.nginx.service.nodePort }}
+      {{- end }}
+    {{- if .Values.nginx.service.httpsPort }}
+    - port: {{ .Values.nginx.service.httpsPort }}
+      targetPort: https
+      protocol: TCP
+      name: https
+      {{- if and (or (eq .Values.nginx.service.type "NodePort") (eq .Values.nginx.service.type "LoadBalancer")) .Values.nginx.service.httpsNodePort }}
+      nodePort: {{ .Values.nginx.service.httpsNodePort }}
+      {{- end }}
+    {{- end }}
+    {{- if .Values.nginx.service.extraPorts }}
+    {{- range .Values.nginx.service.extraPorts }}
+    - port: {{ .port }}
+      targetPort: {{ .targetPort | default .port }}
+      protocol: {{ .protocol | default "TCP" }}
+      name: {{ .name }}
+      {{- if and (or (eq $.Values.nginx.service.type "NodePort") (eq $.Values.nginx.service.type "LoadBalancer")) .nodePort }}
+      nodePort: {{ .nodePort }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+  selector:
+    {{- include "nginx-proxy-server.selectorLabels" . | nindent 4 }}
+  {{- if .Values.nginx.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.nginx.service.sessionAffinity }}
+  {{- end }}
+  {{- if .Values.nginx.service.sessionAffinityConfig }}
+  sessionAffinityConfig:
+    {{- toYaml .Values.nginx.service.sessionAffinityConfig | nindent 4 }}
+  {{- end }}

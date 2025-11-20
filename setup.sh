@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+# Initialize and update git submodules
+echo "Initializing git submodules..."
+git submodule sync --recursive
+git submodule update --init --recursive --remote
+echo "✅ Git submodules initialized"
+
 # Parse command line arguments
 AUTO_YES=false
 while [ $# -gt 0 ]; do
@@ -128,6 +134,10 @@ sh build.sh
 popd
 
 pushd deployer/images/python-3.9.7
+sh build.sh
+popd
+
+pushd deployer/images/golang-1.18
 sh build.sh
 popd
 

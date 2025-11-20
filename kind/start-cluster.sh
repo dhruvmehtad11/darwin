@@ -29,15 +29,14 @@ else
   helm install cert-manager jetstack/cert-manager \
     --namespace cert-manager \
     --create-namespace \
-    --set installCRDs=true
+    --set crds.enabled=true
 
   # Wait for cert-manager pods to be ready
   kubectl wait --for=condition=Available --timeout=120s deployment/cert-manager -n cert-manager
 
-  # Previously installed manually, but now managed for consistent lifecycle
+  # Install ingress-nginx for routing
   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/kind/deploy.yaml
   kubectl label node kind-control-plane ingress-ready=true
-  # Label the control plane node for ingress (still needed for Kind port mapping)
 fi
 
 chmod 600 $KUBECONFIG

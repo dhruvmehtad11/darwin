@@ -1,0 +1,16 @@
+{{ range $k, $v := until (atoi .Values.numVolumes) }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fsx-claim-{{ $v }}
+  namespace: ray
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: fsx-pv-{{ $v }}
+{{ end }}

@@ -1,0 +1,119 @@
+# Common nginx proxy configuration for local development
+nginx:
+  # Deployment configuration
+  replicas: 1
+
+  # Image configuration
+  image:
+    repository: nginx
+    tag: "1.27.4"
+    pullPolicy: IfNotPresent
+
+  # Image pull secrets
+  imagePullSecrets: []
+
+  # Resources for the nginx proxy (reduced for local)
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+  # HPA configuration - disabled for local development
+  hpa:
+    enabled: false
+
+  # Node selector - disabled for local
+  nodeSelector: {}
+
+  # Tolerations - disabled for local
+  tolerations: []
+
+  # Affinity rules - disabled for local
+  affinity: {}
+
+  # Security context for nginx container
+  securityContext: {}
+
+  # Pod annotations
+  podAnnotations: {}
+
+  # Pod Labels
+  podLabels: {}
+
+  # Service configuration
+  service:
+    type: NodePort
+    port: 80
+    nodePort: 30080
+    annotations: {}
+
+  # Health check probes
+  livenessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+  # Environment variables
+  env: []
+
+  # Lifecycle hooks
+  lifecycle: {}
+
+  # Extra volumes and volume mounts
+  extraVolumes: []
+  extraVolumeMounts: []
+
+  # Priority class name
+  priorityClassName: ""
+
+  # Termination grace period
+  terminationGracePeriodSeconds: 30
+
+# Global configuration
+global:
+  # Cluster key for path routing
+  kubeClusterKey: "eks-0"
+
+  # Environment
+  environment: "local"
+
+  # Ray Cluster Namespace
+  rayClusterNamespace: "ray"
+
+# Service Account configuration
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  name: ""
+  # Image pull secrets for the service account
+  imagePullSecrets: []
+
+# Ingress configuration - disabled for local (using NodePort instead)
+ingress:
+  enabled: false
+  internal:
+    enabled: false
+    annotations: {}
+    ingressClassName: ""
+
+  external:
+    enabled: false
+    annotations: {}
+    ingressClassName: ""
+
+# Override chart name
+nameOverride: ""
+fullnameOverride: ""
