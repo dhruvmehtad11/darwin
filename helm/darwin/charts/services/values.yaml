@@ -245,8 +245,6 @@ services:
     extraEnvVars:
       - name: ENV
         value: "darwin-local"
-      - name: CONFIG_SERVICE_S3_PATH
-        value: "s3://darwin-mlflow-bucket"
       - name: CONFIG_SERVICE_MYSQL_MASTERHOST
         value: "darwin-mysql"
       - name: CONFIG_SERVICE_MYSQL_DATABASE
@@ -261,6 +259,14 @@ services:
         value: "password"
       - name: CONFIG_SERVICE_MYSQL_AUTH_DATABASE
         value: "darwin_mlflow_auth"
+      - name: MLFLOW_S3_BUCKET
+        value: "darwin-mlflow"
+      - name: AWS_ACCESS_KEY_ID
+        value: "test"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "test"
+      - name: AWS_DEFAULT_REGION
+        value: "us-east-1"
 
   mlflow-app:
     serviceName: darwin-mlflow-app
@@ -288,8 +294,6 @@ services:
     extraEnvVars:
       - name: ENV
         value: "darwin-local"
-      - name: CONFIG_SERVICE_S3_PATH
-        value: "s3://darwin-mlflow-bucket"
       - name: CONFIG_SERVICE_MYSQL_MASTERHOST
         value: "darwin-mysql"
       - name: CONFIG_SERVICE_MYSQL_DATABASE
@@ -314,12 +318,16 @@ services:
         value: ""
       - name: DARWIN_MYSQL_HOST
         value: "darwin-mysql"
-      - name: DARWIN_MYSQL_USERNAME
-        value: "darwin"
-      - name: DARWIN_MYSQL_PASSWORD
-        value: "password"
       - name: MYSQL_PORT
         value: "3306"
+      - name: MLFLOW_S3_BUCKET
+        value: "darwin-mlflow"
+      - name: AWS_ACCESS_KEY_ID
+        value: "test"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "test"
+      - name: AWS_DEFAULT_REGION
+        value: "us-east-1"
 
 # Ingress Configuration
 ingress:

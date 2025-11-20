@@ -7,6 +7,22 @@ git submodule sync --recursive
 git submodule update --init --recursive --remote
 echo "✅ Git submodules initialized"
 
+# Parse command line arguments
+AUTO_YES=false
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -y|--yes)
+      AUTO_YES=true
+      shift
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Usage: $0 [-y|--yes]"
+      exit 1
+      ;;
+  esac
+done
+
 echo '' > config.env
 
 ENV=local
@@ -16,7 +32,12 @@ ENV_CREATION=false
 if [ "$ENV" = "local" ]; then
     echo "ENV is set to 'local'"
     # Start the kind cluster using the existing script
-    read -p "Do you want to setup local k8s cluster? (y/n) " -n 1 -r
+    if [ "$AUTO_YES" = "true" ]; then
+        REPLY="y"
+        echo "Auto-answering 'yes' to setup local k8s cluster"
+    else
+        read -p "Do you want to setup local k8s cluster? (y/n) " -n 1 -r
+    fi
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
         echo "\nStarting kind cluster..."
@@ -54,7 +75,12 @@ else
 fi
 
 # Ask if user wants a clean build
-read -p "Do you want a clean build? (y/n) " -n 1 -r
+if [ "$AUTO_YES" = "true" ]; then
+    REPLY="y"
+    echo "Auto-answering 'yes' to clean build"
+else
+    read -p "Do you want a clean build? (y/n) " -n 1 -r
+fi
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
     echo "\nSkipping build. Exiting."
