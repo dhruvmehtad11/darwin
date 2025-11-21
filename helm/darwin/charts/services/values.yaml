@@ -72,7 +72,7 @@ services:
     # Volume mounts for persistent storage
     volumeMounts:
       - name: shared-services-data
-        mountPath: /var/www/fsx/workspace
+        mountPath: /var/www/fsx
         subPath: workspace
     # Volumes configuration
     volumes:
@@ -180,7 +180,8 @@ services:
     replicaCount: 1
     serviceName: darwin-compute
     image:
-      repository: darwin-compute
+      registry: localhost:5000
+      name: darwin-compute
       tag: latest
       pullPolicy: Always
     service:

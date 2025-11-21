@@ -4,6 +4,7 @@
 [submodule "workspace"]
 	path = workspace
 	url = https://github.com/dream11/darwin-workspace.git
+	branch = feat/onboard-distro
 [submodule "mlflow"]
 	path = mlflow
 	url = git@github.com:dream11/darwin-mlflow.git
