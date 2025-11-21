@@ -1,0 +1,39 @@
+{{- if and .Values.storage.enabled (index .Values.global "local-k8s") }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-shared-pv
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    storage-type: shared-services
+spec:
+  storageClassName: {{ .Values.storage.storageClassName }}
+  capacity:
+    storage: {{ .Values.storage.size }}
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: {{ .Values.storage.reclaimPolicy }}
+  hostPath:
+    path: {{ .Values.storage.hostPath }}
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-shared-pvc
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    storage-type: shared-services
+spec:
+  storageClassName: {{ .Values.storage.storageClassName }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}
+  volumeName: {{ .Release.Name }}-shared-pv
+{{- end }}
+

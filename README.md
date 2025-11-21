@@ -21,6 +21,7 @@ Complete Darwin Feature Store platform for local development and deployment.
 - Feature Store: `localhost/feature-store/*`
 - Feature Store Admin: `localhost/feature-store-admin/*`
 - Feature Store Consumer: `localhost/feature-store-consumer/*`
+- Workspace: `localhost/workspace/*`
 - Airflow UI: `airflow.localhost`
 
 ## Adding New Services

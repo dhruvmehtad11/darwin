@@ -52,6 +52,34 @@ services:
     autoscaling:
       enabled: false
 
+  # Workspace Service
+  workspace:
+    enabled: true
+    replicaCount: 1
+    serviceName: darwin-workspace
+    image:
+      registry: localhost:5000
+      name: darwin-workspace
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: false
+    autoscaling:
+      enabled: false
+    # Volume mounts for persistent storage
+    volumeMounts:
+      - name: shared-services-data
+        mountPath: /var/www/fsx/workspace
+        subPath: workspace
+    # Volumes configuration
+    volumes:
+      - name: shared-services-data
+        persistentVolumeClaim:
+          claimName: darwin-shared-pvc
+
   chronos:
     enabled: true
     replicaCount: 1
@@ -152,8 +180,7 @@ services:
     replicaCount: 1
     serviceName: darwin-compute
     image:
-      registry: localhost:5000
-      name: darwin-compute
+      repository: darwin-compute
       tag: latest
       pullPolicy: Always
     service:
@@ -294,6 +321,8 @@ services:
     extraEnvVars:
       - name: ENV
         value: "darwin-local"
+      - name: CONFIG_SERVICE_S3_PATH
+        value: "s3://darwin-mlflow-bucket"
       - name: CONFIG_SERVICE_MYSQL_MASTERHOST
         value: "darwin-mysql"
       - name: CONFIG_SERVICE_MYSQL_DATABASE
@@ -348,6 +377,9 @@ ingress:
     - path: "/feature-store-consumer(/|$)(.*)"
       service: "feature-store-consumer"
       port: 8080
+    - path: "/workspace(/|$)(.*)"
+      service: "workspace"
+      port: 8000
     - path: "/mlflow-lib(/|$)(.*)"
       service: "mlflow-lib"
       port: 8080
@@ -360,3 +392,13 @@ ingress:
     - path: "/cluster-manager(/|$)(.*)"
       service: "cluster-manager"
       port: 8080
+
+# Shared Storage Configuration for Services
+# This creates a shared PersistentVolume that can be used by multiple services
+storage:
+  enabled: true
+  storageClassName: shared-services
+  size: 5Gi
+  reclaimPolicy: Retain
+  # For local Kind clusters, uses the .m2 mount which maps to $HOME/.m2 on the host
+  hostPath: /mnt/shared-data/efs

@@ -23,6 +23,14 @@ global:
 # Subchart Configuration
 datastores:
   enabled: true
+  mysql:
+    enabled: true
+  cassandra:
+    enabled: true
+  kafka:
+    enabled: true
+  zookeeper:
+    enabled: true
   localstack:
     enabled: true
   airflow:

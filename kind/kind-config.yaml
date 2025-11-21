@@ -23,17 +23,11 @@ nodes:
   extraMounts:
   - hostPath: ./kind/shared-storage
     containerPath: /mnt/shared-data
-  - hostPath: $HOME/.m2
-    containerPath: /mnt/shared-data/.m2
 - role: worker
   extraMounts:
   - hostPath: ./kind/shared-storage
     containerPath: /mnt/shared-data
-  - hostPath: $HOME/.m2
-    containerPath: /mnt/shared-data/.m2
 - role: worker
   extraMounts:
   - hostPath: ./kind/shared-storage
     containerPath: /mnt/shared-data
-  - hostPath: $HOME/.m2
-    containerPath: /mnt/shared-data/.m2

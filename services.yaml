@@ -116,10 +116,17 @@ applications:
     base-image: darwin/python:3.9.7-pip-bookworm-slim
     enabled: true
     env: []
-  
+
   - application: darwin-cluster-manager
     base-path: darwin-cluster-manager
     path: .
     base-image: darwin/golang:1.18-bookworm-slim
+    enabled: true
+    env: []
+
+  - application: darwin-workspace
+    base-path: workspace
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
     enabled: true
     env: []

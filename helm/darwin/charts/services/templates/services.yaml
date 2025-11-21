@@ -117,6 +117,16 @@ spec:
             {{- if $config.extraEnvVars }}
             {{- toYaml $config.extraEnvVars | nindent 12 }}
             {{- end }}
+          {{- if $config.volumeMounts }}
+          volumeMounts:
+            {{- range $config.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              {{- if .readOnly }}
+              readOnly: {{ .readOnly }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
           {{- if $config.healthcheck }}
           livenessProbe:
             httpGet:
@@ -137,6 +147,25 @@ spec:
           {{- end }}
           resources:
             {{- toYaml $config.resources | nindent 12 }}
+      {{- if $config.volumes }}
+      volumes:
+        {{- range $config.volumes }}
+        - name: {{ .name }}
+          {{- if .persistentVolumeClaim }}
+          persistentVolumeClaim:
+            claimName: {{ .persistentVolumeClaim.claimName }}
+          {{- else if .hostPath }}
+          hostPath:
+            path: {{ .hostPath.path }}
+            type: {{ .hostPath.type | default "DirectoryOrCreate" }}
+          {{- else if .emptyDir }}
+          emptyDir: {}
+          {{- else if .configMap }}
+          configMap:
+            name: {{ .configMap.name }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
 ---
 apiVersion: v1
 kind: Service
