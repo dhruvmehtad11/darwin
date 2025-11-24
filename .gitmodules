@@ -11,6 +11,7 @@
 [submodule "chronos"]
 	path = chronos
 	url = https://github.com/dream11/chronos.git
+	branch = feat/chronos_distro_changes
 [submodule "darwin-compute"]
 	path = darwin-compute
 	url = https://github.com/dream11/darwin-compute.git
