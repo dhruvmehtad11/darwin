@@ -9,7 +9,7 @@ global:
   # Database connection details (shared across subcharts)
   database:
     mysql:
-      username: "root"
+      username: "darwin"
       rootPassword: "password"
       database: "main"
       userPassword: "password"
