@@ -1,6 +1,7 @@
 [submodule "feature-store"]
 	path = feature-store
 	url = https://github.com/dream11/darwin-ofs-v2.git
+	branch = darwin-k8s-local
 [submodule "workspace"]
 	path = workspace
 	url = https://github.com/dream11/darwin-workspace.git
