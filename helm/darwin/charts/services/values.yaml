@@ -248,7 +248,7 @@ services:
         value: "http://darwin-localstack:4566"
 
   mlflow-lib:
-    serviceName: darwin-mlflow
+    serviceName: darwin-mlflow-lib
     enabled: true
     replicaCount: 1
     image:

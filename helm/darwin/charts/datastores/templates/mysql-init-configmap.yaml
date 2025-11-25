@@ -11,8 +11,6 @@ data:
   01-create-databases.sql: |
     -- Create all required databases for Darwin services
     CREATE DATABASE IF NOT EXISTS darwin;
-    CREATE DATABASE IF NOT EXISTS darwin_mlflow;
-    CREATE DATABASE IF NOT EXISTS darwin_mlflow_auth;
     CREATE DATABASE IF NOT EXISTS airflow;
     
     -- Grant all privileges to root user from any host
