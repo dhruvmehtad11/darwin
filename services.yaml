@@ -3,7 +3,7 @@ applications:
     base-path: feature-store
     path: app
     base-image: darwin/java:11-maven-bookworm-slim
-    enabled: true
+    enabled: false
     env:
       - name: VAULT_SERVICE_MYSQL_USERNAME
         value: "dummy"
@@ -20,7 +20,7 @@ applications:
     base-path: feature-store
     path: admin
     base-image: darwin/java:11-maven-bookworm-slim
-    enabled: true
+    enabled: false
     env:
       - name: VAULT_SERVICE_MYSQL_USERNAME
         value: "dummy"
@@ -37,7 +37,7 @@ applications:
     base-path: feature-store
     path: consumer
     base-image: darwin/java:11-maven-bookworm-slim
-    enabled: true
+    enabled: false
     env:
       - name: VAULT_SERVICE_MYSQL_USERNAME
         value: "dummy"
@@ -61,13 +61,13 @@ applications:
       - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
         value: "password"
       - name: CONFIG_SERVICE_MYSQL_DATABASE
-        value: "darwin"
+        value: "darwin_mlflow"
       - name: TEAM_SUFFIX
         value: "-darwin-local"
       - name: VPC_SUFFIX
         value: "-darwin-local"
       - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "darwin"
+        value: "root"
       - name: VAULT_SERVICE_MYSQL_PASSWORD
         value: "password"
       - name: CONFIG_SERVICE_S3_PATH
@@ -84,13 +84,13 @@ applications:
       - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
         value: "password"
       - name: CONFIG_SERVICE_MYSQL_DATABASE
-        value: "darwin"
+        value: "darwin_mlflow"
       - name: TEAM_SUFFIX
         value: "-darwin-local"
       - name: VPC_SUFFIX
         value: "-darwin-local"
       - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "darwin"
+        value: "root"
       - name: VAULT_SERVICE_MYSQL_PASSWORD
         value: "password"
       - name: CONFIG_SERVICE_S3_PATH
@@ -100,14 +100,14 @@ applications:
     base-path: chronos
     path: .
     base-image: darwin/python:3.9.7-pip-bookworm-slim
-    enabled: true
+    enabled: false
     env: []
 
   - application: chronos-consumer
     base-path: chronos
     path: .
     base-image: darwin/python:3.9.7-pip-bookworm-slim
-    enabled: true
+    enabled: false
     env: []
 
   - application: darwin-compute

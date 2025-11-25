@@ -11,7 +11,7 @@ global:
     mysql:
       username: "darwin"
       rootPassword: "password"
-      database: "main"
+      database: "darwin"  # Main database name
       userPassword: "password"
     cassandra:
       username: "darwin_user"
@@ -26,15 +26,15 @@ datastores:
   mysql:
     enabled: true
   cassandra:
-    enabled: true
+    enabled: false
   kafka:
-    enabled: true
+    enabled: false
   zookeeper:
-    enabled: true
+    enabled: false
   localstack:
     enabled: true
   airflow:
-    enabled: true
+    enabled: false
 
 services:
   enabled: true

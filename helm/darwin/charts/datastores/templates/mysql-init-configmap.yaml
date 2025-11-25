@@ -8,8 +8,22 @@ metadata:
     {{- include "darwin.labels" . | nindent 4 }}
     app.kubernetes.io/component: mysql
 data:
-  01-create-airflow-db.sql: |
+  01-create-databases.sql: |
+    -- Create all required databases for Darwin services
+    CREATE DATABASE IF NOT EXISTS darwin;
+    CREATE DATABASE IF NOT EXISTS darwin_mlflow;
+    CREATE DATABASE IF NOT EXISTS darwin_mlflow_auth;
     CREATE DATABASE IF NOT EXISTS airflow;
+    
+    -- Grant all privileges to root user from any host
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+    
+    -- Create darwin user if needed and grant privileges
+    CREATE USER IF NOT EXISTS 'darwin'@'%' IDENTIFIED BY 'password';
+    GRANT ALL PRIVILEGES ON *.* TO 'darwin'@'%' WITH GRANT OPTION;
     GRANT ALL PRIVILEGES ON airflow.* TO 'root'@'%';
+    GRANT ALL PRIVILEGES ON *.* TO 'darwin'@'%';
+
+    
     FLUSH PRIVILEGES;
 {{- end }}

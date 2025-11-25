@@ -27,7 +27,6 @@ spec:
               value: {{ .Values.auth.username | quote }}
             - name: MYSQL_PASSWORD
               value: {{ .Values.auth.password | quote }}
-            {{- end }}
           ports:
             - name: mysql
               containerPort: 3306
@@ -56,16 +55,21 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 2
             timeoutSeconds: 1
-          {{- if .Values.primary.persistence.enabled }}
           volumeMounts:
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+            {{- if .Values.primary.persistence.enabled }}
             - name: data
               mountPath: /var/lib/mysql
-          {{- end }}
+            {{- end }}
           resources:
             {{- toYaml .Values.primary.resources | nindent 12 }}
-      {{- if .Values.primary.persistence.enabled }}
       volumes:
+        - name: init-scripts
+          configMap:
+            name: {{ .Release.Name }}-mysql-init
+        {{- if .Values.primary.persistence.enabled }}
         - name: data
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-mysql
-      {{- end }}
+        {{- end }}

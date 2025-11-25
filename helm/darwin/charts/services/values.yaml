@@ -2,7 +2,7 @@
 services:
   # Feature Store Service
   feature-store:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2
     image:
@@ -19,7 +19,7 @@ services:
       enabled: false
 
   feature-store-admin:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2-admin
     image:
@@ -36,7 +36,7 @@ services:
       enabled: false
 
   feature-store-consumer:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ofs-v2-consumer
     image:
@@ -81,7 +81,7 @@ services:
           claimName: darwin-shared-pvc
 
   chronos:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: chronos
     image:
@@ -117,7 +117,7 @@ services:
         value: "us-east-1"
 
   chronos-consumer:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: chronos-consumer
     image:
@@ -154,7 +154,7 @@ services:
 
   # Workflow Orchestration Service
   workflow:
-    enabled: true
+    enabled: false
     replicaCount: 1
     image:
       repository: darwin-workflow
@@ -199,7 +199,7 @@ services:
       - name: DARWIN_COMPUTE_HOST
         value: "darwin-compute"
       - name: CONFIG_SERVICE_MYSQL_DATABASE
-        value: "main"
+        value: "darwin"
       - name: VAULT_SERVICE_ES_USERNAME
         value: "admin"
       - name: VAULT_SERVICE_ES_PASSWORD
@@ -278,7 +278,7 @@ services:
       - name: CONFIG_SERVICE_MYSQL_DATABASE
         value: "darwin_mlflow"
       - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "darwin"
+        value: "root"
       - name: VAULT_SERVICE_MYSQL_PASSWORD
         value: "password"
       - name: VAULT_SERVICE_ADMIN_USERNAME
@@ -329,15 +329,15 @@ services:
       - name: CONFIG_SERVICE_MYSQL_DATABASE
         value: "darwin_mlflow"
       - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "darwin"
+        value: "root"
       - name: VAULT_SERVICE_MYSQL_PASSWORD
         value: "password"
       - name: VAULT_SERVICE_ADMIN_USERNAME
-        value: "darwin"
+        value: "root"
       - name: VAULT_SERVICE_ADMIN_PASSWORD
         value: "password"
       - name: VAULT_SERVICE_MLFLOW_ADMIN_USERNAME
-        value: "darwin"
+        value: "root"
       - name: VAULT_SERVICE_MLFLOW_ADMIN_PASSWORD
         value: "password"
       - name: MLFLOW_UI_URL

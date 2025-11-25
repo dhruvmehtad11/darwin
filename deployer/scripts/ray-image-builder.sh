@@ -67,5 +67,4 @@ echo "Tagging and pushing image to registry..."
 docker tag "$IMAGE_NAME" "$REGISTRY/$IMAGE_NAME"
 docker push "$REGISTRY/$IMAGE_NAME"
 echo "Successfully pushed image to registry: $REGISTRY/$IMAGE_NAME"
-
 echo "Successfully built image: $IMAGE_NAME"
