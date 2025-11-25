@@ -193,7 +193,7 @@ services:
       enabled: false
     extraEnvVars:
       - name: VAULT_SERVICE_MYSQL_USERNAME
-        value: "darwin"
+        value: "root"
       - name: VAULT_SERVICE_MYSQL_PASSWORD
         value: "password"
       - name: DARWIN_COMPUTE_HOST

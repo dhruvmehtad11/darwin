@@ -355,11 +355,7 @@ spec:
               env_json="$env_json{\"name\":\"DARWIN_ELASTICSEARCH_HOST\",\"value\":\"$DARWIN_ELASTICSEARCH_HOST\"},"
               env_json="$env_json{\"name\":\"SERVICE_NAME\",\"value\":\"$component_name\"},"
               env_json="$env_json{\"name\":\"AWS_ENDPOINT_OVERRIDE\",\"value\":\"$AWS_ENDPOINT_OVERRIDE\"},"
-              env_json="$env_json{\"name\":\"AWS_ENDPOINT_URL_S3\",\"value\":\"$AWS_ENDPOINT_OVERRIDE\"},"
-              env_json="$env_json{\"name\":\"COMPUTE_BUCKET_NAME\",\"value\":\"$COMPUTE_BUCKET_NAME\"},"
-              env_json="$env_json{\"name\":\"AWS_ACCESS_KEY_ID\",\"value\":\"dummy\"},"
-              env_json="$env_json{\"name\":\"AWS_SECRET_ACCESS_KEY\",\"value\":\"dummy\"},"
-              env_json="$env_json{\"name\":\"AWS_DEFAULT_REGION\",\"value\":\"us-east-1\"}"
+              env_json="$env_json{\"name\":\"COMPUTE_BUCKET_NAME\",\"value\":\"$COMPUTE_BUCKET_NAME\"}"
               
               # Add extra environment variables
               for kv in "$@"; do
@@ -384,18 +380,7 @@ spec:
                       \"image\": \"$image\",
                       \"imagePullPolicy\": \"Always\",
                       \"command\": [\"bash\", \"-c\", \".odin/pre-deploy.sh\"],
-                      \"env\": $env_json,
-                      \"volumeMounts\": [{
-                        \"mountPath\": \"/root/.m2/\",
-                        \"name\": \"host-data\"
-                      }]
-                    }],
-                    \"volumes\": [{
-                      \"name\": \"host-data\",
-                      \"hostPath\": {
-                        \"path\": \"/mnt/shared-data/.m2/\",
-                        \"type\": \"Directory\"
-                      }
+                      \"env\": $env_json
                     }]
                   }
                 }"
