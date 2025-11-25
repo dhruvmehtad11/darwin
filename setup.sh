@@ -176,3 +176,13 @@ while [ $i -lt $app_count ]; do
   echo ">>> Completed processing $application"
   i=$((i + 1))
 done
+
+# Build Ray images
+ray_image_count=$(yq eval '.ray-images | length' "$YAML_FILE")
+i=0
+while [ $i -lt $ray_image_count ]; do
+  image_name=$(yq eval ".ray-images[$i].image-name" "$YAML_FILE")
+  dockerfile_path=$(yq eval ".ray-images[$i].dockerfile-path" "$YAML_FILE")
+  sh deployer/scripts/ray-image-builder.sh -n "$image_name" -p "$dockerfile_path" -r "$DOCKER_REGISTRY"
+  i=$((i + 1))
+done

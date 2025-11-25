@@ -62,4 +62,3 @@ docker build \
   
 docker tag "$application":latest "$registry/$application":latest
 docker push "$registry/$application":latest
-
