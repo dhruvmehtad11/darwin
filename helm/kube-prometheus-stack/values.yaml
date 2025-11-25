@@ -1,4 +1,10 @@
+global:
+  registry: localhost:5000
+
 grafana:
+  image:
+    repository: grafana/grafana
+    tag: latest
   grafana.ini:
     security:
       allow_embedding: true

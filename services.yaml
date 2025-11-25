@@ -135,3 +135,63 @@ ray-images:
   - image-name: ray:2.37.0
     dockerfile-path: darwin-compute/runtimes/cpu/New-Lightweight/Ray2.37_Py3.10
     registry: localhost:5000
+
+datastores:
+  - name: mysql
+    image: mysql
+    tag: "8.0"
+    enabled: true
+  - name: cassandra
+    image: cassandra
+    tag: "5.0"
+    enabled: false
+  - name: kafka
+    image: confluentinc/cp-kafka
+    tag: "7.4.0"
+    enabled: false
+  - name: zookeeper
+    image: zookeeper
+    tag: "3.8"
+    enabled: false
+  - name: airflow
+    image: apache/airflow
+    tag: "2.7.0"
+    enabled: false
+  - name: rabbitmq
+    image: rabbitmq
+    tag: "3.12-management-alpine"
+    enabled: false
+  - name: localstack
+    image: localstack/localstack
+    tag: "latest"
+    enabled: true
+  - name: opensearch
+    image: opensearchproject/opensearch
+    tag: "2.11.0"
+    enabled: true
+  - name: busybox
+    image: busybox
+    tag: "1.36"
+    enabled: true
+
+operators:
+  - name: kuberay-operator
+    image: quay.io/kuberay/operator
+    tag: "v1.1.0"
+    enabled: true
+  - name: nginx
+    image: nginx
+    tag: "1.27.4"
+    enabled: true
+  - name: grafana
+    image: grafana/grafana
+    tag: "latest"
+    enabled: true
+  - name: curl
+    image: curlimages/curl
+    tag: "latest"
+    enabled: true
+  - name: alpine-k8s
+    image: alpine/k8s
+    tag: "1.28.0"
+    enabled: true

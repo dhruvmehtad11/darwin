@@ -54,7 +54,7 @@ services:
 
   # Workspace Service
   workspace:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-workspace
     image:

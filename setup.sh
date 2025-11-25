@@ -1,6 +1,15 @@
 #!/bin/sh
 set -e
 
+# Check for init configuration
+ENABLED_SERVICES_FILE=".setup/enabled-services.yaml"
+if [ ! -f "$ENABLED_SERVICES_FILE" ]; then
+    echo "❌ No configuration found at $ENABLED_SERVICES_FILE"
+    echo "   Please run ./init.sh first to configure which services to enable."
+    exit 1
+fi
+echo "✅ Found configuration: $ENABLED_SERVICES_FILE"
+
 # Initialize and update git submodules
 echo "Initializing git submodules..."
 git submodule sync --recursive
@@ -141,20 +150,35 @@ pushd deployer/images/golang-1.18
 sh build.sh
 popd
 
-# Path to your YAML
+# Path to your YAML files
 YAML_FILE="services.yaml"
+ENABLED_FILE=".setup/enabled-services.yaml"
 
 dynamic_build_args=""
 
-# Loop through YAML using array approach
+# ============================================================================
+# BUILD APPLICATIONS
+# ============================================================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "                    BUILDING APPLICATIONS"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Loop through YAML using array approach - check enabled status from .setup/enabled-services.yaml
 app_count=$(yq eval '.applications | length' "$YAML_FILE")
 i=0
 while [ $i -lt $app_count ]; do
-  if [ $(yq eval ".applications[$i].enabled" "$YAML_FILE") = "false" ]; then
+  application=$(yq eval ".applications[$i].application" "$YAML_FILE")
+  
+  # Check enabled status from .setup/enabled-services.yaml
+  is_enabled=$(yq eval ".applications.\"$application\"" "$ENABLED_FILE")
+  if [ "$is_enabled" != "true" ]; then
+    echo "⏭️  Skipping $application (disabled)"
     i=$((i + 1))
     continue
   fi
-  application=$(yq eval ".applications[$i].application" "$YAML_FILE")
+  
   base_path=$(yq eval ".applications[$i].base-path" "$YAML_FILE")
   path=$(yq eval ".applications[$i].path" "$YAML_FILE")
   base_image=$(yq eval ".applications[$i].base-image" "$YAML_FILE")
@@ -177,12 +201,173 @@ while [ $i -lt $app_count ]; do
   i=$((i + 1))
 done
 
-# Build Ray images
+# ============================================================================
+# BUILD RAY IMAGES
+# ============================================================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "                    BUILDING RAY IMAGES"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
 ray_image_count=$(yq eval '.ray-images | length' "$YAML_FILE")
 i=0
 while [ $i -lt $ray_image_count ]; do
   image_name=$(yq eval ".ray-images[$i].image-name" "$YAML_FILE")
+  
+  # Check enabled status from .setup/enabled-services.yaml
+  is_enabled=$(yq eval ".ray-images.\"$image_name\"" "$ENABLED_FILE")
+  if [ "$is_enabled" != "true" ]; then
+    echo "⏭️  Skipping ray image $image_name (disabled)"
+    i=$((i + 1))
+    continue
+  fi
+  
   dockerfile_path=$(yq eval ".ray-images[$i].dockerfile-path" "$YAML_FILE")
+  echo ">>> Building ray image $image_name..."
   sh deployer/scripts/ray-image-builder.sh -n "$image_name" -p "$dockerfile_path" -r "$DOCKER_REGISTRY"
   i=$((i + 1))
 done
+
+# ============================================================================
+# PULL/PUSH DATASTORE IMAGES TO LOCAL REGISTRY
+# ============================================================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "              PULLING DATASTORE IMAGES TO LOCAL REGISTRY"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Function to pull, tag, and push datastore image to local registry
+push_datastore_image() {
+  local name=$1
+  local image=$2
+  local tag=$3
+  local full_image="${image}:${tag}"
+  local local_image="${DOCKER_REGISTRY}/${image}:${tag}"
+  
+  echo ">>> Processing datastore: $name ($full_image)"
+  
+  # Pull from public registry
+  echo "    Pulling $full_image..."
+  if docker pull "$full_image"; then
+    echo "    ✅ Pulled $full_image"
+  else
+    echo "    ❌ Failed to pull $full_image"
+    return 1
+  fi
+  
+  # Tag for local registry
+  echo "    Tagging as $local_image..."
+  docker tag "$full_image" "$local_image"
+  
+  # Push to local registry
+  echo "    Pushing to local registry..."
+  if docker push "$local_image"; then
+    echo "    ✅ Pushed $local_image"
+  else
+    echo "    ❌ Failed to push $local_image"
+    return 1
+  fi
+  
+  echo ">>> Completed $name"
+  echo ""
+}
+
+# Loop through datastores defined in services.yaml
+datastore_count=$(yq eval '.datastores | length' "$YAML_FILE")
+if [ "$datastore_count" != "0" ] && [ "$datastore_count" != "null" ]; then
+  i=0
+  while [ $i -lt $datastore_count ]; do
+    ds_name=$(yq eval ".datastores[$i].name" "$YAML_FILE")
+    ds_image=$(yq eval ".datastores[$i].image" "$YAML_FILE")
+    ds_tag=$(yq eval ".datastores[$i].tag" "$YAML_FILE")
+    
+    # Check enabled status from .setup/enabled-services.yaml
+    is_enabled=$(yq eval ".datastores.\"$ds_name\"" "$ENABLED_FILE")
+    if [ "$is_enabled" != "true" ]; then
+      echo "⏭️  Skipping datastore $ds_name (disabled)"
+      i=$((i + 1))
+      continue
+    fi
+    
+    push_datastore_image "$ds_name" "$ds_image" "$ds_tag"
+    
+    i=$((i + 1))
+  done
+else
+  echo "⚠️  No datastores defined in services.yaml"
+fi
+
+# ============================================================================
+# PULL/PUSH OPERATOR IMAGES TO LOCAL REGISTRY
+# ============================================================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "              PULLING OPERATOR IMAGES TO LOCAL REGISTRY"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Function to pull, tag, and push operator image to local registry
+push_operator_image() {
+  local name=$1
+  local image=$2
+  local tag=$3
+  local full_image="${image}:${tag}"
+  local local_image="${DOCKER_REGISTRY}/${image}:${tag}"
+  
+  echo ">>> Processing operator: $name ($full_image)"
+  
+  # Pull from public registry
+  echo "    Pulling $full_image..."
+  if docker pull "$full_image"; then
+    echo "    ✅ Pulled $full_image"
+  else
+    echo "    ❌ Failed to pull $full_image"
+    return 1
+  fi
+  
+  # Tag for local registry
+  echo "    Tagging as $local_image..."
+  docker tag "$full_image" "$local_image"
+  
+  # Push to local registry
+  echo "    Pushing to local registry..."
+  if docker push "$local_image"; then
+    echo "    ✅ Pushed $local_image"
+  else
+    echo "    ❌ Failed to push $local_image"
+    return 1
+  fi
+  
+  echo ">>> Completed $name"
+  echo ""
+}
+
+# Loop through operators defined in services.yaml (always enabled - no config check)
+operator_count=$(yq eval '.operators | length' "$YAML_FILE")
+if [ "$operator_count" != "0" ] && [ "$operator_count" != "null" ]; then
+  i=0
+  while [ $i -lt $operator_count ]; do
+    op_name=$(yq eval ".operators[$i].name" "$YAML_FILE")
+    op_image=$(yq eval ".operators[$i].image" "$YAML_FILE")
+    op_tag=$(yq eval ".operators[$i].tag" "$YAML_FILE")
+    op_enabled=$(yq eval ".operators[$i].enabled" "$YAML_FILE")
+    
+    # Operators are always pulled if enabled in services.yaml (no user config check)
+    if [ "$op_enabled" != "true" ]; then
+      echo "⏭️  Skipping operator $op_name (disabled in services.yaml)"
+      i=$((i + 1))
+      continue
+    fi
+    
+    push_operator_image "$op_name" "$op_image" "$op_tag"
+    
+    i=$((i + 1))
+  done
+else
+  echo "⚠️  No operators defined in services.yaml"
+fi
+
+echo ""
+echo "✅ Setup completed!"

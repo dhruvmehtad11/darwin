@@ -6,6 +6,8 @@
 config.env
 kind/shared-storage/*
 kind/config/*
+.setup/*
+!.setup/.gitkeep
 
 # ===========================
 # OS generated files

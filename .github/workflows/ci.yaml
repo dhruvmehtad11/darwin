@@ -1,0 +1,168 @@
+name: Darwin Platform Sanity CI
+
+on:
+  pull_request:
+    types:
+      - synchronize
+      - opened
+  push:
+    branches:
+      - main
+
+env:
+  M2_HOME: /usr/local/apache-maven
+  ARTIFACT_NAME: darwin-ofs-v2
+  JFROG_REPOSITORY: /com/dream11
+  RUNNER_ALLOW_RUNASROOT: 1
+  TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX: "954754807219.dkr.ecr.us-east-1.amazonaws.com/"
+  RYUK_CONTAINER_IMAGE: "954754807219.dkr.ecr.us-east-1.amazonaws.com/testcontainers/ryuk:0.8.1"
+
+jobs:
+  sanity-test:
+    runs-on: [ self-hosted, linux, X64, kube ]
+    timeout-minutes: 45
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9.7'
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Setup Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: '3.9.1'
+
+      - name: Setup Kubernetes tools
+        run: |
+          echo "🔧 Installing Kubernetes tools..."
+          
+          # Install Kind
+          if ! command -v kind &> /dev/null; then
+            echo "Installing kind..."
+            curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+            chmod +x ./kind
+            sudo mv ./kind /usr/local/bin/kind
+          fi
+          
+          # Install kubectl
+          if ! command -v kubectl &> /dev/null; then
+            echo "Installing kubectl..."
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin/kubectl
+          fi
+          
+          # Install Helm
+          if ! command -v helm &> /dev/null; then
+            echo "Installing helm..."
+            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          fi
+          
+          echo "✅ All Kubernetes tools installed"
+          echo ""
+          echo "📦 Versions:"
+          docker --version
+          python --version
+          java -version
+          mvn -version
+          kind version
+          kubectl version --client
+          helm version
+
+      - name: Initialize configuration (init.sh --all)
+        run: |
+          echo "🚀 Running init.sh --all to enable all services..."
+          sh init.sh --all
+          echo ""
+          echo "✅ Configuration created:"
+          cat .setup/enabled-services.yaml
+
+      - name: Build images and setup cluster (setup.sh --yes)
+        run: |
+          echo "🚀 Running setup.sh --yes to build images and create cluster..."
+          sh setup.sh --yes
+          echo "✅ Setup completed"
+
+      - name: Deploy platform (start.sh)
+        run: |
+          echo "🚀 Running start.sh to deploy the platform..."
+          sh start.sh
+          echo "✅ Deployment completed"
+
+      - name: Validate all pods are running
+        run: |
+          echo "🔍 Validating all pods in darwin namespace..."
+          
+          # Set timeout and interval
+          TIMEOUT=600  # 10 minutes
+          INTERVAL=10
+          ELAPSED=0
+          
+          echo "Waiting for all pods in darwin namespace to be RUNNING..."
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            # Get pod status - count pods that are NOT Running or Completed
+            NOT_RUNNING=$(kubectl get pods -n darwin --no-headers 2>/dev/null | grep -v "Running\|Completed" | wc -l || echo "0")
+            
+            if [ "$NOT_RUNNING" -eq 0 ]; then
+              echo "✅ All pods are running!"
+              echo ""
+              echo "Pod status in darwin namespace:"
+              kubectl get pods -n darwin -o wide
+              exit 0
+            fi
+            
+            echo "[$ELAPSED/${TIMEOUT}s] Waiting for $NOT_RUNNING pods to reach RUNNING state..."
+            kubectl get pods -n darwin --no-headers | grep -v "Running\|Completed" || true
+            
+            sleep $INTERVAL
+            ELAPSED=$((ELAPSED + INTERVAL))
+          done
+          
+          echo "❌ Timeout: Not all pods reached RUNNING state after ${TIMEOUT}s"
+          echo ""
+          echo "Final pod status:"
+          kubectl get pods -n darwin -o wide
+          echo ""
+          echo "Pod descriptions for failed pods:"
+          kubectl get pods -n darwin --no-headers | grep -v "Running\|Completed" | awk '{print $1}' | xargs -I {} kubectl describe pod {} -n darwin
+          exit 1
+
+      - name: Show deployment summary
+        if: success()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "                  DEPLOYMENT SUCCESSFUL"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📊 All services in darwin namespace:"
+          kubectl get all -n darwin
+          echo ""
+          echo "✅ Sanity check passed - all pods are running"
+
+      - name: Cleanup cluster
+        if: always()
+        run: |
+          echo "🧹 Cleaning up kind cluster..."
+          if kind get clusters | grep -q "kind"; then
+            kind delete cluster --name kind
+            echo "✅ Cluster deleted"
+          fi
+          
+          echo "🧹 Cleaning up docker registry..."
+          if docker ps -a | grep -q "kind-registry"; then
+            docker stop kind-registry || true
+            docker rm kind-registry || true
+            echo "✅ Registry cleaned up"
+          fi
