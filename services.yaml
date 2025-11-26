@@ -159,6 +159,11 @@ ray-images:
     dockerfile-path: darwin-compute/runtimes/cpu/New-Lightweight/Ray2.37_Py3.10
     registry: localhost:5000
 
+serve-images:
+  - image-name: serve-md-runtime:latest
+    dockerfile-path: ml-serve-app/runtime/darwin-serve-runtime
+    registry: localhost:5000
+
 datastores:
   - name: mysql
     image: mysql

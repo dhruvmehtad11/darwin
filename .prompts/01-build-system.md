@@ -41,9 +41,10 @@ sh init.sh    # Interactive wizard - creates .setup/enabled-services.yaml
 4. Starts local Docker registry
 5. Builds base images (Java, Python, Go)
 6. Builds **enabled** applications from config
-7. Builds **enabled** Ray runtime images
-8. Pulls/pushes **enabled** datastore images to local registry
-9. Pulls/pushes operator images to local registry
+7. Builds **enabled** Ray runtime images (auto-enabled with darwin-compute)
+8. Builds **enabled** Serve runtime images (auto-enabled with ml-serve-app)
+9. Pulls/pushes **enabled** datastore images to local registry
+10. Pulls/pushes operator images to local registry
 
 **Key flags**:
 ```bash
@@ -81,6 +82,11 @@ applications:
 ray-images:
   - image-name: ray:2.37.0
     dockerfile-path: darwin-compute/runtimes/cpu/New-Lightweight/Ray2.37_Py3.10
+    registry: localhost:5000
+
+serve-images:
+  - image-name: serve-md-runtime:latest
+    dockerfile-path: ml-serve-app/runtime/darwin-serve-runtime
     registry: localhost:5000
 
 datastores:
@@ -125,9 +131,13 @@ applications:
   darwin-compute: true
   darwin-cluster-manager: true
   darwin-workspace: false
+  ml-serve-app: true
 
 ray-images:
   "ray:2.37.0": true    # Auto-enabled with darwin-compute
+
+serve-images:
+  "serve-md-runtime:latest": true  # Auto-enabled with ml-serve-app
 
 datastores:
   mysql: true
@@ -331,6 +341,20 @@ Builds Ray runtime images separately:
 ```
 
 **Note**: Ray images are automatically enabled when `darwin-compute` is selected in `init.sh`.
+
+---
+
+## Serve Image Builder
+
+Uses the same `deployer/scripts/ray-image-builder.sh` script for serve runtime images:
+
+```bash
+-n  image name (e.g., serve-md-runtime:latest)
+-p  dockerfile path (e.g., ml-serve-app/runtime/darwin-serve-runtime)
+-r  registry URL
+```
+
+**Note**: Serve images are automatically enabled when `ml-serve-app` is selected in `init.sh`.
 
 ---
 
