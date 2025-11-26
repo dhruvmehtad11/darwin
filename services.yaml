@@ -128,6 +128,20 @@ applications:
     base-path: workspace
     path: .
     base-image: darwin/python:3.9.7-pip-bookworm-slim
+    enabled: false
+    env: []
+
+  - application: ml-serve-app
+    base-path: ml-serve-app
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
+    enabled: true
+    env: []
+
+  - application: artifact-builder
+    base-path: artifact-builder
+    path: .
+    base-image: darwin/python:3.9.7-pip-bookworm-slim
     enabled: true
     env: []
 

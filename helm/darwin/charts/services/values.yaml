@@ -247,6 +247,217 @@ services:
       - name: AWS_ENDPOINT_URL_S3
         value: "http://darwin-localstack:4566"
 
+  ml-serve-app:
+    enabled: true
+    replicaCount: 1
+    serviceName: darwin-ml-serve-app
+    image:
+      registry: localhost:5000
+      name: ml-serve-app
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: false
+    autoscaling:
+      enabled: false
+    extraEnvVars:
+      # Environment Configuration
+      - name: ENV
+        value: "local"
+      # Also include MYSQL_* variants for backward compatibility
+      - name: MYSQL_HOST
+        value: "darwin-mysql"
+      - name: MYSQL_DATABASE
+        value: "darwin_ml_serve"
+      - name: MYSQL_USERNAME
+        value: "root"
+      - name: MYSQL_PASSWORD
+        value: "password"
+      # Service URLs
+      # Using direct service URLs for inter-service communication (faster than ingress)
+      # Cluster Manager service is available at darwin-cluster-manager:8080
+      # Ingress path: http://localhost/cluster-manager (for external access)
+      - name: DCM_URL
+        value: "http://darwin-cluster-manager.darwin.svc.cluster.local:8080"
+      # Artifact Builder service - use Kubernetes service for inter-pod communication
+      # External access (from laptop): http://localhost/artifact-builder
+      - name: ARTIFACT_BUILDER_URL
+        value: "http://darwin-artifact-builder.darwin.svc.cluster.local:8000"
+      - name: ARTIFACT_BUILDER_PUBLIC_URL
+        value: "http://localhost/artifact-builder"
+      # Container Registry (for Kubernetes pods pulling images)
+      - name: CONTAINER_REGISTRY
+        value: "localhost:5000"
+      - name: IMAGE_REPOSITORY
+        value: serve-app
+      - name: IMAGE_TAG
+        value: "test-iter1_v1"
+      # AWS Configuration
+      - name: AWS_ENDPOINT_URL
+        value: "http://darwin-localstack:4566"
+      # OpenTelemetry Configuration
+      - name: ENABLE_OTEL
+        value: "false"
+      # GitHub Configuration
+      - name: GITHUB_TOKEN
+        value: ""
+      # Kubernetes Configuration
+      - name: KUBE_INGRESS_CLASS
+        value: "nginx"
+      # Domain Configuration
+      # Service Discovery
+      - name: ENABLE_ISTIO
+        value: "false"
+      - name: ISTIO_SERVICE_NAME
+        value: "istio-ingressgateway"
+      - name: ISTIO_NAMESPACE
+        value: "istio-system"
+      # Serve Configuration
+      - name: HEALTHCHECK_PATH
+        value: "/healthcheck"
+      - name: APPLICATION_PORT
+        value: "8000"
+      # Resource Names
+      - name: FASTAPI_SERVE_RESOURCE_NAME
+        value: "darwin-fastapi-serve"
+      - name: FASTAPI_VALUES_TEMPLATE_NAME
+        value: "fastapi_values.yaml"
+      - name: RAY_SERVE_RESOURCE_NAME
+        value: "RayService"
+      - name: RAY_VALUES_TEMPLATE_NAME
+        value: "ray_values.yaml"
+      # Chart Versions
+      - name: FASTAPI_SERVE_CHART_VERSION
+        value: "1.0.0"
+      - name: RAY_SERVE_CHART_VERSION
+        value: "1.0.0"
+      # Organization Configuration
+      - name: ORGANIZATION_NAME
+        value: "my-org"
+      # Optional: Job Configuration
+      # ALB Logging Configuration
+      - name: ALB_LOGS_ENABLED
+        value: "false"
+      - name: ALB_LOGS_PREFIX
+        value: "alb-logs"
+      - name: ALB_LOGS_BUCKET
+        value: d11-logs
+      - name: MLFLOW_TRACKING_URI
+        value: http://darwin-mlflow-lib.darwin.svc.cluster.local:8080
+      - name: MLFLOW_TRACKING_USERNAME
+        value: "test"
+      - name: MLFLOW_TRACKING_PASSWORD
+        value: "test"
+
+  artifact-builder:
+    enabled: true
+    replicaCount: 1
+    serviceName: darwin-artifact-builder
+    image:
+      registry: localhost:5000
+      name: artifact-builder
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8000
+    ingress:
+      enabled: false
+    autoscaling:
+      enabled: false
+    healthcheck:
+      path: /healthcheck
+      initialDelaySeconds: 60
+      readinessDelay: 30
+    extraEnvVars:
+      # Environment Configuration
+      - name: ENV
+        value: "local"
+      - name: DEV
+        value: "true"
+      # Directory for build artifacts
+      - name: BUILD_ARTIFACTS_ROOT
+        value: "build_artifacts"
+      # Log file roots
+      - name: LOG_FILE_ROOT_LOCAL
+        value: "logs"
+      - name: LOG_FILE_ROOT_PROD
+        value: "/var/www/artifact-builder/logs"
+      # Database Configuration
+      - name: MYSQL_HOST
+        value: "darwin-mysql"
+      - name: MYSQL_PORT
+        value: "3306"
+      - name: MYSQL_DATABASE
+        value: "mlp_serve"
+      - name: MYSQL_USERNAME
+        value: "root"
+      - name: MYSQL_PASSWORD
+        value: "password"
+      # AWS Configuration
+      - name: AWS_ACCESS_KEY_ID
+        value: "tset"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "test"
+      - name: AWS_DEFAULT_REGION
+        value: "us-east-1"
+      - name: S3_BUCKET
+        value: "test"
+      # Service URLs
+      - name: APP_LAYER_URL
+        value: "http://localhost/artifact-builder"
+      # Container Registry Configuration
+      - name: CONTAINER_IMAGE_PREFIX
+        value: "darwin"
+      - name: CONTAINER_IMAGE_PREFIX_GCP
+        value: "ray-images"
+      - name: IMAGE_REPOSITORY
+        value: "serve-app"
+      - name: AWS_ECR_ACCOUNT_ID
+        value: ""
+      - name: AWS_ECR_REGION
+        value: "us-east-1"
+      - name: GCP_PROJECT_ID
+        value: ""
+      - name: GCP_CREDS_PATH
+        value: "test"
+      # Local Registry Configuration
+      - name: LOCAL_REGISTRY
+        value: "127.0.0.1:55000"
+      # OpenTelemetry Configuration
+      - name: ENABLE_OTEL
+        value: "false"
+      - name: GITHUB_TOKEN
+        value: ""
+
+    # Note: artifact-builder needs Docker-in-Docker or Docker socket access
+    # Consider using privileged: true or mounting Docker socket if needed
+    # For now, disabled by default to not disturb existing deployments
+    securityContext:
+      privileged: true  # Required for Docker-in-Docker or accessing Docker socket with permissions
+      runAsUser: 0      # Root access needed for Docker operations
+
+    volumeMounts:
+      - mountPath: /var/run/docker.sock
+        name: docker-socket
+    volumes:
+      - name: docker-socket
+        hostPath:
+          path: /var/run/docker.sock
+          type: Socket
+    
+    # Persistence for logs
+    persistence:
+      enabled: true
+      mountPath: "/app/app_layer/src/serve_app_layer/logs"
+      # existingClaim: "fsx-claim-0" # Uncomment if you want to use specific shared storage
+      size: "1Gi"
+      accessMode: "ReadWriteOnce"
+
+
   mlflow-lib:
     serviceName: darwin-mlflow-lib
     enabled: true
@@ -393,6 +604,12 @@ ingress:
     - path: "/cluster-manager(/|$)(.*)"
       service: "cluster-manager"
       port: 8080
+    - path: "/ml-serve(/|$)(.*)"
+      service: "ml-serve-app"
+      port: 8000
+    - path: "/artifact-builder(/|$)(.*)"
+      service: "artifact-builder"
+      port: 8000
 
 # Shared Storage Configuration for Services
 # This creates a shared PersistentVolume that can be used by multiple services
