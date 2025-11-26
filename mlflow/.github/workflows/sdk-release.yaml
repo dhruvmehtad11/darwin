@@ -1,0 +1,56 @@
+# This workflow publishes the module to Maven and is triggered when a Draft release is published.
+
+name: Publish SDK Release
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  publish-concrete-version:
+    runs-on: [ self-hosted, linux, X64, kube ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.COMMIT_ACCESS_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup jfrog
+        uses: jfrog/setup-jfrog-cli@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Setup git config
+        run: |
+          git config user.name "release-bot"
+          git config user.email "<>"
+
+      - name: Build Python SDK
+        run: |
+          sudo apt update
+          sudo apt install -y python3.9-venv
+          
+          pushd sdk  
+          rm -rf dist
+          python3 -m pip install --upgrade build
+          python3 -m build
+          popd
+
+      - name: Release Python SDK
+        run: |
+          pushd sdk
+          python3 -m pip install --upgrade twine
+          python3 -m twine upload --repository-url https://dreamsports.jfrog.io/artifactory/api/pypi/d11-python-dev-local/ \
+          -u ${{ secrets.JFROG_PYPI_USERNAME }} -p ${{ secrets.JFROG_PYPI_PASSWORD }} --verbose dist/*
+          rm -rf dist
+          popd
+
+      - name: Bump version
+        run: |
+          python3 -m pip install bumpversion
+          bash .ci/scripts/bump-sdk-version.sh
+
