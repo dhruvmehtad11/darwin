@@ -29,3 +29,7 @@
 	path = ml-serve-app
 	url = https://github.com/dream11/darwin-ml-serve-v2/
 	branch = feat/one-click-ml-flow
+[submodule "darwin-catalog"]
+	path = darwin-catalog
+	url = https://github.com/dream11/darwincatalog.git
+	branch = main
