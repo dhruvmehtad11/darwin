@@ -4,7 +4,7 @@ runnerImage:
   imagePullSecrets:
     - name: dsjfrog
 labels:
-  - prod-onboarding-runner
+  - self-hosted
   - linux
   - X64
   - kube
