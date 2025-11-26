@@ -300,24 +300,17 @@ echo "cli-tools:" >> "$OUTPUT_FILE"
 
 HERMES_CLI_ENABLED=false
 
-# Check if hermes-cli directory exists
-HERMES_CLI_PATH="hermes-cli"
-if [ ! -d "$HERMES_CLI_PATH" ]; then
-  echo "  ⚠️  hermes-cli directory not found at $HERMES_CLI_PATH"
-  echo "  hermes-cli: false" >> "$OUTPUT_FILE"
+# If --all flag is set, enable hermes-cli
+if [ "$ALL_YES" = "true" ]; then
+  HERMES_CLI_ENABLED=true
 else
-  # If --all flag is set, enable hermes-cli
-  if [ "$ALL_YES" = "true" ]; then
+  prompt_yn "  Enable hermes-cli (local installation)?" "n"
+  if [ "$PROMPT_RESULT" = "true" ]; then
     HERMES_CLI_ENABLED=true
-  else
-    prompt_yn "  Enable hermes-cli (local installation)?" "n"
-    if [ "$PROMPT_RESULT" = "true" ]; then
-      HERMES_CLI_ENABLED=true
-    fi
   fi
-  
-  echo "  hermes-cli: $HERMES_CLI_ENABLED" >> "$OUTPUT_FILE"
 fi
+
+echo "  hermes-cli: $HERMES_CLI_ENABLED" >> "$OUTPUT_FILE"
 
 # ============================================================================
 # SUMMARY
