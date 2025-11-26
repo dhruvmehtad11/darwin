@@ -6,7 +6,7 @@ on: workflow_dispatch
 
 jobs:
   onboarding-job:
-    runs-on: [ self-hosted, linux, X64, prod-onboarding-runner ]
+    runs-on: [ self-hosted, linux, X64, onboarding-runner ]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
