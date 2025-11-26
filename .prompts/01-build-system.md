@@ -85,7 +85,7 @@ ray-images:
     registry: localhost:5000
 
 serve-images:
-  - image-name: serve-ocd-runtime:latest
+  - image-name: serve-md-runtime:latest
     dockerfile-path: ml-serve-app/runtime/darwin-serve-runtime
     registry: localhost:5000
 
@@ -137,7 +137,7 @@ ray-images:
   "ray:2.37.0": true    # Auto-enabled with darwin-compute
 
 serve-images:
-  "serve-ocd-runtime:latest": true  # Auto-enabled with ml-serve-app
+  "serve-md-runtime:latest": true  # Auto-enabled with ml-serve-app
 
 datastores:
   mysql: true
@@ -349,7 +349,7 @@ Builds Ray runtime images separately:
 Uses the same `deployer/scripts/ray-image-builder.sh` script for serve runtime images:
 
 ```bash
--n  image name (e.g., serve-ocd-runtime:latest)
+-n  image name (e.g., serve-md-runtime:latest)
 -p  dockerfile path (e.g., ml-serve-app/runtime/darwin-serve-runtime)
 -r  registry URL
 ```

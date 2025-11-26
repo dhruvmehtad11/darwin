@@ -160,7 +160,7 @@ ray-images:
     registry: localhost:5000
 
 serve-images:
-  - image-name: serve-ocd-runtime:latest
+  - image-name: serve-md-runtime:latest
     dockerfile-path: ml-serve-app/runtime/darwin-serve-runtime
     registry: localhost:5000
 

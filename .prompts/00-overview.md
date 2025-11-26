@@ -87,7 +87,7 @@ ray-images:
   - image-name: ray:2.37.0              # Ray runtime images (auto-enabled with compute)
 
 serve-images:
-  - image-name: serve-ocd-runtime:latest # Serve runtime images (auto-enabled with ml-serve-app)
+  - image-name: serve-md-runtime:latest # Serve runtime images (auto-enabled with ml-serve-app)
 
 datastores:
   - name: mysql                         # Database images
@@ -128,7 +128,7 @@ ray-images:
   "ray:2.37.0": true    # Auto-enabled if darwin-compute is enabled
 
 serve-images:
-  "serve-ocd-runtime:latest": true  # Auto-enabled if ml-serve-app is enabled
+  "serve-md-runtime:latest": true  # Auto-enabled if ml-serve-app is enabled
 
 datastores:
   mysql: true
