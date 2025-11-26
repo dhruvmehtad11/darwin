@@ -33,3 +33,7 @@
 	path = darwin-catalog
 	url = https://github.com/dream11/darwincatalog.git
 	branch = main
+[submodule "hermes-cli"]
+	path = hermes-cli
+	url = https://github.com/dream11/hermes-cli.git
+	branch = hermes_for_distro
