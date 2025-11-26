@@ -4,57 +4,21 @@ run-name: ${{ github.repository }} repository ephemeral runners
 
 on: workflow_dispatch
 
-env:
-  DOCKER_REGISTRY: https://dreamsports.jfrog.io/
-  HELM_REPOSITORY: https://dreamsports.jfrog.io/artifactory/d11-helm-charts
-  KUBE_CLUSTER: ci_cluster_v2
-
 jobs:
-  onboard-ephemeral-runners:
+  onboarding-job:
     runs-on: [ self-hosted, linux, X64, prod-onboarding-runner ]
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Use Onboard Ephemeral Runners Action
+        id: onboarding
+        uses: dream11/k8s-action-runner@v2
         with:
-          path: './'
-
-      - name: Split repository name
-        env:
-          REPOSITORY: ${{ github.repository }}
-        id: split
-        run: echo "fragment=${REPOSITORY##*/}" >> $GITHUB_OUTPUT
-
-      - name: Set up helm
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: azure/setup-helm@v3
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'v1.22.4'
-
-      - name: Set up aws cli
-        run: pip3 install awscli
-
-      - name: Add /usr/local/bin to path
-        run: echo "/usr/local/bin/" >> $GITHUB_PATH
-
-      - name: Set namespace in environment
-        run: echo "NAMESPACE=github-action-runners-${{ steps.split.outputs.fragment }}" >> $GITHUB_ENV
-
-      - name: Generate kube config
-        run: |
-          aws eks update-kubeconfig --name ${KUBE_CLUSTER} --region us-east-1 --kubeconfig ./kubeconf
-
-      - name: Create kubernetes secret
-        run: |
-          kubectl get namespace --kubeconfig=./kubeconf | grep -q "^${NAMESPACE}" || (kubectl create ns ${NAMESPACE} \
-          --kubeconfig=./kubeconf  && kubectl create secret docker-registry dsjfrog --docker-server=${DOCKER_REGISTRY} \
-          --docker-username=${{ secrets.JFROG_USERNAME }} --docker-password=${{ secrets.JFROG_PASSWORD }} -n ${NAMESPACE} --kubeconfig=./kubeconf)
-
-      - name: Install actions runner controller
-        run: |
-          helm upgrade --repo ${HELM_REPOSITORY} --username ${{ secrets.JFROG_USERNAME }} --password ${{ secrets.JFROG_PASSWORD }} \
-          --install ${{ steps.split.outputs.fragment }} github-action-runners --values .ci/actions/ephemeral-runners.yaml \
-          --set repository=${{ github.repository }} -n ${NAMESPACE} --create-namespace --kubeconfig=./kubeconf --version 0.2.1
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          values-file : '.ci/actions/values.yaml'
+          docker-username: ${{ secrets.JFROG_USERNAME }}
+          docker-password: ${{ secrets.JFROG_PASSWORD }}
+          helm-username: ${{ secrets.JFROG_USERNAME }}
+          helm-password: ${{ secrets.JFROG_PASSWORD }}
+          kube-cluster: 'ci_cluster_v2'
