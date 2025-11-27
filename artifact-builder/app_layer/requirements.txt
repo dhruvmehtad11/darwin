@@ -1,0 +1,5 @@
+# Install app_layer package in editable mode (includes core and model dependencies)
+# Run from workspace root: pip install -r app_layer/requirements.txt
+-e ./model
+-e ./core
+-e ./app_layer

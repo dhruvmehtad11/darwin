@@ -21,10 +21,6 @@
 	path = darwin-cluster-manager
 	url = https://github.com/dream11/darwin-cluster-manager/
 	branch = agharsh/feat/localstack
-[submodule "artifact-builder"]
-	path = artifact-builder
-	url = https://github.com/dream11/darwin-ml-serve
-	branch = atif/feat/distro-setup
 [submodule "ml-serve-app"]
 	path = ml-serve-app
 	url = https://github.com/dream11/darwin-ml-serve-v2/
