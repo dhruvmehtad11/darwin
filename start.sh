@@ -35,7 +35,7 @@ if [ "$HERMES_CLI_ENABLED" = "true" ]; then
     # Install hermes-cli
     echo "   Installing hermes-cli package..."
     (
-      cd "$HERMES_CLI_PATH" && source .venv/bin/activate && pip install -e . --force-reinstall
+      cd "$HERMES_CLI_PATH" && source .venv/bin/activate && pip install -e . --force-reinstall --no-cache-dir
     )
 
     if [ $? -eq 0 ]; then
