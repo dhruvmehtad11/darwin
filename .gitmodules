@@ -2,10 +2,10 @@
 	path = feature-store
 	url = https://github.com/dream11/darwin-ofs-v2.git
 	branch = darwin-k8s-local
-[submodule "workspace"]
-	path = workspace
-	url = https://github.com/dream11/darwin-workspace.git
-	branch = feat/onboard-distro
+[submodule "chronos"]
+	path = chronos
+	url = https://github.com/dream11/chronos.git
+	branch = feat/chronos_distro_changes
 [submodule "artifact-builder"]
 	path = artifact-builder
 	url = https://github.com/dream11/darwin-ml-serve
