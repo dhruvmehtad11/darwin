@@ -1,0 +1,103 @@
+suite: "Readinessprobe configuration deployment tests"
+
+#  This suite tests the readinessprobe configurations for both head and worker group
+#  specifications in the Ray cluster. It ensures that all readiness probe parameters,
+#  such as failure threshold, initial delay, period, success threshold, and timeout,
+#  are correctly set according to the values defined.
+
+
+tests:
+  - it: test failed , headGroupSpec readinessProbe.failureThreshold
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.failureThreshold: 2
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].readinessProbe.failureThreshold
+          value: 2
+
+  - it: test failed , headGroupSpec readinessProbe.initialDelaySeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.initialDelaySeconds: 60
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].readinessProbe.initialDelaySeconds
+          value: 60
+
+  - it: test failed , headGroupSpec readinessProbe.periodSeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.periodSeconds: 15
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].readinessProbe.periodSeconds
+          value: 15
+
+  - it: test failed , headGroupSpec readinessProbe.successThreshold
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.timeoutSeconds: 3
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].readinessProbe.successThreshold
+          value: 1
+
+  - it: test failed , headGroupSpec readinessProbe.timeoutSeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.timeoutSeconds: 3
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].readinessProbe.timeoutSeconds
+          value: 3
+
+
+  - it: test failed , workerGroupSpec readinessProbe.failureThreshold
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.failureThreshold: 2
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].readinessProbe.failureThreshold
+          value: 2
+
+  - it: test failed , workerGroupSpec readinessProbe.initialDelaySeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.initialDelaySeconds: 60
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].readinessProbe.initialDelaySeconds
+          value: 60
+
+  - it: test failed , workerGroupSpec readinessProbe.periodSeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.periodSeconds: 15
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].readinessProbe.periodSeconds
+          value: 15
+
+
+  - it: test failed , workerGroupSpec readinessProbe.successThreshold
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.successThreshold: 1
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].readinessProbe.successThreshold
+          value: 1
+
+  - it: test failed , workerGroupSpec readinessProbe.timeoutSeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      readinessProbe.timeoutSeconds: 3
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].readinessProbe.timeoutSeconds
+          value: 3
+
+
+

@@ -1,0 +1,63 @@
+suite: "Head configuration deployment tests"
+
+#  This suite tests the configuration settings for the head group of the Ray cluster,
+#  including resource limits, requests, annotations, and node selectors. It ensures
+#  that the head group is correctly configured with specified CPU and memory resources, proper
+#  annotations, and node selectors in the deployment.
+
+tests:
+  - it: test failed , head.resources.limits.cpu
+    template: "raycluster-cluster.yaml"
+    set:
+      head.resources.limits.cpu: 4
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].resources.limits.cpu
+          value: 4
+
+  - it: test failed , head.resources.limits.memory
+    template: "raycluster-cluster.yaml"
+    set:
+      head.resources.limits.memory: "4G"
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].resources.limits.memory
+          value: "4G"
+
+  - it: test failed , head.resources.requests.cpu
+    template: "raycluster-cluster.yaml"
+    set:
+      head.resources.requests.cpu: 4
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].resources.requests.cpu
+          value: 4
+
+  - it: test failed , head.resources.requests.memory
+    template: "raycluster-cluster.yaml"
+    set:
+      head.resources.requests.memory: "4G"
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].resources.requests.memory
+          value: "4G"
+
+  - it: test failed , head.annotations.[karpenter.sh/do-not-disrupt]
+    template: "raycluster-cluster.yaml"
+    set:
+      head.annotations.[karpenter.sh/do-not-disrupt]: 'true'
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.metadata.annotations
+          value:
+            karpenter.sh/do-not-disrupt: 'true'
+
+  - it: test failed , head.nodeSelector.[darwin.dream11.com/resource]
+    template: "raycluster-cluster.yaml"
+    set:
+      head.nodeSelector.[darwin.dream11.com/resource]: ray-cluster-head
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.nodeSelector
+          value:
+            darwin.dream11.com/resource: ray-cluster-head

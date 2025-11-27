@@ -1,0 +1,101 @@
+suite: "Worker configuration deployment tests"
+
+#  This suite tests the configuration settings for the worker group of the Ray cluster,
+#  including resource limits, requests, annotations, and node selectors. It ensures
+#  that the worker group is correctly configured with specified CPU and memory resources, proper
+#  annotations, and node selectors in the deployment.
+
+tests:
+  - it: test failed , worker.groupName
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.groupName: wg
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].groupName
+          value: wg
+
+  - it: test failed , worker.replicas
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.replicas: 2
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].replicas
+          value: 2
+
+  - it: test failed , worker.minReplicas
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.minReplicas: 2
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].minReplicas
+          value: 2
+
+  - it: test failed , worker.maxReplicas
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.maxReplicas: 4
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].maxReplicas
+          value: 4
+
+  - it: test failed , worker.resources.limits.cpu
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.resources.limits.cpu: 4
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].resources.limits.cpu
+          value: 4
+
+  - it: test failed , worker.resources.limits.memory
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.resources.limits.memory: "4G"
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].resources.limits.memory
+          value: "4G"
+
+  - it: test failed , worker.resources.requests.cpu
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.resources.requests.cpu: 4
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].resources.requests.cpu
+          value: 4
+
+  - it: test failed , worker.resources.requests.memory
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.resources.requests.memory: "4G"
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].resources.requests.memory
+          value: "4G"
+
+  - it: test failed , worker.annotations.[karpenter.sh/do-not-disrupt]
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.annotations.[karpenter.sh/do-not-disrupt]: 'true'
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.metadata.annotations
+          value:
+            karpenter.sh/do-not-disrupt: 'true'
+
+  - it: test failed , worker.nodeSelector.[darwin.dream11.com/resource]
+    template: "raycluster-cluster.yaml"
+    set:
+      worker.nodeSelector.[darwin.dream11.com/resource]: ray-cluster
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.nodeSelector
+          value:
+            darwin.dream11.com/resource: ray-cluster
+
+

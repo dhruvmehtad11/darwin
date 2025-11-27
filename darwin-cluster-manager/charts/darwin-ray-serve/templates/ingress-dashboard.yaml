@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{printf "raydashboard-%s" .Release.Name }}
+  namespace: istio-system
+spec:
+  gateways:
+  - darwin-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: {{ printf "/%s-dashboard/" .Release.Name }} 
+    rewrite:
+      uri: /  
+    route:
+    - destination:
+        host: {{ printf "%s-kuberay-head-svc.%s.svc.cluster.local" .Release.Name .Release.Namespace }}
+        port:
+          number: 8265
