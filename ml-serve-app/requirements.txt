@@ -1,0 +1,3 @@
+# Root requirements for development
+# Install packages with: pip install -r app_layer/requirements.txt
+# This file is kept for any additional development tools not in setup.cfg files

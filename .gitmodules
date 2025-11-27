@@ -2,7 +2,3 @@
 	path = chronos
 	url = https://github.com/dream11/chronos.git
 	branch = feat/chronos_distro_changes
-[submodule "ml-serve-app"]
-	path = ml-serve-app
-	url = https://github.com/dream11/darwin-ml-serve-v2/
-	branch = feat/one-click-ml-flow
