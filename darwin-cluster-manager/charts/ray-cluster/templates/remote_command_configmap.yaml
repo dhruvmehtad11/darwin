@@ -1,0 +1,111 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-remote-command
+  labels: {{- include "ray-cluster.labels" . | nindent 4 }}
+data:
+  # Common script to execute any command
+  run-remote-command.sh: |
+    #!/bin/bash
+
+    # Variables
+    EXECUTION_ID="$1"
+    COMMAND="$2"
+    TIMEOUT="$3"
+    echo "$(date): Received command execution for $EXECUTION_ID" "$COMMAND" >> ~/logs/remote-command.log
+
+    LOG_FILE="./logs/${EXECUTION_ID}.log"  # Log file path
+    POD_NAME=$(hostname)
+
+    API_URL={{ .Values.remoteCommand.statusReportApi }}  # API endpoint for status updates
+    UPDATE_INTERVAL={{ .Values.remoteCommand.statusReportInterval }}  # Time interval (in seconds) for status updates
+    S3_LOG_FILE="s3://{{ .Values.remoteCommand.logsS3Bucket }}/{{ .Values.remoteCommand.logsS3Key }}/${EXECUTION_ID}/${POD_NAME}/remote-command.log"
+
+    # Function to send status updates to the API
+    send_status_update() {
+      local status=$1
+      local message=$2
+      echo "$(date): Sending status update: $status - $message for $CLUSTER_ID, $EXECUTION_ID, $POD_NAME" >> ~/logs/remote-command.log
+      response=$(curl -X POST -H "Content-Type: application/json" -d "{\"cluster_id\": \"$CLUSTER_ID\", \"execution_id\": \"$EXECUTION_ID\", \"pod_name\": \"$POD_NAME\", \"status\": \"$status\", \"message\": \"$message\"}" $API_URL)
+      echo "$(date): Status update response for $EXECUTION_ID: $response" >> ~/logs/remote-command.log
+    }
+
+    # Log script execution
+    echo "$(date): Starting command execution for $EXECUTION_ID : $COMMAND" >> ~/logs/remote-command.log
+
+    # Start execution
+    send_status_update "started" "Command execution started"
+
+    # Execute command with timeout and capture logs
+    timeout $TIMEOUT bash -c "set -e; $COMMAND" > "$LOG_FILE" 2>&1 &
+    COMMAND_PID=$!
+
+    # Monitor command execution and send periodic updates
+    while ps -p $COMMAND_PID > /dev/null; do
+      send_status_update "running" "Command is still running"
+      sleep $UPDATE_INTERVAL
+    done
+
+    # Capture exit status
+    wait $COMMAND_PID
+    EXIT_STATUS=$?
+
+    # Final status update
+    if [ $EXIT_STATUS -eq 0 ]; then
+      send_status_update "success" "Command execution completed successfully"
+    elif [ $EXIT_STATUS -eq 124 ]; then
+      send_status_update "failed" "Command execution timed out"
+    else
+      send_status_update "failed" "Command execution failed with exit code $EXIT_STATUS"
+    fi
+
+    # Upload logs to S3
+    if aws s3 cp $LOG_FILE $S3_LOG_FILE; then
+      echo "$(date): Logs uploaded to S3 for $EXECUTION_ID" >> ~/logs/remote-command.log
+    else
+      echo "$(date): Failed to upload logs to S3 for $EXECUTION_ID" >> ~/logs/remote-command.log
+    fi
+
+    # Log script completion
+    echo "$(date): Command execution completed for $EXECUTION_ID : $COMMAND" >> ~/logs/remote-command.log
+
+  execute-remote-commands.sh: |
+    #!/bin/bash
+    echo "$(date): Running all commands in parallel"
+
+    NODE_TYPE="${TYPE}"
+    if [ -z "$NODE_TYPE" ]; then
+      echo "$(date): NODE_TYPE is not set. Exiting."
+      exit 1
+    fi
+
+    # Array to hold background process IDs
+    pids=()
+
+    if [ "$NODE_TYPE" == "head" ]; then
+      {{- range .Values.remoteCommand.commands.head }}
+        # Launch each command in the background and capture its PID
+        /tmp/remote-command/run-remote-command.sh {{ .executionId }} '{{ .command }}' {{ .timeout }} &
+        pids+=($!)
+      {{- end }}
+    else
+      {{- range .Values.remoteCommand.commands.worker }}
+        # Launch each command in the background and capture its PID
+        /tmp/remote-command/run-remote-command.sh {{ .executionId }} '{{ .command }}' {{ .timeout }} &
+        pids+=($!)
+      {{- end }}
+    fi
+
+    # Wait for all background processes to complete
+    exit_status=0
+    for pid in "${pids[@]}"; do
+      # If any command exits with a non-zero status, capture it
+      wait $pid || exit_status=$?
+    done
+
+    if [ $exit_status -eq 0 ]; then
+      echo "$(date): All commands executed successfully."
+    else
+      echo "$(date): Some commands failed. Exiting with status $exit_status"
+      exit $exit_status
+    fi

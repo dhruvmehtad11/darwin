@@ -1,0 +1,5 @@
+requests~=2.32.3
+typeguard~=4.4.2
+PyYAML~=6.0.2
+darwin-logger~=2.0.6
+-e ../model

@@ -1,0 +1,90 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    ray.io/cluster: {{ .Release.Name }}
+  name: {{ .Release.Name }}-head-monitor
+  namespace: {{ .Release.Namespace }}
+spec:
+  endpoints:
+    - interval: 20s
+      path: /metrics
+      scrapeTimeout: 10s
+      port: metrics
+      relabelings:
+        - sourceLabels: [ __meta_kubernetes_pod_node_name ]
+          action: replace
+          targetLabel: kubernetes_node_name
+  jobLabel: {{ .Release.Name }}-ray-head
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      ray.io/cluster: {{ .Release.Name }}-kuberay
+      ray.io/identifier: {{ .Release.Name }}-kuberay-head
+      ray.io/node-type: head
+  targetLabels:
+    - ray.io/cluster
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  labels:
+    ray.io/cluster: {{ .Release.Name }}
+  name: {{ .Release.Name }}-workers-monitor
+  namespace: {{ .Release.Namespace }}
+spec:
+  jobLabel: {{ .Release.Name }}-ray-workers
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  podMetricsEndpoints:
+    - interval: 20s
+      port: metrics
+      scrapeTimeout: 10s
+      relabelings:
+        - sourceLabels: [ __meta_kubernetes_pod_node_name ]
+          action: replace
+          targetLabel: kubernetes_node_name
+  podTargetLabels:
+    - ray.io/cluster
+  selector:
+    matchLabels:
+      ray.io/is-ray-node: "yes"
+      ray.io/node-type: worker
+      ray.io/cluster: {{ .Release.Name }}-kuberay
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  labels:
+    ray.io/cluster: {{ .Release.Name }}
+  name: {{ .Release.Name }}-spark-monitor
+  namespace: {{ .Release.Namespace }}
+spec:
+  jobLabel: {{ .Release.Name }}-spark-monitor
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  podMetricsEndpoints:
+    - interval: 20s
+      port: sparkui
+      scrapeTimeout: 10s
+      path: /metrics/prometheus/
+      metricRelabelings:
+        - sourceLabels: [ __name__ ]
+          regex: '^metrics_spark_application_(\d+)_driver_(.*)'
+          replacement: spark-application-$1
+          targetLabel: spark_app_name
+        - sourceLabels: [ __name__ ]
+          regex: '^metrics_spark_application_(\d+)_driver_(.*)'
+          replacement: $2
+          targetLabel: __name__
+  podTargetLabels:
+    - ray.io/cluster
+  selector:
+    matchLabels:
+      ray.io/cluster: {{ .Release.Name }}-kuberay
+      ray.io/identifier: {{ .Release.Name }}-kuberay-head
+      ray.io/node-type: head

@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  labels:
+    ray.io/cluster: {{ .Release.Name }}
+  name: {{ .Release.Name }}-workers-monitor
+  namespace: {{ .Release.Namespace }}
+spec:
+  jobLabel: {{ .Release.Name }}-ray-workers
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  podMetricsEndpoints:
+    - interval: 20s
+      port: metrics
+      scrapeTimeout: 10s
+  podTargetLabels:
+    - rayCluster
+  selector:
+    matchLabels:
+      ray.io/is-ray-node: "yes"
+      ray.io/node-type: worker
+      rayCluster: {{ .Release.Name }}-kuberay

@@ -1,0 +1,117 @@
+---
+replicaCount: 1
+logLevel: info
+name: ml-serve-demo
+cluster_name: darwin-prod-eks-cluster
+ui:
+  color: "#34577c"
+  message: ''
+  logo: ''
+pdb:
+  enabled: true
+  minAvailable: 1
+envs:
+  ENV: darwin-prod
+  SERVICE_NAME: ml-serve-demo
+  TEAM_SUFFIX: ""
+  VPC_SUFFIX: ""
+image:
+  repository: localhost:5000/darwin
+  tag: ml_serve_demo
+  pullPolicy: Always
+service:
+  enabled: true
+  type: ClusterIP
+  httpPort: 8000
+  externalPort: 80
+tls:
+  enabled: false
+hpa:
+  enabled: true
+  maxReplicas: 3
+  cpu: 60
+  memory:
+    target: Utilization
+    value: 80
+    unit: Mi
+livenessProbe:
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
+  httpGet:
+    path: healthcheck
+    port: 8000
+readinessProbe:
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
+  httpGet:
+    path: healthcheck
+    port: 8000
+serviceAccount:
+  enabled: false
+serviceMonitor:
+  enabled: false
+  interval: 15s
+ingressInt:
+  namespace: darwin
+  ingressClass: alb
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: ml-serve-demo.darwin.dream11-k8s.local
+  enabled: true
+  healthcheckPath: "/healthcheck"
+  tags: "Environment=prod, Service=ml-serve-demo, squad=darwin, provisioned-by-user=harsh.a@dream11.com,
+    environment_name=prod, component_name=ml-serve-demo-alb, service_name=ml-serve-demo,
+    resource_type=alb, component_type=application, org_name=dream11"
+  albLogs:
+    enabled: false
+    bucket: d11-logs
+    prefix: alb-logs
+  path: "/*"
+  pathType: ImplementationSpecific
+  hosts: 
+  - localhost
+  tls: []
+ingressExt:
+  enabled: false
+resources:
+  limits:
+    cpu: 2
+    memory: 4G
+  requests:
+    cpu: 2
+    memory: 4G
+nodeSelector:
+  karpenter.sh/capacity-type: spot
+  serve: true
+tolerations: []
+affinity: {}
+podAnnotations: {}
+command: ""
+configServer:
+  enabled: false
+  consulToken: null
+  vaultToken: null
+labels: []
+org: dream11
+flagger:
+  metrics:
+  - name: sidecar-error-rate-measure
+    thresholdRange:
+      max: 1
+    interval: 1m
+  enabled: false
+  type: canary
+  interval: 1m
+  threshold: 2
+  skipAnalysis: false
+  maxWeight: 60
+  stepWeight: 20
+  iterations: 2
+  maxSurge: 10%
+  maxUnavailable: 1
+  slackChannel: darwin-serve-alerts

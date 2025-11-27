@@ -1,0 +1,45 @@
+suite: "Image configuration deployment tests"
+
+#  This suite tests the image configurations for both head and worker group specifications
+#  in the Ray cluster. It ensures that the image repository, tag, and pull policy are correctly
+#  set according to the defined values for the container images used in the deployment."
+
+tests:
+  - it: test failed , headGroupSpec image.repository and image.tag
+    template: "raycluster-cluster.yaml"
+    set:
+      image.repository: '000375658054.dkr.ecr.us-east-1.amazonaws.com/ray-images'
+      image.tag: 'Ray2.8.1-Py310-Spark3.3.1-CPU-v8'
+
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].image
+          value: "000375658054.dkr.ecr.us-east-1.amazonaws.com/ray-images:Ray2.8.1-Py310-Spark3.3.1-CPU-v8"
+
+  - it: test failed , headGroupSpec image.pullPolicy
+    template: "raycluster-cluster.yaml"
+    set:
+      image.pullPolicy: IfNotPresent
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent
+
+  - it: test failed , workerGroupSpecs image.repository and image.tag
+    template: "raycluster-cluster.yaml"
+    set:
+      image.repository: '000375658054.dkr.ecr.us-east-1.amazonaws.com/ray-images'
+      image.tag: 'Ray2.8.1-Py310-Spark3.3.1-CPU-v8'
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].image
+          value: '000375658054.dkr.ecr.us-east-1.amazonaws.com/ray-images:Ray2.8.1-Py310-Spark3.3.1-CPU-v8'
+
+  - it: test failed , workerGroupSpecs image.pullPolicy
+    template: "raycluster-cluster.yaml"
+    set:
+      image.pullPolicy: IfNotPresent
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent

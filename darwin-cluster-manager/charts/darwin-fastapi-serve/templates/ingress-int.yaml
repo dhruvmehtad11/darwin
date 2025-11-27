@@ -1,0 +1,58 @@
+{{- if .Values.ingressInt.enabled -}}
+{{- $fullName := include "service-deployment.fullname" . -}}
+{{- $ingressPath := .Values.ingressInt.path -}}
+{{- $ingressPathType := .Values.ingressInt.pathType -}}
+{{- $ingressServiceName := include "service-deployment.ingressServiceName" . -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-{{ .Release.Namespace }}-internal
+  namespace: {{ .Values.ingressInt.namespace }}
+{{- with .Values.ingressInt.annotations }}
+  annotations: {{ toYaml . | nindent 4 }}
+{{- end }}
+{{- if eq .Values.ingressInt.ingressClass "alb" -}}
+{{- include "service-deployment.ingressInt.alb-annotations" . | nindent 4 -}}
+{{- else -}}
+{{- include "service-deployment.ingressInt.nginx-annotations" . | nindent 4 -}}
+{{- end }}
+  labels:
+    {{- include "service-deployment.labels" . | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.ingressInt.ingressClass }}
+{{- if .Values.ingressInt.tls }}
+  tls:
+  {{- range .Values.ingressInt.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .Values.ingressInt.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - path: {{ $ingressPath }}
+            pathType: {{ $ingressPathType | default "Prefix" }}
+            backend:
+              service:
+                name: {{ $ingressServiceName }}
+                port:
+                  number: 80
+            pathType: {{ $ingressPathType }}
+  {{- end }}
+  {{- if not .Values.ingressInt.hosts }}
+    - http:
+        paths:
+          - path: {{ $ingressPath }}
+            pathType: {{ $ingressPathType | default "Prefix" }}
+            backend:
+              service:
+                name: {{ $ingressServiceName }}
+                port: http
+  {{- end }}
+{{- end }}
+

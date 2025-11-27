@@ -6,21 +6,10 @@
 	path = workspace
 	url = https://github.com/dream11/darwin-workspace.git
 	branch = feat/onboard-distro
-[submodule "mlflow"]
-	path = mlflow
-	url = https://github.com/dream11/darwin-mlflow.git
 [submodule "chronos"]
 	path = chronos
 	url = https://github.com/dream11/chronos.git
 	branch = feat/chronos_distro_changes
-[submodule "darwin-compute"]
-	path = darwin-compute
-	url = https://github.com/dream11/darwin-compute.git
-	branch = agharsh/feat/localstack
-[submodule "darwin-cluster-manager"]
-	path = darwin-cluster-manager
-	url = https://github.com/dream11/darwin-cluster-manager/
-	branch = agharsh/feat/localstack
 [submodule "ml-serve-app"]
 	path = ml-serve-app
 	url = https://github.com/dream11/darwin-ml-serve-v2/
@@ -29,3 +18,7 @@
 	path = darwin-catalog
 	url = https://github.com/dream11/darwincatalog.git
 	branch = main
+[submodule "hermes-cli"]
+	path = hermes-cli
+	url = https://github.com/dream11/hermes-cli.git
+	branch = hermes_for_distro

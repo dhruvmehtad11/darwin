@@ -287,6 +287,32 @@ else
 fi
 
 # ============================================================================
+# CLI TOOLS
+# ============================================================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "                        CLI TOOLS"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+echo "" >> "$OUTPUT_FILE"
+echo "cli-tools:" >> "$OUTPUT_FILE"
+
+HERMES_CLI_ENABLED=false
+
+# If --all flag is set, enable hermes-cli
+if [ "$ALL_YES" = "true" ]; then
+  HERMES_CLI_ENABLED=true
+else
+  prompt_yn "  Enable hermes-cli (local installation)?" "n"
+  if [ "$PROMPT_RESULT" = "true" ]; then
+    HERMES_CLI_ENABLED=true
+  fi
+fi
+
+echo "  hermes-cli: $HERMES_CLI_ENABLED" >> "$OUTPUT_FILE"
+
+# ============================================================================
 # SUMMARY
 # ============================================================================
 echo ""
@@ -320,6 +346,10 @@ fi
 echo ""
 echo "🗄️  Datastores:"
 yq eval '.datastores | to_entries | .[] | select(.value == true) | "   ✓ " + .key' "$OUTPUT_FILE" 2>/dev/null || echo "   (none)"
+
+echo ""
+echo "🛠️  CLI Tools:"
+yq eval '.cli-tools | to_entries | .[] | select(.value == true) | "   ✓ " + .key' "$OUTPUT_FILE" 2>/dev/null || echo "   (none)"
 
 echo ""
 echo "Next steps:"

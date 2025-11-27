@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    ray.io/cluster: {{ .Release.Name }}
+  name: {{ .Release.Name }}-head-monitor
+  namespace: {{ .Release.Namespace }}
+spec:
+  endpoints:
+    - interval: 20s
+      path: /metrics
+      scrapeTimeout: 10s
+      port: metrics
+  jobLabel: {{ .Release.Name }}-ray-head
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      ray.io/identifier: {{ .Release.Name }}-kuberay-head
+      ray.io/node-type: head
+  targetLabels:
+    - ray.io/identifier
