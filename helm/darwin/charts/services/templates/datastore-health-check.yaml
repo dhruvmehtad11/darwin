@@ -113,6 +113,8 @@ spec:
           value: "{{ .Release.Name }}-localstack"
         - name: DARWIN_ELASTICSEARCH_HOST
           value: "{{ .Release.Name }}-elasticsearch"
+        - name: ELASTICSEARCH_URL
+          value: "http://{{ .Release.Name }}-workflow-elasticsearch:9200"
         {{- if .Values.global.dockerRegistry }}
         - name: DOCKER_REGISTRY
           value: "{{ .Values.global.dockerRegistry }}"
@@ -353,6 +355,7 @@ spec:
               env_json="$env_json{\"name\":\"DARWIN_KAFKA_HOST\",\"value\":\"$DARWIN_KAFKA_HOST\"},"
               env_json="$env_json{\"name\":\"DARWIN_ZOOKEEPER_HOST\",\"value\":\"$DARWIN_ZOOKEEPER_HOST\"},"
               env_json="$env_json{\"name\":\"DARWIN_ELASTICSEARCH_HOST\",\"value\":\"$DARWIN_ELASTICSEARCH_HOST\"},"
+              env_json="$env_json{\"name\":\"ELASTICSEARCH_URL\",\"value\":\"$ELASTICSEARCH_URL\"},"
               env_json="$env_json{\"name\":\"SERVICE_NAME\",\"value\":\"$component_name\"},"
               env_json="$env_json{\"name\":\"AWS_ENDPOINT_OVERRIDE\",\"value\":\"$AWS_ENDPOINT_OVERRIDE\"},"
               env_json="$env_json{\"name\":\"COMPUTE_BUCKET_NAME\",\"value\":\"$COMPUTE_BUCKET_NAME\"}"

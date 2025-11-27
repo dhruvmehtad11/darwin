@@ -27,7 +27,7 @@ else
 fi
 
 echo "⚙️  Setting up Kubernetes dependencies..."
-./k8s-setup.sh
+# ./k8s-setup.sh
 
 echo "🚀 Starting Darwin Platform deployment..."
 

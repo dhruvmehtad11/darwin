@@ -10,6 +10,12 @@ dependencies:
     version: 1.0.0
     repository: "file://./mysql"
     condition: mysql.enabled
+  - name: elasticsearch
+    version: 1.0.0
+    repository: "file://./elasticsearch"
+    condition: elasticsearch.enabled
+    tags:
+      - search
   - name: cassandra
     version: 1.0.0
     repository: "file://./cassandra"

@@ -29,3 +29,7 @@
 	path = ml-serve-app
 	url = https://github.com/dream11/darwin-ml-serve-v2/
 	branch = feat/one-click-ml-flow
+[submodule "workflow"]
+	path = workflow
+	url = https://github.com/dream11/darwin-workflow.git
+	branch = feat/workflow-onboard

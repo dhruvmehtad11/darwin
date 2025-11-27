@@ -19,6 +19,28 @@ mysql:
         cpu: 250m
         memory: 1Gi
 
+# Elasticsearch (For Workflow Service)
+# Separate from OpenSearch which is used by other services
+elasticsearch:
+  enabled: true
+  replicas: 1
+  image:
+    repository: docker.elastic.co/elasticsearch/elasticsearch
+    tag: "8.11.0"
+    pullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 1Gi
+  security:
+    enabled: false
+
 # Cassandra Database
 cassandra:
   enabled: false
@@ -75,11 +97,15 @@ zookeeper:
 # Apache Airflow
 airflow:
   enabled: false
-  executor: CeleryExecutor
+  executor: LocalExecutor  # Changed from CeleryExecutor to LocalExecutor for local development
   image:
-    repository: apache/airflow
-    tag: "2.7.0"
+    repository: darwin-airflow
+    tag: "latest"
     pullPolicy: IfNotPresent
+  config:
+    scheduler:
+      dag_dir_list_interval: 30  # Scan for new DAGs every 30 seconds (default is 300)
+      min_file_process_interval: 30  # Process DAG files every 30 seconds
   webserver:
     replicas: 1
     defaultUser:
@@ -102,7 +128,7 @@ airflow:
   redis:
     enabled: false
   rabbitmq:
-    enabled: true
+    enabled: false
     auth:
       username: airflow
       password: airflow
@@ -112,6 +138,7 @@ airflow:
   mysql:
     enabled: false # Use existing MySQL service
   workers:
+    enabled: false
     replicas: 1
     resources:
       limits:
@@ -129,6 +156,9 @@ airflow:
       requests:
         cpu: 200m
         memory: 1Gi
+  logs:
+    storage: 5Gi  # Storage size for Airflow logs PVC
+    # storageClassName: ""  # Optional: specify storage class if needed
 
 # LocalStack (S3 Mock)
 localstack:

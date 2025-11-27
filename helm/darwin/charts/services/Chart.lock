@@ -1,0 +1,6 @@
+dependencies:
+- name: feature-store
+  repository: file://./feature-store
+  version: 1.0.0
+digest: sha256:cdd2611c17cf8a5071e044a33152e667bb87e7698b5c3e10add8d6f7e12d4894
+generated: "2025-11-05T14:00:26.644413+05:30"

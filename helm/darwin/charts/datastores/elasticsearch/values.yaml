@@ -1,0 +1,66 @@
+image:
+  repository: docker.elastic.co/elasticsearch/elasticsearch
+  tag: "8.11.0"
+  pullPolicy: IfNotPresent
+
+replicas: 1
+
+# Elasticsearch configuration
+clusterName: "darwin-es-cluster"
+nodeName: "darwin-es-node"
+
+# Security settings (disabled for local development)
+security:
+  enabled: false
+
+# Environment variables
+env:
+  - name: "discovery.type"
+    value: "single-node"
+  - name: "xpack.security.enabled"
+    value: "false"
+  - name: "ES_JAVA_OPTS"
+    value: "-Xms512m -Xmx512m"
+  - name: "cluster.name"
+    value: "darwin-es-cluster"
+  - name: "node.name"
+    value: "darwin-es-node"
+
+# Persistence
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 10Gi
+  mountPath: /usr/share/elasticsearch/data
+
+# Resources
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 250m
+    memory: 1Gi
+
+# Service configuration
+service:
+  type: ClusterIP
+  httpPort: 9200
+  transportPort: 9300
+
+# Health checks
+livenessProbe:
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+

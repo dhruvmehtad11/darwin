@@ -1,0 +1,24 @@
+{{- if .Values.airflow.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-airflow-logs
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: airflow-logs
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.airflow.logs.storage | default "5Gi" }}
+  {{- $env := .Values.global.environment | default "stag" }}
+  {{- if or (eq $env "local") (eq $env "darwin-local") }}
+  # For local development, use empty storageClassName to bind to manual PV
+  storageClassName: ""
+  {{- else if .Values.airflow.logs.storageClassName }}
+  storageClassName: {{ .Values.airflow.logs.storageClassName }}
+  {{- end }}
+{{- end }}
+

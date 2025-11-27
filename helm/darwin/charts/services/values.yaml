@@ -156,13 +156,16 @@ services:
   workflow:
     enabled: false
     replicaCount: 1
+    serviceName: darwin-workflow
+    skipInitContainer: true
     image:
-      repository: darwin-workflow
+      registry: localhost:5000
+      name: darwin-workflow
       tag: latest
       pullPolicy: IfNotPresent
     service:
       type: ClusterIP
-      port: 8081
+      port: 8001
     ingress:
       enabled: true
       className: nginx
@@ -173,10 +176,92 @@ services:
               pathType: Prefix
     autoscaling:
       enabled: false
+    extraEnvVars:
+      # Elasticsearch Configuration (using dedicated Elasticsearch instance for workflow, NOT OpenSearch)
+      - name: ELASTICSEARCH_URL
+        value: "http://darwin-workflow-elasticsearch:9200"
+      - name: ELASTICSEARCH_USERNAME
+        value: ""
+      - name: ELASTICSEARCH_PASSWORD
+        value: ""
+      # Airflow Configuration (new variable names)
+      - name: AIRFLOW_URL
+        value: "http://darwin-airflow:8080/airflow"
+      - name: AIRFLOW_AUTH_TOKEN
+        value: "Basic ZGFyd2luOmRhcndpbg=="
+      # Airflow MySQL Configuration (new variable names)
+      - name: AIRFLOW_MYSQL_HOST
+        value: "darwin-mysql"
+      - name: AIRFLOW_MYSQL_USERNAME
+        value: "root"
+      - name: AIRFLOW_MYSQL_PASSWORD
+        value: "password"
+      - name: AIRFLOW_MYSQL_DATABASE
+        value: "airflow"
+      - name: AIRFLOW_MYSQL_PORT
+        value: "3306"
+      # Workflow Database Configuration (new variable names)
+      - name: WORKFLOW_DB_HOST
+        value: "darwin-mysql"
+      - name: WORKFLOW_DB_USERNAME
+        value: "root"
+      - name: WORKFLOW_DB_PASSWORD
+        value: "password"
+      - name: WORKFLOW_DB_NAME
+        value: "darwin_workflow"
+      - name: WORKFLOW_DB_PORT
+        value: "3306"
+      # Compute Service (new variable names)
+      - name: COMPUTE_SERVICE_URL
+        value: "http://darwin-compute:8000"
+      - name: COMPUTE_APP_LAYER_URL
+        value: "http://darwin-compute:8000/cluster"
+      # Commuter (Notebook Viewer)
+      - name: COMMUTER_URL
+        value: "http://darwin-commuter:8888/view"
+      # Application URLs (new variable names)
+      - name: WORKFLOW_APP_LAYER_URL
+        value: "http://darwin-workflow:8001"
+      - name: WORKFLOW_APP_LAYER_PUBLIC_URL
+        value: "http://darwin-workflow.local"
+      - name: WORKFLOW_UI_BASE_URL
+        value: "http://darwin-workflow.local/workflows/"
+      # AWS/S3 Configuration (LocalStack)
+      - name: AWS_ACCESS_KEY_ID
+        value: "minioadmin"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "minioadmin"
+      - name: AWS_ENDPOINT_URL
+        value: "http://darwin-localstack:4566"
+      - name: AWS_ENDPOINT_OVERRIDE
+        value: "http://darwin-localstack:4566"
+      - name: S3_BUCKET_NAME
+        value: "darwin-local-bucket"
+      - name: AIRFLOW_S3_FOLDER
+        value: "darwin_workflow_local/airflow_artifacts"
+      # Events and Callbacks (new variable names)
+      - name: DEFAULT_CALLBACK_URL
+        value: "http://darwin-workflow:8001/events"
+      - name: EVENTS_SERVICE_URL
+        value: "http://darwin-events:8080"
+      # PyPI Configuration (for internal packages)
+      - name: PYPI_INDEX_URL
+        value: ""
+      - name: PYPI_TRUSTED_HOST
+        value: ""
+      # Other
+      - name: LOG_FILE
+        value: "./workflow.log"
+      # Uvicorn worker configuration - use single worker to avoid DB init race conditions
+      - name: CORES
+        value: "1"
+      # Skip Aerich migrations to avoid initialization hang
+      - name: SKIP_AERICH_MIGRATIONS
+        value: "true"
 
   # Compute Orchestration Service
   compute:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-compute
     image:
@@ -220,7 +305,7 @@ services:
         value: "http://darwin-localstack.darwin.svc.cluster.local:4566"
 
   cluster-manager:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-cluster-manager
     image:
@@ -248,7 +333,7 @@ services:
         value: "http://darwin-localstack:4566"
 
   ml-serve-app:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-ml-serve-app
     image:
@@ -353,7 +438,7 @@ services:
         value: "test"
 
   artifact-builder:
-    enabled: true
+    enabled: false
     replicaCount: 1
     serviceName: darwin-artifact-builder
     image:
@@ -610,6 +695,9 @@ ingress:
     - path: "/artifact-builder(/|$)(.*)"
       service: "artifact-builder"
       port: 8000
+    - path: "/workflow(/|$)(.*)"
+      service: "workflow"
+      port: 8001
 
 # Shared Storage Configuration for Services
 # This creates a shared PersistentVolume that can be used by multiple services
