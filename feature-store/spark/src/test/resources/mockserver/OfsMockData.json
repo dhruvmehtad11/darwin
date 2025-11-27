@@ -1,0 +1,984 @@
+{
+  "getFgTopicResponse_f15" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f15"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName": "f15",
+        "topic": "f15"
+      }
+    }
+  },
+  "getFgSchemaResponse_f15" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f15"
+    },
+    "body" : {
+      "data": {
+        "schema": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "version": "v1"
+      }
+    }
+  },
+  "getFgTopicResponse_f16" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f16"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName": "f16",
+        "topic": "f16"
+      }
+    }
+  },
+  "getFgSchemaResponse_f16" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f16",
+      "version": "v2"
+    },
+    "body" : {
+      "data": {
+        "schema": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "version": "v2"
+      }
+    }
+  },
+  "getFgTopicResponse_f17" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f17"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName": "f17",
+        "topic": "f17"
+      }
+    }
+  },
+  "getFgSchemaResponse_f17" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f17",
+      "version": "v2"
+    },
+    "body" : {
+      "data": {
+        "schema": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "version": "v2"
+      }
+    }
+  },
+  "getFgTopicResponse_f18" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f18"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName": "f18",
+        "topic": "f18"
+      }
+    }
+  },
+  "getFgSchemaResponse_f18" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f18",
+      "version": "v2"
+    },
+    "body" : {
+      "data": {
+        "schema": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "version": "v2"
+      }
+    }
+  },
+  "getFgTopicResponse_f19" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f19"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName": "f19",
+        "topic": "f19"
+      }
+    }
+  },
+  "getFgSchemaResponse_f19" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f19",
+      "version": "v2"
+    },
+    "body" : {
+      "data": {
+        "schema": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "version": "v2"
+      }
+    }
+  },
+  "getFgTopicResponse_f20" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f20"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName": "f20",
+        "topic": "f20"
+      }
+    }
+  },
+  "getFgSchemaResponse_f20" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f20"
+    },
+    "body" : {
+      "data": {
+        "schema": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "fg_version",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "version": "v1"
+      }
+    }
+  },
+  "getFgSchemaResponse_f21" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 404,
+    "params": {
+      "name": "f21"
+    },
+    "body" : {
+      "error" : {
+        "message" : "feature group not found",
+        "cause" : "feature group not found",
+        "code" : "FEATURE-GROUP-NOT-FOUND-EXCEPTION"
+      }
+    }
+  },
+  "getFgTopicResponse_f22" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f22"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName": "f22",
+        "topic": "f22"
+      }
+    }
+  },
+  "getFgSchemaResponse_f22" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f22",
+      "version": "v2"
+    },
+    "body" : {
+      "data": {
+        "schema": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "version": "v2"
+      }
+    }
+  },
+  "getFgTopicResponse_f23" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f23"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName": "f23",
+        "topic": "f23"
+      }
+    }
+  },
+  "getFgSchemaResponse_f23" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f23",
+      "version": "v2"
+    },
+    "body" : {
+      "data": {
+        "schema": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "version": "v2"
+      }
+    }
+  },
+  "getFgTopicResponse_f24" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f24"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName": "f24",
+        "topic": "f24"
+      }
+    }
+  },
+  "getFgSchemaResponse_f24" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params": {
+      "name": "f24",
+      "version": "v2"
+    },
+    "body" : {
+      "data": {
+        "schema": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "version": "v2"
+      }
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "getKafkaTopicMetadataSuccessTest" : {
+    "request" : {
+      "endpoint" : "/kafka/topic-metadata",
+      "method" : "GET",
+      "body" : {}
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "kafkaTopicMetadata" : [
+            {
+              "topicName" : "f1200",
+              "partitions" : 8,
+              "replicationFactor" : 1,
+              "retentionMs" : 864000
+            },
+            {
+              "topicName" : "f1300-1",
+              "partitions" : 10,
+              "replicationFactor" : 1,
+              "retentionMs" : 864000
+            },
+            {
+              "topicName" : "f1400",
+              "partitions" : 7,
+              "replicationFactor" : 1,
+              "retentionMs" : 864345300
+            },
+            {
+              "topicName" : "f1500",
+              "partitions" : 5,
+              "replicationFactor" : 1,
+              "retentionMs" : 34534534
+            },
+            {
+              "topicName" : "f1600",
+              "partitions" : 11,
+              "replicationFactor" : 1,
+              "retentionMs" : 6786783
+            }
+          ]
+        }
+      }
+    }
+  },
+  "getKafkaTopicMetadataNotFoundTest" : {
+    "request" : {
+      "endpoint" : "/kafka/topic-metadata",
+      "method" : "GET",
+      "body" : {}
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+          "error" : {
+            "message" : "kafka config backup not found",
+            "cause" : "kafka config backup not found",
+            "code" : "OFS-V2-KAFKA-CONFIG-NOT-FOUND-EXCEPTION"
+          }
+      }
+    }
+  },
+  "kafkaTopicMetadata" : [
+    {
+      "topicName" : "f1200",
+      "partitions" : 8,
+      "replicationFactor" : 1,
+      "retentionMs" : 864000
+    },
+    {
+      "topicName" : "f1300-1",
+      "partitions" : 10,
+      "replicationFactor" : 1,
+      "retentionMs" : 864000
+    },
+    {
+      "topicName" : "f1400",
+      "partitions" : 7,
+      "replicationFactor" : 1,
+      "retentionMs" : 864345300
+    },
+    {
+      "topicName" : "f1500",
+      "partitions" : 5,
+      "replicationFactor" : 1,
+      "retentionMs" : 34534534
+    },
+    {
+      "topicName" : "f1600",
+      "partitions" : 11,
+      "replicationFactor" : 1,
+      "retentionMs" : 6786783
+    }
+  ]
+}

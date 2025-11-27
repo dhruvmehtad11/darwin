@@ -1,0 +1,1858 @@
+{
+  "s3backupSuccessTest" : {
+    "request" : {
+      "endpoint" : "/jobs/BackupMetastoreJob/start",
+      "method" : "POST",
+      "body" : {}
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : "Successful"
+      }
+    },
+    "s3Data" : {
+      "entities" : [
+        {
+          "name" : "t10",
+          "entity" : {
+            "tableName" : "t10",
+            "features" : [
+              {
+                "name" : "p_col1",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "p_col2",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "p_col3",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              }
+            ],
+            "primaryKeys" : [
+              "p_col1",
+              "p_col2"
+            ]
+          },
+          "state" : "LIVE",
+          "owner" : "ujjwal.bagrania@dream11.com",
+          "tags" : [
+            "tpp",
+            "suggest"
+          ],
+          "description" : "some-description",
+          "createdAt" : 1708419407000,
+          "updatedAt" : 1708423028000
+        },
+        {
+          "name" : "t15",
+          "entity" : {
+            "tableName" : "t15",
+            "features" : [
+              {
+                "name" : "p_col1",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "p_col2",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "p_col3",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              }
+            ],
+            "primaryKeys" : [
+              "p_col1",
+              "p_col2"
+            ]
+          },
+          "state" : "LIVE",
+          "owner" : "ujjwal.bagrania@dream11.com",
+          "tags" : [
+            "tpp",
+            "suggest"
+          ],
+          "description" : "some-description",
+          "createdAt" : 1708419407000,
+          "updatedAt" : 1708419407000
+        }
+      ],
+      "featureGroups" : [
+        {
+          "name" : "f300",
+          "versionEnabled" : true,
+          "version" : "v1",
+          "featureGroupType" : "ONLINE",
+          "featureGroup" : {
+            "featureGroupName" : "f300",
+            "versionEnabled" : true,
+            "featureGroupType" : "ONLINE",
+            "entityName" : "t15",
+            "features" : [
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ]
+          },
+          "owner" : "bot@dream11.com",
+          "state" : "LIVE",
+          "tags" : [
+            "t1",
+            "t2"
+          ],
+          "tenant" : {
+            "read" : "default-tenant",
+            "write" : "default-tenant",
+            "consume" : "default-tenant"
+          },
+          "description" : "some-description",
+          "createdAt" : 1708419428000,
+          "updatedAt" : 1708423028000
+        },
+        {
+          "name" : "f400",
+          "versionEnabled" : true,
+          "version" : "v1",
+          "featureGroupType" : "ONLINE",
+          "featureGroup" : {
+            "featureGroupName" : "f400",
+            "versionEnabled" : true,
+            "featureGroupType" : "ONLINE",
+            "entityName" : "t15",
+            "features" : [
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ]
+          },
+          "owner" : "bot@dream11.com",
+          "state" : "LIVE",
+          "tags" : [
+            "t1",
+            "t2"
+          ],
+          "tenant" : {
+            "read" : "default-tenant",
+            "write" : "default-tenant",
+            "consume" : "default-tenant"
+          },
+          "description" : "some-description",
+          "createdAt" : 1708419428000,
+          "updatedAt" : 1708423028000
+        },
+        {
+          "name" : "f500",
+          "versionEnabled" : true,
+          "version" : "v1",
+          "featureGroupType" : "ONLINE",
+          "featureGroup" : {
+            "featureGroupName" : "f500",
+            "versionEnabled" : true,
+            "featureGroupType" : "ONLINE",
+            "entityName" : "t15",
+            "features" : [
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ]
+          },
+          "owner" : "bot@dream11.com",
+          "state" : "LIVE",
+          "tags" : [
+            "t1",
+            "t2"
+          ],
+          "tenant" : {
+            "read" : "default-tenant",
+            "write" : "default-tenant",
+            "consume" : "default-tenant"
+          },
+          "description" : "some-description",
+          "createdAt" : 1708419428000,
+          "updatedAt" : 1708419428000
+        },
+        {
+          "name" : "f600",
+          "versionEnabled" : false,
+          "version" : "v1",
+          "featureGroupType" : "ONLINE",
+          "featureGroup" : {
+            "featureGroupName" : "f600",
+            "versionEnabled" : false,
+            "featureGroupType" : "ONLINE",
+            "entityName" : "t15",
+            "features" : [
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ]
+          },
+          "owner" : "bot@dream11.com",
+          "state" : "LIVE",
+          "tags" : [
+            "t1",
+            "t2"
+          ],
+          "tenant" : {
+            "read" : "default-tenant",
+            "write" : "default-tenant",
+            "consume" : "default-tenant"
+          },
+          "description" : "some-description",
+          "createdAt" : 1708419428000,
+          "updatedAt" : 1708419428000
+        },
+        {
+          "name" : "f700",
+          "versionEnabled" : true,
+          "version" : "v1",
+          "featureGroupType" : "ONLINE",
+          "featureGroup" : {
+            "featureGroupName" : "f700",
+            "versionEnabled" : true,
+            "featureGroupType" : "ONLINE",
+            "entityName" : "t15",
+            "features" : [
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ]
+          },
+          "owner" : "bot@dream11.com",
+          "state" : "LIVE",
+          "tags" : [
+            "t1",
+            "t2"
+          ],
+          "tenant" : {
+            "read" : "t1",
+            "write" : "t1",
+            "consume" : "t1"
+          },
+          "description" : "some-description",
+          "createdAt" : 1708419428000,
+          "updatedAt" : 1708419428000
+        }
+      ],
+      "versions" : [
+        {
+          "name" : "f300",
+          "latestVersion" : "v1",
+          "updatedAt" : 1708423033000
+        },
+        {
+          "name" : "f400",
+          "latestVersion" : "v1",
+          "updatedAt" : 1708423033000
+        },
+        {
+          "name" : "f500",
+          "latestVersion" : "v1",
+          "updatedAt" : 1708419433000
+        },
+        {
+          "name" : "f600",
+          "latestVersion" : "v1",
+          "updatedAt" : 1708419433000
+        },
+        {
+          "name" : "f700",
+          "latestVersion" : "v1",
+          "updatedAt" : 1708419433000
+        }
+      ],
+      "schemas" : [
+        {
+          "name" : "f300",
+          "version" : "v1",
+          "schema" : {
+            "schema" : [
+              {
+                "name" : "p_col1",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "p_col2",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "p_col3",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ],
+            "primaryKeys" : [
+              "p_col1",
+              "p_col2"
+            ],
+            "version" : "v1",
+            "featureGroupType" : "ONLINE"
+          }
+        },
+        {
+          "name" : "f400",
+          "version" : "v1",
+          "schema" : {
+            "schema" : [
+              {
+                "name" : "p_col1",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "p_col2",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "p_col3",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ],
+            "primaryKeys" : [
+              "p_col1",
+              "p_col2"
+            ],
+            "version" : "v1",
+            "featureGroupType" : "ONLINE"
+          }
+        },
+        {
+          "name" : "f500",
+          "version" : "v1",
+          "schema" : {
+            "schema" : [
+              {
+                "name" : "p_col1",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "p_col2",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "p_col3",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ],
+            "primaryKeys" : [
+              "p_col1",
+              "p_col2"
+            ],
+            "version" : "v1",
+            "featureGroupType" : "ONLINE"
+          }
+        },
+        {
+          "name" : "f600",
+          "version" : "v1",
+          "schema" : {
+            "schema" : [
+              {
+                "name" : "p_col1",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "p_col2",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "p_col3",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ],
+            "primaryKeys" : [
+              "p_col1",
+              "p_col2"
+            ],
+            "version" : "v1",
+            "featureGroupType" : "ONLINE"
+          }
+        },
+        {
+          "name" : "f700",
+          "version" : "v1",
+          "schema" : {
+            "schema" : [
+              {
+                "name" : "p_col1",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "p_col2",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "p_col3",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "something",
+                "tags" : [
+                  "a",
+                  "b"
+                ]
+              }
+            ],
+            "primaryKeys" : [
+              "p_col1",
+              "p_col2"
+            ],
+            "version" : "v1",
+            "featureGroupType" : "ONLINE"
+          }
+        }
+      ],
+      "topics" : [
+        {
+          "featureGroupName" : "f300",
+          "topic" : "default"
+        },
+        {
+          "featureGroupName" : "f400",
+          "topic" : "default"
+        },
+        {
+          "featureGroupName" : "f500",
+          "topic" : "default"
+        },
+        {
+          "featureGroupName" : "f600",
+          "topic" : "default"
+        },
+        {
+          "featureGroupName" : "f700",
+          "topic" : "default"
+        }
+      ],
+      "consumerGroupConfig" : [
+      {
+        "tenantName" : "default-tenant",
+        "topicName" : "default",
+        "numConsumers" : 8
+      },
+      {
+        "tenantName" : "t100",
+        "topicName" : "f100",
+        "numConsumers" : 8
+      },
+      {
+        "tenantName" : "t200",
+        "topicName" : "f200",
+        "numConsumers" : 2
+      },
+      {
+        "tenantName" : "t400",
+        "topicName" : "f400-topic",
+        "numConsumers" : 2
+      },
+      {
+        "tenantName" : "t1000",
+        "topicName" : "f1000",
+        "numConsumers" : 2
+      },
+      {
+        "tenantName" : "t1200",
+        "topicName" : "f1200",
+        "numConsumers" : 2
+      },
+      {
+          "tenantName" : "t1300",
+          "topicName" : "f1300",
+          "numConsumers" : 2
+        }
+      ]
+    }
+  }
+}

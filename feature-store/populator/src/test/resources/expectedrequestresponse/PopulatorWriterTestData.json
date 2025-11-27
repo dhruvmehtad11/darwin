@@ -1,0 +1,37 @@
+{
+  "successWriterTest" : {
+    "request" : {
+      "endpoint" : "/table/read",
+      "method" : "POST",
+      "body" : {
+        "tenantName" : "t1",
+        "tableName" : "table1",
+        "featureGroupName" : "fg1",
+        "featureGroupVersion" : "v1",
+        "topicName" : "test-topic",
+        "runId": "run-01",
+        "replicateWrites": true,
+        "path" : "s3a://test-bucket/table1",
+        "startVersion" : 1,
+        "endVersion" : 2
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "tenantName" : "t1",
+          "tableName" : "table1",
+          "featureGroupName" : "fg1",
+          "featureGroupVersion" : "v1",
+          "topicName" : "test-topic",
+          "runId": "run-01",
+          "replicateWrites": true,
+          "path" : "s3a://test-bucket/table1",
+          "startVersion" : 1,
+          "endVersion" : 2
+        }
+      }
+    }
+  }
+}

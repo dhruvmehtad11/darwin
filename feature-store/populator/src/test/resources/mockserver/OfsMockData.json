@@ -1,0 +1,19 @@
+{
+  "getPopulatorMetadata" : {
+    "endpoint" : "/populator/metadata/all",
+    "method" : "GET",
+    "status" : 200,
+    "body" : {
+      "data" : [
+        {
+          "tenantName": "t1",
+          "numWorkers": 2
+        },
+        {
+          "tenantName": "t2",
+          "numWorkers": 2
+        }
+      ]
+    }
+  }
+}
