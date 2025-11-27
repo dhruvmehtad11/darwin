@@ -34,8 +34,47 @@ done
 
 echo '' > config.env
 
+extract_max_supported_api_version() {
+    printf "%s\n" "$1" | sed -n 's/.*Maximum supported API version is \([0-9.]*\).*/\1/p' | head -n 1
+}
+
+ensure_docker_api_version() {
+    if ! command -v docker >/dev/null 2>&1; then
+        echo "❌ Docker is not installed or not found in PATH"
+        exit 1
+    fi
+
+    if docker version >/dev/null 2>&1; then
+        return
+    fi
+
+    error_output="$(docker version 2>&1 || true)"
+    max_version="$(extract_max_supported_api_version "$error_output")"
+
+    if [ -z "$max_version" ]; then
+        ps_error="$(docker ps 2>&1 || true)"
+        error_output="${error_output}\n${ps_error}"
+        max_version="$(extract_max_supported_api_version "$ps_error")"
+    fi
+
+    if [ -n "$max_version" ]; then
+        echo "⚠️  Docker client API version is newer than daemon. Setting DOCKER_API_VERSION=$max_version"
+        export DOCKER_API_VERSION="$max_version"
+        if docker version >/dev/null 2>&1; then
+            echo "✅ Docker API version pinned to $DOCKER_API_VERSION"
+            return
+        fi
+    fi
+
+    printf "%s\n" "$error_output"
+    echo "❌ Failed to communicate with Docker daemon. Please ensure Docker is running."
+    exit 1
+}
+
 ENV=local
 ENV_CREATION=false
+
+ensure_docker_api_version
 
 # Check if ENV environment variable equals "local"
 if [ "$ENV" = "local" ]; then
