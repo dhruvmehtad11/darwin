@@ -198,14 +198,14 @@ insert into asset.asset (fqdn, type, source_platform) value ('example:table:reds
 insert into asset.asset (fqdn, type, source_platform) value ('example:table:redshift:segment:example:contestmaster2', 'TABLE', 'databeam');
 insert into asset.asset (fqdn, type, source_platform) value ('example:table:redshift:segment:example:contestmaster3', 'TABLE', 'databeam');
 
-INSERT INTO asset (fqdn, type, source_platform, quality_score) VALUES
+INSERT INTO asset.asset (fqdn, type, source_platform, quality_score) VALUES
   ('example:table:test:webhook:test_asset_1', 'TABLE', 'test', '2/2'),
   ('example:table:test:webhook:test_asset_2', 'TABLE', 'test', '1/1');
 
-INSERT INTO rule (asset_id, type, comparator, left_expression, right_expression, health_status, monitor_id) VALUES
-  ((SELECT MAX(id) - 1 FROM asset), 'FRESHNESS', 'GREATER_THAN', 'freshness_metric', '100.0', true, 12345),
-  ((SELECT MAX(id) - 1 FROM asset), 'COMPLETENESS', 'LESS_THAN', 'completeness_metric', '95.0', true, 67890),
-  ((SELECT MAX(id) FROM asset), 'CORRECTNESS', 'GREATER_THAN', 'correctness_metric', '99.0', true, 11111);
+INSERT INTO asset.rule (asset_id, type, comparator, left_expression, right_expression, health_status, monitor_id) VALUES
+  ((SELECT MAX(id) - 1 FROM asset.asset), 'FRESHNESS', 'GREATER_THAN', 'freshness_metric', '100.0', true, 12345),
+  ((SELECT MAX(id) - 1 FROM asset.asset), 'COMPLETENESS', 'LESS_THAN', 'completeness_metric', '95.0', true, 67890),
+  ((SELECT MAX(id) FROM asset.asset), 'CORRECTNESS', 'GREATER_THAN', 'correctness_metric', '99.0', true, 11111);
 
 -- put_schema.sql
 INSERT INTO asset.asset (fqdn, type, description, source_platform, business_roster, asset_created_at, asset_updated_at) VALUES
