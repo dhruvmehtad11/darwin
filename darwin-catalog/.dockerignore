@@ -1,0 +1,54 @@
+# Build artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Test files
+src/test/
+
+# Logs
+*.log
+*.log.gz
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files (except Dockerfile)
+docker-compose.yaml
+.dockerignore
+
+# Environment files
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Maven wrapper (not needed in container)
+.mvn/wrapper/
+

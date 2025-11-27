@@ -1,0 +1,1356 @@
+openapi: 3.0.3
+info:
+  title: Data Asset Central API
+  version: 1.0.0
+  description: API for managing assets, lineage, and rules. For viewing the proper examples, copy the contents from <a href="/v3/api-docs.yaml">`/v3/api-docs.yaml`</a>, and paste it into <a href="https://editor.swagger.io/">https://editor.swagger.io</a>. Enjoy!
+servers:
+  - url: https://data-contract-central.example.com/v1
+paths:
+  /v1/search:
+    post:
+      summary: Search assets
+      description: Search based on given search string. Does a top K distinct operation for each category
+      operationId: searchAssets
+      parameters:
+        - $ref: "#/components/parameters/depth_query_param"
+        - $ref: "#/components/parameters/offset_query_param"
+        - $ref: "#/components/parameters/search_page_size_query_param"
+      requestBody:
+        $ref: "#/components/requestBodies/SearchRegexRequestBody"
+      responses:
+        '200':
+          description: A paginated list of assets based on the queries supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedList"
+  /v1/assets:
+    post:
+      summary: Get assets
+      description: List assets with the given query parameters. Will be an AND operation based on queries.
+      operationId: getAssets
+      parameters:
+        - $ref: "#/components/parameters/offset_query_param"
+        - $ref: "#/components/parameters/default_page_size_query_param"
+        - $ref: "#/components/parameters/fields_query_param"
+      requestBody:
+        $ref: "#/components/requestBodies/ListRegexRequestBody"
+      responses:
+        '200':
+          description: A paginated list of assets based on the queries supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedAssets"
+    patch:
+      summary: Update asset
+      description: Update properties of an asset
+      operationId: patchAsset
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        $ref: "#/components/requestBodies/PatchAssetRequest"
+      responses:
+        '200':
+          description: Asset updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Asset"
+  /v1/assets/{asset_fqdn}:
+    get:
+      summary: Get asset by fqdn
+      description: Get asset by fqdn, along with the required fields. If no fields supplied, it will return all fields.
+      operationId: getAssetByFqdn
+      parameters:
+        - $ref: "#/components/parameters/asset_fqdn_path_param"
+        - $ref: "#/components/parameters/fields_query_param"
+      responses:
+        '200':
+          description: Complete metadata for the asset
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+  /v1/assets/tags:
+    post:
+      summary: Add tags
+      description: Add tags for the given asset
+      operationId: postTags
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        $ref: "#/components/requestBodies/PostTagsRequest"
+      responses:
+        '200':
+          description: Tags added successfully
+  /v1/assets/{asset_fqdn}/tags/{tag_name}:
+    delete:
+      summary: Remove tag
+      description: Remove tag for the given asset
+      operationId: deleteTag
+      parameters:
+        - $ref: "#/components/parameters/asset_fqdn_path_param"
+        - $ref: "#/components/parameters/tag_name_path_param"
+      responses:
+        '204':
+          description: Tag removed
+  /v1/parse-lineage-from-sql:
+    post:
+      summary: Get lineage
+      description: Get lineage from source query
+      operationId: parseLineage
+      requestBody:
+        $ref: "#/components/requestBodies/ParseLineageRequest"
+      responses:
+        '200':
+          description: Lineage derived from source query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ParentDependency'
+  /v1/assets/{asset_fqdn}/lineage:
+    get:
+      summary: Get entire lineage
+      description: Get entire lineage for the given asset
+      operationId: getLineage
+      parameters:
+        - $ref: "#/components/parameters/asset_fqdn_path_param"
+      responses:
+        '200':
+          description: The entire lineage for the given asset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lineage"
+  /v1/assets/{asset_fqdn}/rules:
+    get:
+      summary: Get rules
+      description: Get all rules for the given asset
+      operationId: getRules
+      parameters:
+        - $ref: "#/components/parameters/asset_fqdn_path_param"
+      responses:
+        200:
+          description: List of rules which belong to the asset
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Rule"
+  /v1/assets/rules:
+    post:
+      summary: Create rule
+      description: Create rule for the given asset
+      operationId: postRule
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        $ref: "#/components/requestBodies/PostRuleRequestBody"
+      responses:
+        200:
+          description: rule created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rule"
+  /v1/assets/rules/{rule_id}:
+    patch:
+      summary: Update rule
+      description: Update rule for the given asset
+      operationId: updateRule
+      parameters:
+        - $ref: "#/components/parameters/rule_id_path_param"
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        $ref: "#/components/requestBodies/PatchRuleRequestBody"
+      responses:
+        200:
+          description: Updated rule for the given asset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rule"
+  /v1/assets/{asset_fqdn}/rules/{rule_id}:
+    delete:
+      summary: Delete rule
+      description: Delete rule for the given asset
+      operationId: deleteRule
+      parameters:
+        - $ref: "#/components/parameters/asset_fqdn_path_param"
+        - $ref: "#/components/parameters/rule_id_path_param"
+        - $ref: "#/components/parameters/client_token_header"
+      responses:
+        200:
+          description: rule deleted
+  /v1/metric/bulk:
+    post:
+      summary: Push metrics for multiple assets
+      operationId: postBulkMetrics
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        $ref: "#/components/requestBodies/PostBulkMetricsRequestBody"
+      responses:
+        200:
+          description: Metrics pushed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  failed_assets:
+                    type: array
+                    items:
+                      type: string
+                      description: asset name for which the metrics failed to be pushed
+  /v1/descriptions/bulk:
+    put:
+      summary: Update descriptions for multiple assets and their fields
+      operationId: putBulkDescriptions
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        $ref: "#/components/requestBodies/PutBulkDescriptionsRequestBody"
+      responses:
+        200:
+          description: Descriptions updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PutBulkDescriptionsResponse"
+  /v1/assets/register:
+    post:
+      summary: Register the asset with the catalog. Will throw an error if the asset already exists
+      operationId: registerAsset
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterAssetRequest"
+      responses:
+        200:
+          description: "newly persisted asset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Asset"
+  /v1/assets/schema:
+    put:
+      summary: Update the schema of the asset
+      operationId: putSchema
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        required: true
+        description: "request body for updating fields of an asset"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutAssetSchema"
+      responses:
+        '204':
+          description: The fields which were updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssetSchema"
+  /v1/schemas/classification:
+    get:
+      summary: Get schemas with the given filter
+      operationId: GetSchemas
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+        - $ref: "#/components/parameters/offset_query_param"
+        - $ref: "#/components/parameters/default_page_size_query_param"
+        - $ref: "#/components/parameters/classification_category_query_param"
+        - $ref: "#/components/parameters/classification_status_query_param"
+        - $ref: "#/components/parameters/classification_method_query_param"
+        - $ref: "#/components/parameters/schema_classification_id_query_param"
+      responses:
+        200:
+          description: Paginated list of schemas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedSchemas"
+    patch:
+      summary: Send the classified schema to catalog. The request payload should contain the IDs of all the fields compulsorily, and no extra/less field must be added. It should only classify the existing fields.
+      operationId: patchExternalSchemaClassification
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        required: true
+        description: "request body for updating fields of an asset"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutExternalSchemaClassification"
+      responses:
+        200:
+          description: New classified schema is acknowledged by the catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExternalAssetSchemaClassification"
+  /v1/schemas/classification/review:
+    patch:
+      summary: Review the classified schema to catalog
+      operationId: patchExternalSchemaClassificationReview
+      parameters:
+        - $ref: "#/components/parameters/client_token_header"
+      requestBody:
+        required: true
+        description: "request body for reviewing the schema"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutExternalSchemaClassificationReview"
+      responses:
+        200:
+          description: New classified schema is acknowledged by the catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExternalAssetSchemaClassification"
+components:
+  schemas:
+    columnMap:
+      type: object
+      description: Map of given asset column to list of column(s) in the parent asset
+      additionalProperties:
+        type: array
+        items:
+          type: string
+      example:
+        current_field1:
+          - parent1_field1
+          - parent1_field2
+        current_field2:
+          - parent1_field3
+    AssetInfoMap:
+      type: object
+      description: Map<String, Asset>
+      additionalProperties:
+        $ref: "#/components/schemas/Asset"
+      example:
+        "example:table:redhsift:segment:example:contestmaster":
+          name: "orders"
+          fields:
+            - id: 1
+              name: "order_id"
+              type: "String"
+              doc: "Internal order identifier"
+            - id: 2
+              name: "user_id"
+              type: "Integer"
+              doc: "User identifier"
+            - id: 3
+              name: "amount"
+              type: "Float"
+              doc: "Order amount"
+        "example:table:lakehouse:segment:example:contestmaster2":
+          name: "users"
+          fields:
+            - id: 1
+              name: "user_id"
+              type: "String"
+              description: "Internal order identifier"
+            - id: 2
+              name: "logged_in"
+              type: "Integer"
+              doc: "Logged in status for the user"
+            - id: 3
+              name: "age"
+              type: "Float"
+              doc: "Age of the user in months"
+    TableDetail:
+      type: object
+      properties:
+        org:
+          type: string
+          example: example
+        type:
+          type: string
+          description: "[REDSHIFT, LAKEHOUSE]"
+          example: LAKEHOUSE
+        catalog_name:
+          type: string
+          example: segment
+        database_name:
+          type: string
+          example: example
+        table_name:
+          type: string
+          example: titan_cohort_demo
+    StreamDetail:
+      type: object
+      properties:
+        org:
+          type: string
+          example: example\
+        tenant:
+          type: string
+          example: Streams-internal
+        stream_name:
+          type: string
+          example: default.cli_stream_1
+    KafkaDetail:
+      type: object
+      properties:
+        org:
+          type: string
+          example: example
+        cluster_name:
+          type: string
+          example: segment
+        topic_name:
+          type: string
+          example: example
+    DashboardDetail:
+      type: object
+      properties:
+        org:
+          type: string
+          example: example
+    ServiceDetail:
+      type: object
+      properties:
+        org:
+          type: string
+          example: example
+    Asset:
+      type: object
+      description: todo
+      required:
+        - fqdn
+        - type
+      properties:
+        fqdn:
+          type: string
+          example: "example:table:redhsift:segment:example:contestmaster"
+          description: Globally unique identifier for an asset (case-insensitive)
+        type:
+          $ref: "#/components/schemas/AssetType"
+        detail:
+          oneOf:
+            - $ref: "#/components/schemas/TableDetail"
+            - $ref: "#/components/schemas/StreamDetail"
+            - $ref: "#/components/schemas/KafkaDetail"
+            - $ref: "#/components/schemas/DashboardDetail"
+            - $ref: "#/components/schemas/ServiceDetail"
+        description:
+          type: string
+          example: "an awesome table"
+        source_platform:
+          type: string
+          description: Source platform from which the asset is created
+          example: databeam
+        business_roster:
+          type: string
+          example: "gameplay_analytics"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Rule"
+        quality_score:
+          type: string
+          example: 7/10
+          description: indication of the Asset's health
+        immediate_parents:
+          type: array
+          description: immediate parent assets to the given asset
+          items:
+            $ref: "#/components/schemas/ParentDependency"
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        asset_schema:
+          $ref: "#/components/schemas/AssetSchema"
+        asset_created_at:
+          type: integer
+          format: int64
+          example: 1750060683
+        asset_updated_at:
+          type: integer
+          format: int64
+          example: 1750060683
+        metadata:
+          $ref: "#/components/schemas/PropertiesMapObject"
+    Lineage:
+      type: object
+      properties:
+        graph:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssetRelation"
+        assetsInfo:
+          $ref: "#/components/schemas/AssetInfoMap"
+    AssetRelation:
+      type: object
+      properties:
+        from:
+          type: string
+          format: int64
+          example: "example:table:redhsift:segment:example:contestmaster"
+        to:
+          type: string
+          format: int64
+          example: "example:table:lakehouse:segment:example:contestmaster2"
+        fields_map:
+          $ref: "#/components/schemas/columnMap"
+    ParentDependency:
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the parent asset
+          example: "example:table:redshift:segment:example:benefitmaster"
+        fields_map:
+          $ref: "#/components/schemas/columnMap"
+    comparator:
+      type: string
+      enum:
+        - LESS_THAN
+        - LESS_THAN_OR_EQUAL_TO
+        - GREATER_THAN
+        - GREATER_THAN_OR_QUAL_TO
+        - EQUAL_TO
+        - NOT_EQUAL_TO
+      example: LESS_THAN
+    metricType:
+      type: string
+      enum:
+        - FRESHNESS
+        - COMPLETENESS
+        - CORRECTNESS
+      example: COMPLETENESS
+    Field:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          example: "order_id"
+        type:
+          type: object
+          description: Can be a primitive string, a complex object, or a union (array)
+          example: "varchar"
+        doc:
+          type: string
+          example: "Internal order identifier"
+        default:
+          type: object
+          description: Optional default value
+        is_pii:
+          type: string
+          example: "true"
+    AssetSchema:
+      type: object
+      required:
+        - version
+        - schema_json
+      properties:
+        version:
+          type: integer
+          example: 1
+        schema_json:
+          $ref: "#/components/schemas/SchemaStructure"
+        schema_hash:
+          type: string
+          example: "1234567890"
+        previous_schema_id:
+          type: integer
+          format: int64
+          example: 1
+          description: The ID of the previous schema version. This is used to track the history of the schema.
+        schema_classification_status:
+          $ref: "#/components/schemas/CommonInternalClassificationStatusRead"
+    CommonInternalClassificationStatusRead:
+      type: array
+      description: If left empty, it will be assumed that no classifications are required.
+      items:
+        type: object
+        properties:
+          category:
+            $ref: "#/components/schemas/SchemaClassificationCategory"
+          method:
+            $ref: "#/components/schemas/SchemaClassificationMethod"
+          status:
+            $ref: "#/components/schemas/SchemaClassificationStatus"
+          classified_by:
+            type: string
+          classified_at:
+            type: string
+          classification_notes:
+            type: string
+          reviewed_by:
+            type: string
+          reviewed_at:
+            type: string
+          review_notes:
+            type: string
+    SchemaStructure:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - record
+          default: record
+        name:
+          type: string
+          default: "schema"
+        namespace:
+          type: string
+        doc:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+    SchemaClassificationStatus:
+      type: string
+      enum:
+        - NOT_REQUIRED
+        - REQUIRED
+        - CLASSIFICATION_APPROVAL_PENDING
+        - CLASSIFICATION_REJECTED
+        - CLASSIFIED
+      default: NOT_REQUIRED
+      example: CLASSIFIED
+    ClassificationNotificationType:
+      type: string
+      enum:
+        - CLASSIFICATION_UPDATE_SENT
+        - CLASSIFICATION_UPDATE_REJECTED_DUE_TO_STALE_VERSION
+        - CLASSIFICATION_UPDATE_ACCEPTED
+        - NO_NOTIFICATION_REQUIRED
+        - NOT_INITIATED
+      default: NOT_INITIATED
+      example: NOTIFICATION_SENT
+    SchemaClassificationMethod:
+      type: string
+      enum:
+        - MANUAL
+        - AUTOMATED
+        - ML_ASSISTED
+      default: AUTOMATED
+      example: ML_ASSISTED
+    SchemaClassificationCategory:
+      type: string
+      enum:
+        - PII
+      example: PII
+    ExternalAssetSchemaClassification:
+      type: object
+      required:
+        - schema_classification_id
+        - version
+        - schema_json
+        - classification_status
+      properties:
+        schema_classification_id:
+          type: integer
+          format: int64
+        original_schema_json:
+          $ref: '#/components/schemas/SchemaStructure'
+        classified_schema_json:
+          $ref: '#/components/schemas/SchemaStructure'
+        schema_classification_status:
+          $ref: "#/components/schemas/CommonInternalClassificationStatusRead"
+    PutExternalSchemaClassification:
+      type: object
+      required:
+        - schema_classification_id
+        - schema_json
+        - classification_status
+      properties:
+        schema_classification_id:
+          type: integer
+          format: int64
+        classified_schema_json:
+          $ref: "#/components/schemas/SchemaStructure"
+        schema_classification_status:
+          type: array
+          items:
+            $ref: "#/components/schemas/PutExternalSchemaClassificationStatus"
+    PutExternalSchemaClassificationStatus:
+      type: object
+      properties:
+        category:
+          $ref: "#/components/schemas/SchemaClassificationCategory"
+        method:
+          $ref: "#/components/schemas/SchemaClassificationMethod"
+        status:
+          $ref: "#/components/schemas/SchemaClassificationStatus"
+        notes:
+          type: string
+    PutExternalSchemaClassificationReview:
+      type: object
+      required:
+        - schema_classification_id
+        - classification_status
+      properties:
+        schema_classification_id:
+          type: integer
+          format: int64
+        schema_classification_status:
+          type: array
+          items:
+            $ref: "#/components/schemas/PutExternalSchemaClassificationReviewStatus"
+    PutExternalSchemaClassificationReviewStatus:
+      type: object
+      properties:
+        category:
+          $ref: "#/components/schemas/SchemaClassificationCategory"
+        status:
+          $ref: "#/components/schemas/SchemaClassificationStatus"
+        notes:
+          type: string
+    NotifySchemaClassification:
+      type: object
+      required:
+        - asset_fqdn
+        - type
+        - detail
+        - asset_schema
+        - previous_schema_version
+      properties:
+        asset_fqdn:
+          type: string
+          example: "example:table:redhsift:segment:example:contestmaster"
+        asset_schema:
+          $ref: "#/components/schemas/AssetSchema"
+    RegisterAssetRequest:
+      type: object
+      required:
+        - type
+        - detail
+        - business_roster
+      properties:
+        type:
+          $ref: "#/components/schemas/AssetType"
+        detail:
+          $ref: "#/components/schemas/PropertiesMapString"
+        description:
+          type: string
+          example: "an awesome table"
+        business_roster:
+          type: string
+          example: "gameplay_analytics"
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        asset_schema:
+          $ref: "#/components/schemas/PostAssetSchema"
+        parent_dependencies:
+          type: array
+          items:
+            $ref: "#/components/schemas/ParentDependency"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/RegisterRuleRequest"
+        metadata:
+          $ref: "#/components/schemas/PropertiesMapObject"
+    PropertiesMapString:
+      type: object
+      description: Map<String, String>
+      additionalProperties:
+        type: string
+        example: "value"
+    PropertiesMapObject:
+      type: object
+      description: Map<String, Object>
+      additionalProperties:
+        type: object
+        example: "value"
+    PaginatedSchemas:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int64
+          description: Total number of entities
+          example: 100
+        offset:
+          type: integer
+          example: 2
+        page_size:
+          type: integer
+          example: 10
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExternalAssetSchemaClassification"
+    PutAssetSchema:
+      type: object
+      required:
+        - fqdn
+      properties:
+        asset_fqdn:
+          type: string
+          example: "example:table:redhsift:segment:example:contestmaster"
+        version:
+          type: integer
+          example: 1
+        schema_json:
+          $ref: "#/components/schemas/SchemaStructure"
+        schema_classification_status:
+          type: array
+          description: If left empty, it will be assumed that no classifications are required.
+          items:
+            $ref: "#/components/schemas/PostSchemaClassificationStatus"
+    PostAssetSchema:
+      type: object
+      properties:
+        version:
+          type: integer
+          example: 1
+          default: 1
+        schema_json:
+          $ref: "#/components/schemas/SchemaStructure"
+        schema_classification_status:
+          type: array
+          description: If left empty, it will be assumed that no classifications are required.
+          items:
+            $ref: "#/components/schemas/PostSchemaClassificationStatus"
+    PostSchemaClassificationStatus:
+      type: object
+      properties:
+        category:
+          $ref: "#/components/schemas/SchemaClassificationCategory"
+        required:
+          type: boolean
+          default: false
+    Tag:
+      type: string
+      example: "User"
+    Rule:
+      type: object
+      required:
+        - id
+        - left_expression
+        - comparator
+        - right_expression
+        - type
+      properties:
+        id:
+          type: integer
+          format: int64
+        schedule:
+          type: string
+          description: cron schedule at which the rule is expected to run
+        left_expression:
+          type: string
+          example: "select count(1) from table where col1 = null"
+        comparator:
+          $ref: "#/components/schemas/comparator"
+        right_expression:
+          type: string
+          example: "0"
+        health_status:
+          type: boolean
+          example: true
+        type:
+          $ref: "#/components/schemas/metricType"
+        severity:
+          $ref: "#/components/schemas/Severity"
+        slack_channel:
+          type: string
+          description: "Slack channel to which the alerts should be sent"
+          example: "#darwincatalog-alerts"
+    Severity:
+      type: string
+      enum:
+        - INCIDENT
+        - OPS_GENIE
+        - SLACK_ALERT
+      example: INCIDENT
+    PaginatedList:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int64
+          description: Total number of entities
+          example: 100
+        offset:
+          type: integer
+          example: 2
+        page_size:
+          type: integer
+          example: 10
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchEntry"
+    SearchEntry:
+      type: object
+      properties:
+        asset_name:
+          type: string
+          example: "company_transactions"
+        depth:
+          type: integer
+          example: 1
+        is_terminal:
+          type: boolean
+          example: true
+        asset_prefix:
+          type: string
+          example: example:table:redshift:segment:example
+    PaginatedAssets:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int64
+          description: Total number of assets
+          example: 100
+        offset:
+          type: integer
+          example: 2
+        page_size:
+          type: integer
+          example: 10
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+    Metric:
+      type: object
+      required:
+        - metric_name
+        - asset_fqdn
+        - value
+        - timestamp
+      properties:
+        metric_name:
+          type: string
+          example: example.last_updated
+        asset_fqdn:
+          type: string
+          example: example:table:redhsift:segment:example:contestmaster
+        value:
+          type: number
+          example: 1
+        timestamp:
+          type: integer
+          format: int64
+          example: 73462874
+    AssetType:
+      type: string
+      enum:
+        - table
+        - stream
+        - service
+        - dashboard
+        - kafka
+      example: table
+    RegisterRuleRequest:
+      type: object
+      required:
+        - left_expression
+        - comparator
+        - right_expression
+        - type
+      properties:
+        schedule:
+          type: string
+          description: cron schedule at which the rule is expected to run
+        left_expression:
+          type: string
+          example: "select count(1) from table where col1 = null"
+        comparator:
+          $ref: "#/components/schemas/comparator"
+        right_expression:
+          type: string
+          example: "0"
+        type:
+          $ref: "#/components/schemas/metricType"
+        severity:
+          $ref: "#/components/schemas/Severity"
+        slack_channel:
+          type: string
+          description: "Slack channel to which the alerts should be sent"
+          example: "#darwincatalog-alerts"
+    TableType:
+      type: string
+      enum:
+        - REDSHIFT
+        - LAKEHOUSE
+      example: "REDSHIFT"
+    AssetDescription:
+      type: object
+      required:
+        - asset_fqdn
+        - description
+      properties:
+        asset_fqdn:
+          type: string
+          example: "example:table:redshift:segment:example:contestmaster"
+          description: Globally unique identifier for an asset (case-insensitive)
+        description:
+          type: string
+          example: "This table stores contest master data"
+          description: Description of the asset
+    FieldDescription:
+      type: object
+      required:
+        - asset_fqdn
+        - field_name
+        - description
+      properties:
+        asset_fqdn:
+          type: string
+          example: "example:table:redshift:segment:example:contestmaster"
+          description: Globally unique identifier for an asset (case-insensitive)
+        field_name:
+          type: string
+          example: "contest_id"
+          description: Name of the field within the asset schema
+        description:
+          type: string
+          example: "Unique identifier for the contest"
+          description: Description of the field
+    PutBulkDescriptionsResponse:
+      type: object
+      properties:
+        successful_asset_updates:
+          type: integer
+          example: 5
+          description: Number of assets successfully updated
+        failed_asset_updates:
+          type: array
+          items:
+            type: string
+          example: [ "example:table:redshift:segment:example:nonexistent" ]
+          description: List of asset FQDNs that failed to update
+        successful_field_updates:
+          type: integer
+          example: 12
+          description: Number of fields successfully updated
+        failed_field_updates:
+          type: array
+          items:
+            type: object
+            properties:
+              asset_fqdn:
+                type: string
+              field_name:
+                type: string
+              error:
+                type: string
+          example:
+            [
+              {
+                "asset_fqdn": "example:table:redshift:segment:example:test",
+                "field_name": "nonexistent_field",
+                "error": "Field not found",
+              },
+            ]
+          description: List of field updates that failed with error details
+  requestBodies:
+    ParseLineageRequest:
+      description: "request body for parsing lineage"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - source_query
+              - table_type
+            properties:
+              source_query:
+                type: string
+                example: "select name, age from users a inner join orders b on a.id = b.customer_id"
+              table_type:
+                $ref: "#/components/schemas/TableType"
+    PatchAssetRequest:
+      description: Properties of an asset that needs to be updated
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - asset_fqdn
+            properties:
+              asset_fqdn:
+                type: string
+              description:
+                type: string
+                example: this is an awesome asset
+              business_roster:
+                type: string
+                example: analytics_schedule
+              source_platform:
+                type: string
+                description: Source platform from which the asset is created
+                example: databeam
+              parent_dependencies:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ParentDependency"
+              metadata:
+                $ref: "#/components/schemas/PropertiesMapObject"
+    PostTagsRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - asset_fqdn
+              - tags
+            properties:
+              asset_fqdn:
+                type: string
+              tags:
+                type: array
+                items:
+                  type: string
+            example:
+              tags: [ "checkout", "orders" ]
+    PatchFieldRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              description:
+                type: string
+                description: appropriate description for this field
+              isPii:
+                type: boolean
+                description: signifies whether the current field is a personal information identifier
+    PostRuleRequestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - asset_fqdn
+              - left_expression
+              - comparator
+              - right_expression
+              - type
+            properties:
+              asset_fqdn:
+                type: string
+                example: example:table:redhsift:segment:example:contestmaster
+              schedule:
+                type: string
+                description: cron schedule at which the rule is expected to run
+              left_expression:
+                type: string
+                example: "select count(1) from table where col1 = null"
+              comparator:
+                $ref: "#/components/schemas/comparator"
+              right_expression:
+                type: string
+                example: "0"
+              type:
+                $ref: "#/components/schemas/metricType"
+              severity:
+                $ref: "#/components/schemas/Severity"
+              slack_channel:
+                type: string
+                description: "Slack channel to which the alerts should be sent"
+                example: "#darwincatalog-alerts"
+    PatchRuleRequestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - asset_fqdn
+            properties:
+              asset_fqdn:
+                type: string
+                example: example:table:redhsift:segment:example:contestmaster
+              schedule:
+                type: string
+                description: cron schedule at which the rule is expected to run
+              left_expression:
+                type: string
+                example: "select count(1) from table where col1 = null"
+              comparator:
+                $ref: "#/components/schemas/comparator"
+              right_expression:
+                type: string
+                example: "0"
+              type:
+                $ref: "#/components/schemas/metricType"
+              severity:
+                $ref: "#/components/schemas/Severity"
+              slack_channel:
+                type: string
+                description: "Slack channel to which the alerts should be sent"
+                example: "#darwincatalog-alerts"
+    PostBulkMetricsRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              metrics:
+                type: array
+                description: List of metrics to be pushed
+                items:
+                  $ref: "#/components/schemas/Metric"
+    PutBulkDescriptionsRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              asset_descriptions:
+                type: array
+                description: List of asset descriptions to be updated
+                items:
+                  $ref: "#/components/schemas/AssetDescription"
+              field_descriptions:
+                type: array
+                description: List of field descriptions to be updated
+                items:
+                  $ref: "#/components/schemas/FieldDescription"
+    ListRegexRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - asset_name_regex
+            properties:
+              regex:
+                type: string
+                description: "Regex to match against the asset name"
+                example: ":*orders*"
+    SearchRegexRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - asset_name_regex
+            properties:
+              asset_name_regex:
+                type: string
+                description: "Regex to match against the asset name"
+                example: ":*orders*"
+              asset_prefix_regex:
+                type: string
+                description: "Regex to match against the asset prefix"
+                example: ":*orders*"
+  parameters:
+    offset_query_param:
+      in: query
+      name: offset
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    search_page_size_query_param: # no limit here.
+      in: query
+      name: page_size
+      schema:
+        type: integer
+        default: 20
+        minimum: 1
+        maximum: 50000
+    depth_query_param:
+      in: query
+      name: depth
+      description: search scope and return upto given depth. -1 means all depth.
+      schema:
+        type: integer
+        default: -1
+    fields_query_param:
+      in: query
+      name: fields
+      description: "List of fields to expect in the response. Returns all fields if left empty"
+      example: "severity, metadata, fqdn, slack_channel, quality_score, business_roster, description, rules, type, immediate_parents, tags, asset_updated_at, asset_created_at, source_platform, detail, fields"
+      schema:
+        type: array
+        items:
+          type: string
+    asset_fqdn_path_param:
+      in: path
+      name: asset_fqdn
+      required: true
+      schema:
+        type: string
+    tag_name_path_param:
+      in: path
+      name: tag_name
+      required: true
+      schema:
+        type: string
+    rule_id_path_param:
+      in: path
+      name: rule_id
+      required: true
+      schema:
+        type: integer
+        format: int64
+    client_token_header:
+      name: client-token
+      in: header
+      required: true
+      schema:
+        type: string
+    default_page_size_query_param:
+      in: query
+      name: page_size
+      schema:
+        type: integer
+        default: 20
+        minimum: 1
+        maximum: 500
+    classification_category_query_param:
+      in: query
+      name: category
+      description: "classification category to expect in the response. Returns all types if left empty"
+      example: "PII"
+      schema:
+        type: string
+    classification_status_query_param:
+      in: query
+      name: status
+      description: "classification status to expect in the response. Returns types schemas if left empty"
+      example: "CLASSIFIED"
+      schema:
+        type: string
+    classification_method_query_param:
+      in: query
+      name: method
+      description: "classification method to expect in the response. Returns all types if left empty"
+      example: "AUTOMATED"
+      schema:
+        type: string
+    schema_classification_id_query_param:
+      in: query
+      name: schema_classification_id
+      description: "the exact schema to expect in the response. Returns all if left empty"
+      example: "5"
+      schema:
+        type: integer
+        format: int64

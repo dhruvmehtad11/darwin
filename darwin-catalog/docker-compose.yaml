@@ -1,0 +1,83 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: darwin-catalog-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: darwin_catalog
+      MYSQL_USER: darwin-catalog
+      MYSQL_PASSWORD: darwin-catalog
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - darwin-catalog-network
+
+  darwin-catalog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: darwin-catalog
+    ports:
+      - "8080:8081"
+    entrypoint: ["sh", "-c", "sleep 10 && java -jar app.jar"]
+    environment:
+      # MySQL Configuration
+      MYSQL_URL: jdbc:mysql://mysql:3306/darwin_catalog?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      MYSQL_USERNAME: darwin-catalog
+      MYSQL_PASSWORD: darwin-catalog
+      
+      # Datadog Configuration (optional - set as needed)
+      DATADOG_APP_KEY: ${DATADOG_APP_KEY:-}
+      DATADOG_API_KEY: ${DATADOG_API_KEY:-}
+      DATADOG_MONITOR_ENABLED: ${DATADOG_MONITOR_ENABLED:-false}
+      DATADOG_MONITOR_ENV: ${DATADOG_MONITOR_ENV:-local}
+      DATADOG_MONITOR_ENVIRONMENT: ${DATADOG_MONITOR_ENVIRONMENT:-development}
+      DATADOG_MONITOR_SLACK_WEBHOOKS: ${DATADOG_SLACK_WEBHOOKS:-}
+      DATADOG_MONITOR_CUSTOM_WEBHOOKS: ${DATADOG_CUSTOM_WEBHOOKS:-}
+      
+      # Glue Listener Configuration (optional)
+      GLUE_LISTENER_ENABLED: ${GLUE_LISTENER_ENABLED:-false}
+      GLUE_LISTENER_QUEUE_LINK: ${GLUE_LISTENER_QUEUE_LINK:-}
+      
+      # Consumer Token Configuration (optional)
+      CONSUMER_TOKEN_EXPIRIES_CONTRACTCENTRAL: ${CONSUMER_TOKEN_EXPIRIES_CONTRACTCENTRAL:-30}
+      CONSUMER_TOKEN_EXPIRIES_DATADOG: ${CONSUMER_TOKEN_EXPIRIES_DATADOG:-30}
+      CONSUMER_TOKEN_EXPIRIES_DATABEAM: ${CONSUMER_TOKEN_EXPIRIES_DATABEAM:-30}
+      CONSUMER_TOKEN_EXPIRIES_DATAHIGHWAY: ${CONSUMER_TOKEN_EXPIRIES_DATAHIGHWAY:-30}
+      CONSUMER_TOKEN_EXPIRIES_DATASTITCH: ${CONSUMER_TOKEN_EXPIRIES_DATASTITCH:-30}
+      CONSUMER_TOKEN_EXPIRIES_NEXUS: ${CONSUMER_TOKEN_EXPIRIES_NEXUS:-30}
+      CONSUMER_TOKEN_SELF: ${CONSUMER_TOKEN_SELF:-default-token}
+      CONSUMER_TOKEN_NAMES_DATABEAM: ${CONSUMER_TOKEN_NAMES_DATABEAM:-databeam}
+      CONSUMER_TOKEN_NAMES_DATASTITCH: ${CONSUMER_TOKEN_NAMES_DATASTITCH:-datastitch}
+      CONSUMER_TOKEN_NAMES_DATAHIGHWAY: ${CONSUMER_TOKEN_NAMES_DATAHIGHWAY:-datahighway}
+      CONSUMER_TOKEN_NAMES_CONTRACTCENTRAL: ${CONSUMER_TOKEN_NAMES_CONTRACTCENTRAL:-contractcentral}
+      CONSUMER_TOKEN_NAMES_NEXUS: ${CONSUMER_TOKEN_NAMES_NEXUS:-nexus}
+      
+      # Redshift Configuration (optional)
+      REDSHIFT_USERNAME: ${REDSHIFT_USERNAME:-}
+      REDSHIFT_PASSWORD: ${REDSHIFT_PASSWORD:-}
+      
+      # Spring Profile
+      SPRING_PROFILES_ACTIVE: local
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - darwin-catalog-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  darwin-catalog-network:
+    driver: bridge
+

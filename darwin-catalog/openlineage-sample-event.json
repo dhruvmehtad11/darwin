@@ -1,0 +1,477 @@
+{
+    "eventType": "COMPLETE",
+    "eventTime": "2024-08-29T06:15:00.000Z",
+    "run": {
+        "runId": "12345678-1234-5678-9012-123456789abc",
+        "facets": {
+            "nominalTime": {
+                "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/NominalTimeRunFacet.json",
+                "nominalStartTime": "2024-08-29T06:00:00.000Z",
+                "nominalEndTime": "2024-08-29T06:15:00.000Z"
+            }
+        }
+    },
+    "job": {
+        "namespace": "example:airflow",
+        "name": "user_analytics_etl",
+        "facets": {
+            "documentation": {
+                "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/DocumentationJobFacet.json",
+                "description": "ETL job that processes user data and creates analytics tables"
+            }
+        }
+    },
+    "inputs": [
+        {
+            "namespace": "example:table:redshift:segment:sporta_metrics",
+            "name": "data_aware_logs",
+            "facets": {
+                "schema": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/SchemaDatasetFacet.json",
+                    "fields": [
+                        {
+                            "name": "points",
+                            "type": "float"
+                        },
+                        {
+                            "name": "tourname",
+                            "type": "string"
+                        },
+                        {
+                            "name": "date",
+                            "type": "timestamp"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "namespace": "example:table:redshift:segment:sporta_metrics",
+            "name": "ds_hypothesis",
+            "facets": {
+                "schema": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/SchemaDatasetFacet.json",
+                    "fields": [
+                        {
+                            "name": "record_date",
+                            "type": "date"
+                        },
+                        {
+                            "name": "ggr_h",
+                            "type": "double"
+                        },
+                        {
+                            "name": "cum_ggr_h",
+                            "type": "double"
+                        },
+                        {
+                            "name": "id",
+                            "type": "int"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "namespace": "example:table:redshift:segment:sporta_metrics",
+            "name": "elasticsearch_metrics",
+            "facets": {
+                "schema": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/SchemaDatasetFacet.json",
+                    "fields": [
+                        {
+                            "name": "date",
+                            "type": "date"
+                        },
+                        {
+                            "name": "metric_name",
+                            "type": "string"
+                        },
+                        {
+                            "name": "scope",
+                            "type": "string"
+                        },
+                        {
+                            "name": "value",
+                            "type": "double"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "namespace": "example:table:lakehouse:company_aggregates",
+            "name": "events_qc_logs_stage",
+            "facets": {
+                "schema": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/SchemaDatasetFacet.json",
+                    "fields": [
+                        {
+                            "name": "table_name",
+                            "type": "string"
+                        },
+                        {
+                            "name": "org",
+                            "type": "string"
+                        },
+                        {
+                            "name": "all_event_attributes",
+                            "type": "float"
+                        },
+                        {
+                            "name": "all_events_whitelist",
+                            "type": "float"
+                        },
+                        {
+                            "name": "all_events_blacklist",
+                            "type": "float"
+                        },
+                        {
+                            "name": "raw_events",
+                            "type": "float"
+                        },
+                        {
+                            "name": "processed_events",
+                            "type": "float"
+                        },
+                        {
+                            "name": "parquet_flag",
+                            "type": "smallint"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": [
+        {
+            "namespace": "example:table:lakehouse:company_aggregates",
+            "name": "free_to_paid_user_512",
+            "facets": {
+                "schema": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/SchemaDatasetFacet.json",
+                    "fields": [
+                        {
+                            "name": "total_user",
+                            "type": "bigint"
+                        },
+                        {
+                            "name": "load_date",
+                            "type": "timestamp"
+                        }
+                    ]
+                },
+                "columnLineage": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/ColumnLineageDatasetFacet.json",
+                    "fields": {
+                        "total_user": {
+                            "inputFields": [
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "data_aware_logs",
+                                    "field": "points"
+                                }
+                            ]
+                        },
+                        "load_date": {
+                            "inputFields": [
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "data_aware_logs",
+                                    "field": "tourname"
+                                },
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "data_aware_logs",
+                                    "field": "date"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "namespace": "example:table:lakehouse:company_aggregates",
+            "name": "free_user_cohorts_denorm",
+            "facets": {
+                "schema": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/SchemaDatasetFacet.json",
+                    "fields": [
+                        {
+                            "name": "leaguejoindate",
+                            "type": "timestamp"
+                        },
+                        {
+                            "name": "userid",
+                            "type": "bigint"
+                        },
+                        {
+                            "name": "leagueid",
+                            "type": "bigint"
+                        },
+                        {
+                            "name": "roundid",
+                            "type": "bigint"
+                        },
+                        {
+                            "name": "leaguecategory",
+                            "type": "string"
+                        },
+                        {
+                            "name": "actualleaguesize",
+                            "type": "int"
+                        },
+                        {
+                            "name": "rank",
+                            "type": "int"
+                        },
+                        {
+                            "name": "leaguetype",
+                            "type": "string"
+                        },
+                        {
+                            "name": "entryfee",
+                            "type": "double"
+                        },
+                        {
+                            "name": "pct_rank",
+                            "type": "decimal(21,0)"
+                        },
+                        {
+                            "name": "cashbonusbalance",
+                            "type": "double"
+                        },
+                        {
+                            "name": "depositbalance",
+                            "type": "double"
+                        },
+                        {
+                            "name": "winningsbalance",
+                            "type": "double"
+                        },
+                        {
+                            "name": "amountwoninr",
+                            "type": "double"
+                        },
+                        {
+                            "name": "amountwoninraftertax",
+                            "type": "double"
+                        },
+                        {
+                            "name": "fflj",
+                            "type": "timestamp"
+                        },
+                        {
+                            "name": "ftd",
+                            "type": "timestamp"
+                        },
+                        {
+                            "name": "firstfjoin",
+                            "type": "int"
+                        },
+                        {
+                            "name": "firstpjoin",
+                            "type": "int"
+                        },
+                        {
+                            "name": "winnerflag",
+                            "type": "string"
+                        },
+                        {
+                            "name": "purchase_sequence",
+                            "type": "bigint"
+                        },
+                        {
+                            "name": "previous_pct_rank",
+                            "type": "decimal(21,0)"
+                        },
+                        {
+                            "name": "previous_winnerflag",
+                            "type": "string"
+                        },
+                        {
+                            "name": "previous_leaguetype",
+                            "type": "string"
+                        },
+                        {
+                            "name": "paid_contest_flag",
+                            "type": "string"
+                        },
+                        {
+                            "name": "previous_round",
+                            "type": "bigint"
+                        },
+                        {
+                            "name": "same_match_flag",
+                            "type": "int"
+                        },
+                        {
+                            "name": "load_date",
+                            "type": "string"
+                        },
+                        {
+                            "name": "discountbonusbalance",
+                            "type": "double"
+                        },
+                        {
+                            "name": "discountpointsworthbalance",
+                            "type": "double"
+                        },
+                        {
+                            "name": "playwinningsbalance",
+                            "type": "double"
+                        },
+                        {
+                            "name": "promodiscountbalanceinr",
+                            "type": "double"
+                        },
+                        {
+                            "name": "dreamcoinbalanceinr",
+                            "type": "double"
+                        }
+                    ]
+                },
+                "columnLineage": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/ColumnLineageDatasetFacet.json",
+                    "fields": {
+                        "leaguejoindate": {
+                            "inputFields": [
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "data_aware_logs",
+                                    "field": "tourname"
+                                }
+                            ]
+                        },
+                        "userid": {
+                            "inputFields": [
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "ds_hypothesis",
+                                    "field": "record_date"
+                                },
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "ds_hypothesis",
+                                    "field": "cum_ggr_h"
+                                }
+                            ]
+                        },
+                        "pct_rank": {
+                            "inputFields": [
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "elasticsearch_metrics",
+                                    "field": "scope"
+                                },
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "elasticsearch_metrics",
+                                    "field": "value"
+                                }
+                            ]
+                        },
+                        "discountbonusbalance": {
+                            "inputFields": [
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "events_qc_logs_stage",
+                                    "field": "all_events_whitelist"
+                                },
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "elasticsearch_metrics",
+                                    "field": "metric_name"
+                                },
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "data_aware_logs",
+                                    "field": "tourname"
+                                },
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "events_qc_logs_stage",
+                                    "field": "raw_events"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "namespace": "example:table:lakehouse:company_aggregates",
+            "name": "free_user_weekly_retention_512",
+            "facets": {
+                "schema": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/SchemaDatasetFacet.json",
+                    "fields": [
+                        {
+                            "name": "weeks_since_firsttxn",
+                            "type": "bigint"
+                        },
+                        {
+                            "name": "firstfreejointime_week",
+                            "type": "string"
+                        },
+                        {
+                            "name": "total_users",
+                            "type": "bigint"
+                        },
+                        {
+                            "name": "load_date",
+                            "type": "timestamp"
+                        }
+                    ]
+                },
+                "columnLineage": {
+                    "_producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+                    "_schemaURL": "https://openlineage.io/spec/facets/1-0-0/ColumnLineageDatasetFacet.json",
+                    "fields": {
+                        "weeks_since_firsttxn": {
+                            "inputFields": [
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "ds_hypothesis",
+                                    "field": "user_id"
+                                }
+                            ]
+                        },
+                        "total_users": {
+                            "inputFields": [
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "ds_hypothesis",
+                                    "field": "ggr_h"
+                                }
+                            ]
+                        },
+                        "load_date": {
+                            "inputFields": [
+                                {
+                                    "namespace": "example:table:redshift:segment:sporta_metrics",
+                                    "name": "elasticsearch_metrics",
+                                    "field": "parquet_flag"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "producer": "https://github.com/OpenLineage/OpenLineage/tree/main/client/java",
+    "schemaURL": "https://openlineage.io/spec/1-0-5/OpenLineage.json"
+}
