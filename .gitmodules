@@ -10,7 +10,3 @@
 	path = ml-serve-app
 	url = https://github.com/dream11/darwin-ml-serve-v2/
 	branch = feat/one-click-ml-flow
-[submodule "hermes-cli"]
-	path = hermes-cli
-	url = https://github.com/dream11/hermes-cli.git
-	branch = hermes_for_distro

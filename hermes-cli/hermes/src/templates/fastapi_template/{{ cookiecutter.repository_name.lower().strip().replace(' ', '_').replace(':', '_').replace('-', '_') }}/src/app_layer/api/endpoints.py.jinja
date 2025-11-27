@@ -1,0 +1,68 @@
+from fastapi import APIRouter, HTTPException, Header, Query
+from src.app_layer.dto.request.serve_request_dtos import *
+from src.app_layer.dto.response.serve_response_dtos import *
+from typing import Optional
+from src.app_layer.service.service import *
+
+router = APIRouter()
+
+{% for endpoint in cookiecutter.serve_endpoint_schemas.endpoints %}
+@router.{{ endpoint.method | lower }}(path="/{{ endpoint.endpoint_name | replace('-', '_') | lower }}{% if 'path_params' in endpoint.request_schema %}{% for param in endpoint.request_schema.path_params %}/{param.name}{% endfor %}{% endif %}", response_model={{ endpoint.endpoint_name | replace('-', ' ') | replace('_', ' ') | replace('-', ' ') | replace('_', ' ') | title | replace(' ', '') | replace(' ', '') }}Response)
+async def {{ endpoint.endpoint_name | replace('-', '_') | lower}}(
+    {%- if 'path_params' in endpoint.request_schema %}
+        {%- for param in endpoint.request_schema.path_params %}
+    {{ param.name }}: {{ param.type }},
+        {%- endfor %}
+    {%- endif %}
+    {%- if 'query_params' in endpoint.request_schema %}
+        {%- for param in endpoint.request_schema.query_params %}
+    {{ param.name }}: Optional[{{ param.type }}] = Query(None, description="{{ param.description }}"),
+        {%- endfor %}
+    {%- endif %}
+    {%- if 'headers' in endpoint.request_schema %}
+        {%- for header in endpoint.request_schema.headers %}
+    {{ header.name.replace('-', '_') }}: Optional[{{ header.type }}] = Header(None, description="{{ header.description }}"),
+        {%- endfor %}
+    {%- endif %}
+    {%- if endpoint.method | upper == 'POST' and 'body' in endpoint.request_schema and endpoint.request_schema.body %}
+    body: {{ endpoint.endpoint_name | replace('-', ' ') | replace('_', ' ') | replace('-', ' ') | replace('_', ' ') | title | replace(' ', '') | replace(' ', '') }}Request
+    {%- endif %}
+):
+    """
+    {{ endpoint.endpoint_name }} endpoint.
+    """
+    service = {{ endpoint.endpoint_name | replace('-', ' ') | replace('_', ' ') | replace('-', ' ') | replace('_', ' ') | title | replace(' ', '') | replace(' ', '') }}Service()
+
+    try:
+        # 1. Preprocess
+        preprocessed_data = service.preprocess(
+            {%- if endpoint.method | upper == 'POST' and 'body' in endpoint.request_schema and endpoint.request_schema.body %}
+            body=body,
+            {%- endif %}
+            {%- if 'path_params' in endpoint.request_schema %}
+                {%- for param in endpoint.request_schema.path_params %}
+            {{ param.name }}={{ param.name }},
+                {%- endfor %}
+            {%- endif %}
+            {%- if 'query_params' in endpoint.request_schema %}
+                {%- for param in endpoint.request_schema.query_params %}
+            {{ param.name }}={{ param.name }},
+                {%- endfor %}
+            {%- endif %}
+            {%- if 'headers' in endpoint.request_schema %}
+                {%- for header in endpoint.request_schema.headers %}
+            {{ header.name.replace('-', '_') }}={{ header.name.replace('-', '_') }},
+                {%- endfor %}
+            {%- endif %}
+        )
+
+        # 2. Inference
+        inference_result = service.inference(preprocessed_data)
+
+        # 3. Postprocess
+        response = service.postprocess(inference_result)
+
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+{% endfor %}

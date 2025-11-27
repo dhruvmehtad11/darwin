@@ -1,0 +1,124 @@
+from typing import Dict, List, Optional
+from src.api_client.api_client import APIClient
+
+class APICallerDAO:
+    def __init__(self, api_client: APIClient):
+        self._api_client = api_client
+
+    {%- if cookiecutter.api_client is not string %}
+    {% for endpoint in cookiecutter.api_client.endpoints %}
+    async def {{ endpoint.endpoint_name.lower() }}(
+          self,
+        
+        {%- if endpoint.request_schema.path_params is defined %}
+        {%- for param in endpoint.request_schema.path_params %}
+        {%- if param.required %}
+        {{ param.name }}: {{ param.type }},
+        {%- if not param.required %}
+        {{ param.name }}: {{ param.type }} = None,
+        {%- endif %}
+        {%- endif %}
+        {%- endfor %}
+        {%- endif %}
+        
+       
+        {%- if endpoint.method in ['POST', 'PUT'] and endpoint.request_schema.body is defined %}
+        {%- for param in endpoint.request_schema.body %}
+        {%- if param.required %}
+        {{ param.name }}: {{ param.type }},
+        {%- endif %}
+        {%- if not param.required %}
+        {{ param.name }}: {{ param.type }} = None,
+        {%- endif %}
+        {%- endfor %}
+        {%- endif %}
+       
+        {%- if endpoint.request_schema.query_params is defined %}
+        {%- for param in endpoint.request_schema.query_params %}
+        {%- if param.required %}
+        {{ param.name }}: {{ param.type }},
+        {%- endif %}
+        {%- if not param.required %}
+        {{ param.name }}: {{ param.type }} = None,
+        {%- endif %}
+        {%- endfor %}
+        {%- endif %}
+        headers: Optional[Dict] = None
+    ) -> dict:
+        """
+        {{ endpoint.endpoint_name }} API call
+        {%- if endpoint.request_schema.query_params is defined %}
+
+        Query Parameters:
+        {%- if endpoint.request_schema.query_params is defined %}
+        {%- for param in endpoint.request_schema.query_params %}
+            {{ param.name }}: {{ param.description }}
+        {%- endfor %}
+        {%- endif %}
+        {%- endif %}
+
+        {%- if  endpoint.method in ['POST', 'PUT'] and endpoint.request_schema.body is defined %}
+
+        Request Body:
+        {%- for param in endpoint.request_schema.body %}
+            {{ param.name }}: {{ param.description }}
+        {%- endfor %}
+        {%- endif %}
+        """
+        # Prepare query parameters
+        query_params = {}
+        {%- if  endpoint.request_schema.query_params is defined %}
+        {%- for param in endpoint.request_schema.query_params %}
+        {%- if param.required %}
+        query_params["{{ param.name }}"] = {{ param.name }}
+        {%- else %}
+        if {{ param.name }} is not None:
+            query_params["{{ param.name }}"] = {{ param.name }}
+        {%- endif %}
+        {%- endfor %}
+        {%- endif %}
+    
+        path_params = {}
+        {%- if  endpoint.request_schema.path_params is defined %}
+        {%- for param in endpoint.request_schema.path_params %}
+        {%- if param.required %}
+        path_params["{{ param.name }}"] = {{ param.name }}
+        {%- else %}
+        if {{ param.name }} is not None:
+            path_params["{{ param.name }}"] = {{ param.name }}
+        {%- endif %}
+        {%- endfor %}
+        {%- endif %}
+
+        {%- if endpoint.method in ['POST', 'PUT'] and    endpoint.request_schema.body is defined %}
+        # Prepare request body
+        body = {}
+        {%- for param in endpoint.request_schema.body %}
+        {%- if param.required %}
+        body["{{ param.name }}"] = {{ param.name }}
+        {%- else %}
+        if {{ param.name }} is not None:
+            body["{{ param.name }}"] = {{ param.name }}
+        {%- endif %}
+        {%- endfor %}
+        {%- endif %}
+
+        # Make the API call
+        return await self._api_client.{{    endpoint.method.lower() }}(
+            url="{{     endpoint.path }}",
+            base_url="{{  endpoint.url.split('/api')[0] }}",
+            {%- if endpoint.method in ['POST', 'PUT'] %}
+            body=body,
+            {%- endif %}
+            query_params=query_params,
+            headers=headers
+        )
+
+ 
+    {% endfor %}
+    async def close(self):
+        """Close all API client sessions."""
+        await self._api_client.close()
+    {%- else %}
+    # TODO: implement api caller dao
+    {%- endif %}

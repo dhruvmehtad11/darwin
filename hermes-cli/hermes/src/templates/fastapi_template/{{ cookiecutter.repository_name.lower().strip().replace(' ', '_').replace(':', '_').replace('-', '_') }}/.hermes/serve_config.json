@@ -1,0 +1,7 @@
+{
+  "name": "{{cookiecutter.repository_name.lower().strip().replace(' ', '_').replace(':', '_').replace('_', '-')}}",
+  "type": "api",
+  "description": "{{cookiecutter.repository_description}}",
+  "space": "{{cookiecutter.repository_name.lower().strip().replace(' ', '_').replace(':', '_').replace('_', '-')}}",
+  "github_repo_url": "https://github.com/{{cookiecutter.github_username}}/{{ cookiecutter.repository_name.lower().strip().replace(' ', '_').replace(':', '_').replace('_', '-') }}.git"
+}

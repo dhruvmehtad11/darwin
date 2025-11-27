@@ -1,0 +1,36 @@
+from dependency_injector import containers, providers
+from src.api_client.api_client import APIClient
+{% if cookiecutter.repository_inference_type in ["online", "both"] %}
+from src.app_layer.dao.feature_store_dao import FeatureStoreDAO
+{% endif %}
+from src.app_layer.dao.api_caller_dao import APICallerDAO
+from src.config.config import Config
+{% if cookiecutter.repository_inference_type in ["online", "both"] %}
+from src.feature_store.feature_store import FeatureStoreClient
+{% endif %}
+import os
+
+class Container(containers.DeclarativeContainer):
+    env = "local" if os.getenv("ENV", "local") in ["dev", "stag"] else os.getenv("ENV", "local")
+    
+    os.environ["user"] = "{{ cookiecutter.model_author }}"
+
+    config = providers.Singleton(Config, env=env)
+    
+    # Core dependencies
+    api_client = providers.Singleton(APIClient, config=config)
+
+   
+    {% if cookiecutter.repository_inference_type in ["online", "both"] %}
+    feature_store_client = providers.Singleton(
+        FeatureStoreClient,
+        api_client=api_client,
+        config=config
+    )
+    {% endif %}
+    
+    
+    api_caller_dao = providers.Singleton(
+        APICallerDAO,
+        api_client=api_client
+    )

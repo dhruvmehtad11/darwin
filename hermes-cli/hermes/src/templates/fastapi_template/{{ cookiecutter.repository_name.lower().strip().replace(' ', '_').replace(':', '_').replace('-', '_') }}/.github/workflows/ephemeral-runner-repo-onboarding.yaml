@@ -1,0 +1,26 @@
+{% raw %}
+
+name: Onboard Ephemeral Runners
+
+run-name: ${{ github.repository }} repository ephemeral runners
+
+on: workflow_dispatch
+
+jobs:
+  onboarding-job:
+    runs-on: onboarding-runner
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Use Onboard Ephemeral Runners Action
+        id: onboarding
+        uses: <your_github_action>
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          values-file : '.ci/actions/values.yaml'
+          docker-username: ${{ secrets.JFROG_USERNAME }}
+          docker-password: ${{ secrets.JFROG_PASSWORD }}
+          helm-username: ${{ secrets.JFROG_USERNAME }}
+          helm-password: ${{ secrets.JFROG_PASSWORD }}
+{% endraw %}

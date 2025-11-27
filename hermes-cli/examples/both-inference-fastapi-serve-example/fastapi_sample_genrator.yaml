@@ -1,0 +1,127 @@
+# Project Configuration
+repository: # required
+  name: "hermes-cli-testing" # required
+  description: "User recommendation service for personalized suggestions" # required
+  author: "user@serve.com" # required
+  output_path: "examples/"
+  type: "api" # required - CHANGED from "fastapi" to "api"
+
+# Model Configuration
+model: # required
+  author: "user@serve.com" # required
+  flavor: "sklearn" # required
+  path: "<mlflow-artifacts-link>" # required
+
+# Schema Definition for the input and output of the REST API
+# UPDATED TO NEW FORMAT with endpoints list
+serve_endpoint_schemas: # optional
+  endpoints:
+    - endpoint_name: "recommend"
+      method: "POST"
+      request_schema:
+        path_params: []
+        query_params: []
+        headers: []
+        body:
+          - name: "user_id"
+            type: "int"
+            description: "Unique identifier for the user"
+            required: true
+          - name: "product_id"
+            type: "int"
+            description: "Unique identifier for the product"
+            required: true
+          - name: "user_age"
+            type: "int"
+            description: "Age of the user"
+            required: false
+          - name: "user_purchase_history"
+            type: "list"
+            description: "List of past purchases made by the user"
+            required: false
+      response_schema:
+        body:
+          - name: "recommendation_score"
+            type: "float"
+            description: "Score indicating user-round affinity"
+            required: true
+
+# API Client - UPDATED TO NEW FORMAT
+api_client:
+  endpoints:
+    - endpoint_name: "user_profile_service"
+      url: "http://user-profile-service/api/v1/profiles"
+      path: "/api/v1/profiles"
+      method: "GET"
+      request_schema:
+        query_params:
+          - name: "user_id"
+            type: "str"
+            required: true
+            description: "Unique identifier for the user"
+          - name: "city"
+            type: "str"
+            required: false
+            description: "City of the user"
+        headers:
+          - name: "page"
+            type: "str"
+            required: false
+            description: "Page number"
+          - name: "is_active"
+            type: "bool"
+            required: false
+            description: "Is the user active"
+        path_params: []
+        body: []
+      response_schema:
+        body:
+          - name: "profile_data"
+            type: "dict"
+            description: "User profile information"
+            required: true
+    
+    - endpoint_name: "add_user"
+      url: "http://user-profile-service/api/v1/profiles"
+      path: "/api/v1/profiles"
+      method: "POST"
+      request_schema:
+        query_params:
+          - name: "city"
+            type: "str"
+            required: false
+            description: "City of the user"
+        headers:
+          - name: "page"
+            type: "str"
+            required: false
+            description: "Page number"
+          - name: "is_active"
+            type: "bool"
+            required: false
+            description: "Is the user active"
+        path_params: []
+        body:
+          - name: "user_id"
+            type: "str"
+            required: true
+            description: "Unique identifier for the user"
+          - name: "devices"
+            type: "list"
+            required: true
+            description: "List of devices"
+          - name: "metadata"
+            type: "dict"
+            required: true
+            description: "extra metadata"
+      response_schema:
+        body:
+          - name: "user_id"
+            type: "str"
+            description: "Created user ID"
+            required: true
+          - name: "status"
+            type: "str"
+            description: "Creation status"
+            required: true
+
