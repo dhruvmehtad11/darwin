@@ -1,3 +1,4 @@
+import os
 from typing import Dict, Any, Optional
 
 from fastapi import FastAPI, HTTPException
@@ -87,7 +88,10 @@ class PredictResponse(BaseModel):
     """Response model for prediction endpoint"""
     prediction: Any = Field(..., description="Model prediction result")
 
-app = FastAPI()
+# ROOT_PATH is used for proper OpenAPI/Swagger docs when behind a reverse proxy
+# e.g., if app is served at /my-model/, set ROOT_PATH=/my-model
+root_path = os.environ.get("ROOT_PATH", "")
+app = FastAPI(root_path=root_path)
 
 config = Config()
 

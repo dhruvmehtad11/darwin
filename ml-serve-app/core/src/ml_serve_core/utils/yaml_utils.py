@@ -51,6 +51,10 @@ def configure_ingress_for_local(values: dict, serve_name: str, namespace: str) -
     values['ingressInt']['path'] = f"/{serve_name}(/|$)(.*)"
     values['ingressInt']['pathType'] = 'ImplementationSpecific'
 
+    # Set ROOT_PATH for FastAPI OpenAPI/Swagger docs to work behind reverse proxy
+    # This ensures /docs loads /openapi.json from the correct path prefix
+    values['envs']['ROOT_PATH'] = f"/{serve_name}"
+
     # Clear ALB-specific settings
     values['ingressInt']['albLogs'] = {'enabled': False}
     values['ingressInt']['tags'] = ''
