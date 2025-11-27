@@ -413,7 +413,7 @@ services:
         value: "http://localhost/artifact-builder"
       # Container Registry Configuration
       - name: CONTAINER_IMAGE_PREFIX
-        value: "darwin"
+        value: "serve-app"
       - name: CONTAINER_IMAGE_PREFIX_GCP
         value: "ray-images"
       - name: IMAGE_REPOSITORY
