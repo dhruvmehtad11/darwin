@@ -1,0 +1,76 @@
+---
+name: 'darwin-demo'
+tags: ["demo"]
+# Updating Runtime will restart a running cluster
+runtime: 'Ray2.37.0-Py310-Spark3.5.1-CPU'
+terminate_after_minutes: 15
+
+# Updating Head_Node will restart a running cluster
+head_node:
+  node:
+    cores: 4
+    memory: 8
+    node_capacity_type: 'ondemand'
+#  node_type: gpu
+#  node:
+#    name: NVIDIA A100
+#    cores: 22
+#    memory: 154
+#    gpu_count: 2
+#    g_ram_memory: 80
+#    g_ram_type: HBM2
+
+worker_group:
+  - node:
+      cores: 2
+      memory: 4
+      node_capacity_type: 'spot'
+    min_pods: 1
+    max_pods: 1
+#  - node_type: gpu
+#    node:
+#      name: NVIDIA A100
+#      cores: 22
+#      memory: 154
+#      gpu_count: 2
+#      g_ram_memory: 80
+#      g_ram_type: HBM2
+#    min_pods: 1
+#    max_pods: 1
+# You can add more worker-groups in the following way
+
+auto_termination_policies:
+  - policy_name: 'JupyterLabActivity'
+  - policy_name: 'ClusterCPUUsage'
+    params:
+      head_node_cpu_usage_threshold: 100
+      worker_node_cpu_usage_threshold: 5
+    enabled: True
+  - policy_name: 'ActiveRayJob'
+
+advance_config:
+  env_variables: "cluster_name=darwin-demo-cluster\npurpose=demo\nowner=darwin"
+  log_path: ''
+  init_script:
+    - pip install mlflow
+    - pip install theano
+  instance_role: 'darwin-ds-role'
+  ray_start_params:
+    object_store_memory_perc: 5
+    num_cpus_on_head: 2
+
+cloud_env: 'eks-1'
+
+# Packages to be installed
+packages:
+  - source: 'pypi'
+    body:
+      name: 'tensorflow'
+      version: '2.19.0'
+  - source: 'maven'
+    body:
+      name: 'org.apache.commons:commons-csv'
+      version: '1.14.0'
+      metadata:
+        repository: 'maven'
+        exclusions: 'org.apache.commons:commons-csv'

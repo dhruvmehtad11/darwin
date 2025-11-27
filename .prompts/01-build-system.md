@@ -71,8 +71,8 @@ Defines all available applications, datastores, and operators:
 ```yaml
 applications:
   - application: darwin-compute        # Image name
-    base-path: darwin-compute          # Submodule directory
-    path: .                            # Build context within submodule
+    base-path: darwin-compute          # Code directory
+    path: .                            # Build context within code directory
     base-image: darwin/python:3.9.7-pip-bookworm-slim
     enabled: true                      # Default state (can be overridden)
     env:                               # Build-time env vars

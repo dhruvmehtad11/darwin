@@ -1,0 +1,559 @@
+image:
+  repository: test
+  tag: v1
+  pullPolicy: IfNotPresent
+nameOverride: kuberay
+fullnameOverride: ""
+imagePullSecrets: [ ]
+serviceAccount:
+  create: false
+  name: ray
+common:
+  containerEnv:
+    - name: SPARK_CONF_DIR
+      value: "/tmp/script"
+    - name: TEST_ENV
+      value: test
+    - name: TEST_ENV2
+      value: test2
+    - name: TERMINATE_AFTER
+      value: "60"
+    - name: CLUSTER_NAME
+      value: test
+    - name: CLUSTER_ID
+      value: test
+    - name: INIT_SCRIPT_API
+      value: darwin-compute-test.dream11-test.local/init-script-status
+    - name: RAY_PROMETHEUS_HOST
+      value: http://test-prometheus.prometheus.svc.cluster.local:9090
+    - name: RAY_GRAFANA_HOST
+      value: http://test-grafana.prometheus.svc.cluster.local:3000
+    - name: RAY_GRAFANA_IFRAME_HOST
+      value: https://darwin-mlp-stag.d11dev.com/eks-1/test-metrics
+    - name: ENV
+      value: test
+    - name: CREATED_BY
+      value: darwin@test.com
+    - name: CLOUD
+      value: AWS
+    - name: RSS
+      value: "False"
+    - name: SPARK_CONNECT_ENABLED
+      value: "false"
+    - name: IS_SPARK_AUTO_INITIALIZATION
+      value: "false"
+    - name: CHRONOS_API_URL
+      value: test_chronos_url.local
+livenessProbe:
+  failureThreshold: 10
+  initialDelaySeconds: 60
+  periodSeconds: 15
+  successThreshold: 1
+  timeoutSeconds: 5
+readinessProbe:
+  failureThreshold: 2
+  initialDelaySeconds: 60
+  periodSeconds: 15
+  successThreshold: 1
+  timeoutSeconds: 5
+head:
+  enableInTreeAutoscaling: true
+  labels: { }
+  serviceAccountName: ray
+  rayStartParams:
+    port: "6379"
+    dashboard-host: 0.0.0.0
+    num-cpus: "0"
+    node-ip-address: "$MY_POD_IP"
+    block: "true"
+    metrics-export-port: "8080"
+    redis-password: ""
+    num-gpus: "0"
+    object-store-memory: "268435456"
+  containerEnv:
+    - name: TYPE
+      value: head
+    - name: SHELL
+      value: "/bin/bash"
+    - name: MY_POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    - name: PYTHONPATH
+      value: "/home/ray/fsx/workspace/shared_code:$PYTHONPATH"
+  envFrom:
+    - secretRef:
+        name: secret-manager-token
+        optional: true
+  ports:
+    - containerPort: 6379
+      name: gcs
+    - containerPort: 8265
+      name: dashboard
+    - containerPort: 10001
+      name: client
+    - containerPort: 8000
+      name: serve
+    - containerPort: 8888
+      name: jupyter
+    - containerPort: 8080
+      name: metrics
+    - containerPort: 4040
+      name: sparkui
+    - containerPort: 3000
+      name: vscode
+    - containerPort: 8998
+      name: livy
+    - containerPort: 10000
+      name: thrift
+    - containerPort: 8001
+      name: custom-1
+    - containerPort: 8002
+      name: custom-2
+    - containerPort: 8003
+      name: custom-3
+  resources:
+    limits:
+      cpu: 1
+      memory: 1G
+    requests:
+      cpu: 1
+      memory: 1G
+  annotations:
+    ad.datadoghq.com/autoscaler.logs: '[{"source": "ray-head", "service": "test-autoscaler"}]'
+    ad.datadoghq.com/ray-head.logs: '[{"source": "ray-head", "service": "test-ray-head"}]'
+    karpenter.sh/do-not-disrupt: "true"
+  nodeSelector:
+    app: nvme
+    darwin.dream11.com/resource: "ray-cluster-head"
+  tolerations:
+    - key: "node.cilium.io/agent-not-ready"
+      operator: "Equal"
+      value: "true"
+      effect: "NoExecute"
+    - key: "karpenter.sh/disrupted"
+      operator: "Exists"
+      effect: "NoSchedule"
+  affinity: { }
+  securityContext:
+    runAsGroup: 100
+    runAsUser: 1000
+    capabilities:
+      add:
+        - SYS_PTRACE
+  volumes:
+    - name: log-volume
+      emptyDir: { }
+    - name: test-scripts-vol
+      configMap:
+        name: test-script
+        defaultMode: 511
+    - name: test-remote-command-vol
+      configMap:
+        name: test-remote-command
+        defaultMode: 511
+    - name: persistent-storage
+      persistentVolumeClaim:
+        claimName: fsx-claim-3
+    - name: disk-nvme
+      hostPath:
+        path: /mnt/disk-nvme
+        type: DirectoryOrCreate
+  volumeMounts:
+    - mountPath: "/tmp/ray"
+      name: log-volume
+    - mountPath: "/tmp/script"
+      name: test-scripts-vol
+    - mountPath: "/tmp/remote-command"
+      name: test-remote-command-vol
+    - name: persistent-storage
+      mountPath: "/home/ray/fsx"
+    - name: disk-nvme
+      mountPath: "/tmp/disk"
+  sidecarContainers: [ ]
+  command: [ ]
+  args:
+    - "/tmp/script/head.sh"
+  headService: { }
+worker:
+  groupName: wg
+  replicas: 1
+  minReplicas: 1
+  maxReplicas: 2
+  labels: { }
+  serviceAccountName: ray
+  rayStartParams:
+    node-ip-address: "$MY_POD_IP"
+    redis-password: LetMeInRay
+    block: "true"
+    metrics-export-port: "8080"
+    object-store-memory: "268435456"
+    resources: '"{\"ondemand\": 100}"'
+  containerEnv:
+    - name: TYPE
+      value: worker
+    - name: RAY_DISABLE_DOCKER_CPU_WARNING
+      value: "1"
+    - name: MY_POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: MY_POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    - name: CPU_REQUEST
+      valueFrom:
+        resourceFieldRef:
+          containerName: ray-worker
+          resource: requests.cpu
+  envFrom:
+    - secretRef:
+        name: secret-manager-token
+        optional: true
+  ports:
+    - containerPort: 8080
+      name: metrics
+  resources:
+    limits:
+      cpu: 1
+      memory: 1G
+    requests:
+      cpu: 1
+      memory: 1G
+  annotations:
+    ad.datadoghq.com/ray-worker.logs: '[{"source": "ray-worker", "service": "test-ray-worker"}]'
+    karpenter.sh/do-not-disrupt: "true"
+  nodeSelector:
+    app: nvme
+    karpenter.sh/capacity-type: on-demand
+    darwin.dream11.com/resource: "ray-cluster-all-purpose"
+  tolerations:
+    - key: "node.cilium.io/agent-not-ready"
+      operator: "Equal"
+      value: "true"
+      effect: "NoExecute"
+    - key: "karpenter.sh/disrupted"
+      operator: "Exists"
+      effect: "NoSchedule"
+  affinity:
+    podAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/instance
+                  operator: In
+                  values:
+                    - test
+            topologyKey: kubernetes.io/hostname
+  securityContext:
+    capabilities:
+      add:
+        - SYS_PTRACE
+  volumes:
+    - name: log-volume
+      emptyDir: { }
+    - name: test-scripts-vol
+      configMap:
+        name: test-script
+        defaultMode: 511
+    - name: test-remote-command-vol
+      configMap:
+        name: test-remote-command
+        defaultMode: 511
+    - name: disk-nvme
+      hostPath:
+        path: /mnt/disk-nvme
+        type: DirectoryOrCreate
+  volumeMounts:
+    - mountPath: "/tmp/ray"
+      name: log-volume
+    - mountPath: "/tmp/script"
+      name: test-scripts-vol
+    - mountPath: "/tmp/remote-command"
+      name: test-remote-command-vol
+    - name: disk-nvme
+      mountPath: "/tmp/disk"
+  sidecarContainers: [ ]
+  command: [ ]
+  args:
+    - "/tmp/script/worker.sh"
+additionalWorkerGroups:
+  wg1:
+    disabled: false
+    replicas: 1
+    minReplicas: 1
+    maxReplicas: 2
+    labels: { }
+    serviceAccountName: ray
+    rayStartParams:
+      node-ip-address: "$MY_POD_IP"
+      redis-password: LetMeInRay
+      block: "true"
+      metrics-export-port: "8080"
+      object-store-memory: "1073741824"
+      resources: '"{\"spot\": 200}"'
+    containerEnv:
+      - name: TYPE
+        value: worker
+      - name: RAY_DISABLE_DOCKER_CPU_WARNING
+        value: "1"
+      - name: MY_POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP
+      - name: MY_POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: CPU_REQUEST
+        valueFrom:
+          resourceFieldRef:
+            containerName: ray-worker
+            resource: requests.cpu
+    envFrom:
+      - secretRef:
+          name: secret-manager-token
+          optional: true
+    ports:
+      - containerPort: 8080
+        name: metrics
+    resources:
+      limits:
+        cpu: 2
+        memory: 4G
+      requests:
+        cpu: 2
+        memory: 4G
+    annotations:
+      ad.datadoghq.com/ray-worker.logs: '[{"source": "ray-worker", "service": "test-ray-worker"}]'
+      karpenter.sh/do-not-disrupt: "true"
+    nodeSelector:
+      app: ray
+      darwin.dream11.com/resource: "ray-cluster-all-purpose"
+    tolerations:
+      - key: "node.cilium.io/agent-not-ready"
+        operator: "Equal"
+        value: "true"
+        effect: "NoExecute"
+      - key: "karpenter.sh/disrupted"
+        operator: "Exists"
+        effect: "NoSchedule"
+    affinity:
+      podAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/instance
+                    operator: In
+                    values:
+                      - test
+              topologyKey: kubernetes.io/hostname
+      nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 80
+            preference:
+              matchExpressions:
+                - key: karpenter.sh/capacity-type
+                  operator: In
+                  values:
+                    - spot
+          - weight: 60
+            preference:
+              matchExpressions:
+                - key: karpenter.sh/capacity-type
+                  operator: In
+                  values:
+                    - ondemand
+    securityContext:
+      capabilities:
+        add:
+          - SYS_PTRACE
+    volumes:
+      - name: log-volume
+        emptyDir: { }
+      - name: test-scripts-vol
+        configMap:
+          name: test-script
+          defaultMode: 511
+      - name: test-remote-command-vol
+        configMap:
+          name: test-remote-command
+          defaultMode: 511
+    volumeMounts:
+      - mountPath: "/tmp/ray"
+        name: log-volume
+      - mountPath: "/tmp/script"
+        name: test-scripts-vol
+      - mountPath: "/tmp/remote-command"
+        name: test-remote-command-vol
+    sidecarContainers: [ ]
+    command: [ ]
+    args:
+      - "/tmp/script/worker.sh"
+  wg2:
+    disabled: false
+    replicas: 1
+    minReplicas: 1
+    maxReplicas: 2
+    labels: { }
+    serviceAccountName: ray
+    rayStartParams:
+      node-ip-address: "$MY_POD_IP"
+      redis-password: LetMeInRay
+      block: "true"
+      metrics-export-port: "8080"
+      object-store-memory: "1073741824"
+      resources: '"{\"spot\": 200}"'
+    containerEnv:
+      - name: TYPE
+        value: worker
+      - name: RAY_DISABLE_DOCKER_CPU_WARNING
+        value: "1"
+      - name: MY_POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP
+      - name: MY_POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: CPU_REQUEST
+        valueFrom:
+          resourceFieldRef:
+            containerName: ray-worker
+            resource: requests.cpu
+    envFrom:
+      - secretRef:
+          name: secret-manager-token
+          optional: true
+    ports:
+      - containerPort: 8080
+        name: metrics
+    resources:
+      limits:
+        cpu: 2
+        memory: 4G
+      requests:
+        cpu: 2
+        memory: 4G
+    annotations:
+      ad.datadoghq.com/ray-worker.logs: '[{"source": "ray-worker", "service": "test-ray-worker"}]'
+      karpenter.sh/do-not-disrupt: "true"
+    nodeSelector:
+      app: ray
+      darwin.dream11.com/resource: "ray-cluster-all-purpose"
+    tolerations:
+      - key: "node.cilium.io/agent-not-ready"
+        operator: "Equal"
+        value: "true"
+        effect: "NoExecute"
+      - key: "karpenter.sh/disrupted"
+        operator: "Exists"
+        effect: "NoSchedule"
+    affinity:
+      podAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/instance
+                    operator: In
+                    values:
+                      - test
+              topologyKey: kubernetes.io/hostname
+      nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 80
+            preference:
+              matchExpressions:
+                - key: karpenter.sh/capacity-type
+                  operator: In
+                  values:
+                    - spot
+          - weight: 60
+            preference:
+              matchExpressions:
+                - key: karpenter.sh/capacity-type
+                  operator: In
+                  values:
+                    - ondemand
+    securityContext:
+      capabilities:
+        add:
+          - SYS_PTRACE
+    volumes:
+      - name: log-volume
+        emptyDir: { }
+      - name: test-scripts-vol
+        configMap:
+          name: test-script
+          defaultMode: 511
+      - name: test-remote-command-vol
+        configMap:
+          name: test-remote-command
+          defaultMode: 511
+    volumeMounts:
+      - mountPath: "/tmp/ray"
+        name: log-volume
+      - mountPath: "/tmp/script"
+        name: test-scripts-vol
+      - mountPath: "/tmp/remote-command"
+        name: test-remote-command-vol
+    sidecarContainers: [ ]
+    command: [ ]
+    args:
+      - "/tmp/script/worker.sh"
+service:
+  type: ClusterIP
+grafana:
+  image: "000375658054.dkr.ecr.us-east-1.amazonaws.com/darwin:grafana"
+  rootPath: "/eks-1/test-metrics/"
+  nodeSelector:
+    app: default
+prometheus:
+  replicas: 1
+  nodeSelector:
+    app: default
+  remoteWrite:
+    - url: "http://darwin-thanos-receive-test.dream11-test.local:10908/api/v1/receive"
+commands:
+  - pip3 install cli
+sparkConfig:
+  spark.ui.proxyRedirectUri: "/"
+  spark.ui.proxyBase: "/eks-1/test-sparkui"
+  spark.metrics.conf.*.sink.prometheusServlet.class: org.apache.spark.metrics.sink.PrometheusServlet
+  spark.metrics.conf.*.sink.prometheusServlet.path: "/metrics/prometheus"
+  spark.metrics.conf.master.sink.prometheusServlet.path: "/metrics/master/prometheus"
+  spark.metrics.conf.applications.sink.prometheusServlet.path: "/metrics/applications/prometheus"
+  spark.ui.prometheus.enabled: "true"
+is_job_cluster: false
+env: test
+user: darwin
+email: darwin@test.com
+cluster_name: test
+kube_cluster_key: eks-1
+domain: darwin-mlp-stag.d11dev.com
+terminate_after_minutes: 60
+cluster_id: test
+TEAM_SUFFIX: -mlp-stag
+VPC_SUFFIX: -stag
+cluster_type: all_purpose_cluster
+labels:
+  project: darwin
+  service: darwin
+  squad: data-science
+  environment: test
+remoteCommand:
+  statusReportApi: "http://darwin-compute-test.dream11-test.local/cluster/command/pod/status"
+  statusReportInterval: 10
+  logsS3Bucket: "test-bucket"
+  logsS3Key: "mlp/logs/remote-command"
+  commands:
+    head: [ ]
+    worker: [ ]

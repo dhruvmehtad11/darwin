@@ -52,6 +52,8 @@ get_helm_path() {
     "darwin-compute") echo "services.services.compute.enabled" ;;
     "darwin-cluster-manager") echo "services.services.cluster-manager.enabled" ;;
     "darwin-workspace") echo "services.services.workspace.enabled" ;;
+    "ml-serve-app") echo "services.services.ml-serve-app.enabled" ;;
+    "artifact-builder") echo "services.services.artifact-builder.enabled" ;;
     "darwin-catalog") echo "services.services.catalog.enabled" ;;
     *) echo "" ;;
   esac

@@ -13,10 +13,6 @@
 	path = chronos
 	url = https://github.com/dream11/chronos.git
 	branch = feat/chronos_distro_changes
-[submodule "darwin-compute"]
-	path = darwin-compute
-	url = https://github.com/dream11/darwin-compute.git
-	branch = agharsh/feat/localstack
 [submodule "darwin-cluster-manager"]
 	path = darwin-cluster-manager
 	url = https://github.com/dream11/darwin-cluster-manager/
