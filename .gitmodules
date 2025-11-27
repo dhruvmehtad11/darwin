@@ -1,4 +1,1 @@
-[submodule "chronos"]
-	path = chronos
-	url = https://github.com/dream11/chronos.git
-	branch = feat/chronos_distro_changes
+
