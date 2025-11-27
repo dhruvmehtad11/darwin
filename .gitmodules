@@ -6,10 +6,6 @@
 	path = chronos
 	url = https://github.com/dream11/chronos.git
 	branch = feat/chronos_distro_changes
-[submodule "artifact-builder"]
-	path = artifact-builder
-	url = https://github.com/dream11/darwin-ml-serve
-	branch = atif/feat/distro-setup
 [submodule "ml-serve-app"]
 	path = ml-serve-app
 	url = https://github.com/dream11/darwin-ml-serve-v2/

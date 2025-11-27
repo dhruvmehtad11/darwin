@@ -1,0 +1,3 @@
+# Install model package in editable mode
+-e .
+

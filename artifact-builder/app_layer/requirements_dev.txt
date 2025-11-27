@@ -1,0 +1,8 @@
+# Development dependencies for app_layer package
+pytest>=6.0
+pytest-cov>=2.0
+mypy>=0.910
+flake8>=3.9
+black>=22.0
+httpx>=0.23.0  # For testing FastAPI
+
