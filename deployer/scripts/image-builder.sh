@@ -49,7 +49,7 @@ bash .odin/$application/build.sh
 cp -r .odin/$application/. $path/target/$application/.odin
 
 chmod 755 $path/target/$application/.odin
-cd $cur_dir
+cd "$cur_dir"
 
 docker build \
   --build-arg BASE_IMAGE=$base_image \
