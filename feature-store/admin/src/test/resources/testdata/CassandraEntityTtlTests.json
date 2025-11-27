@@ -1,0 +1,21 @@
+{
+  "successFeatureGroupTtlUpdateTest": {
+    "request": {
+      "endpoint": "/feature-group/ttl",
+      "method": "PUT",
+      "body": {
+        "name": "f300",
+        "ttl": "60000"
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "name": "f300",
+          "ttl": 60000
+        }
+      }
+    }
+  }
+}

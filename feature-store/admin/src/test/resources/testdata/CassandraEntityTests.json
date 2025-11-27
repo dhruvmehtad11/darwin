@@ -1,0 +1,454 @@
+{
+  "successEntityCreationTest": {
+    "request": {
+      "endpoint": "/entity",
+      "method": "POST",
+      "body": {
+        "entity": {
+          "ttl": 50,
+          "tableName": "t5",
+          "features": [
+            {
+              "name": "p_col1",
+              "type": "INT",
+              "description": "something",
+              "tags": [
+                "a",
+                "b"
+              ]
+            },
+            {
+              "name": "p_col2",
+              "type": "INT"
+            },
+            {
+              "name": "p_col3",
+              "type": "INT"
+            }
+          ],
+          "primaryKeys": [
+            "p_col1",
+            "p_col2"
+          ]
+        },
+        "owner": "ujjwal.bagrania@dream11.com",
+        "tags": [
+          "tpp",
+          "suggest"
+        ],
+        "description": "some-description"
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "entity": {
+            "tableName": "t5",
+            "features": [
+              {
+                "name": "p_col1",
+                "type": "INT",
+                "description": "something",
+                "tags": [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name": "p_col2",
+                "type": "INT",
+                "description": "",
+                "tags": []
+              },
+              {
+                "name": "p_col3",
+                "type": "INT",
+                "description": "",
+                "tags": []
+              }
+            ],
+            "primaryKeys": [
+              "p_col1",
+              "p_col2"
+            ],
+            "ttl": 50
+          }
+        }
+      }
+    }
+  },
+  "invalidRequestEntityCreationTest": {
+    "request": {
+      "endpoint": "/entity",
+      "method": "POST",
+      "body": {
+        "entity": {
+          "tableName": "t20",
+          "features": [
+            {
+              "name": "p_col1",
+              "type": "INT",
+              "description": "something",
+              "tags": [
+                "a",
+                "b"
+              ]
+            },
+            {
+              "name": "p_col2",
+              "type": "INT"
+            },
+            {
+              "name": "p_col3",
+              "type": "INT"
+            }
+          ],
+          "primaryKeys": [
+            "p_col1",
+            "p_col2"
+          ]
+        },
+        "owner": "ujjwal.bagrania",
+        "tags": [
+          "tpp",
+          "suggest"
+        ],
+        "description": "some-description"
+      }
+    },
+    "response": {
+      "status": 400,
+      "body": {
+        "error": {
+          "message": "invalid request",
+          "cause": "invalid request",
+          "code": "ENTITY-REGISTRATION-REQUEST-EXCEPTION"
+        }
+      }
+    }
+  },
+  "invalidRequestEntityCreationTest1": {
+    "request": {
+      "endpoint": "/entity",
+      "method": "POST",
+      "body": {
+        "entity": {
+          "tableName": "t20",
+          "features": [
+            {
+              "name": "p_col1",
+              "type": "INT1",
+              "description": "something",
+              "tags": [
+                "a",
+                "b"
+              ]
+            },
+            {
+              "name": "p_col2",
+              "type": "INT"
+            },
+            {
+              "name": "p_col3",
+              "type": "INT"
+            }
+          ],
+          "primaryKeys": [
+            "p_col1",
+            "p_col2"
+          ]
+        },
+        "owner": "ujjwal.bagrania@dream11.com",
+        "tags": [
+          "tpp",
+          "suggest"
+        ],
+        "description": "some-description"
+      }
+    },
+    "response": {
+      "status": 400,
+      "body": {
+        "error": {
+          "message": "invalid request",
+          "cause": "com.fasterxml.jackson.databind.exc.InvalidFormatException: Cannot deserialize value of type `com.dream11.core.dto.featurecolumn.CassandraFeatureColumn$CassandraDataType` from String \"INT1\": not one of the values accepted for Enum class: [TIMEUUID, TEXT, BIGINT, DECIMAL, INET, TIMESTAMP, UUID, FLOAT, BLOB, BOOLEAN, INT, ASCII, VARCHAR, VARINT, DOUBLE]\n at [Source: (String)\"{\"entity\":{\"tableName\":\"t20\",\"features\":[{\"name\":\"p_col1\",\"type\":\"INT1\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"p_col2\",\"type\":\"INT\"},{\"name\":\"p_col3\",\"type\":\"INT\"}],\"primaryKeys\":[\"p_col1\",\"p_col2\"]},\"owner\":\"ujjwal.bagrania@dream11.com\",\"tags\":[\"tpp\",\"suggest\"],\"description\":\"some-description\"}\"; line: 1, column: 66] (through reference chain: com.dream11.core.dto.request.CreateCassandraEntityRequest[\"entity\"]->com.dream11.core.dto.entity.CassandraEntity[\"features\"]->java.util.ArrayList[0]->com.dream11.core.dto.featurecolumn.CassandraFeatureColumn[\"type\"])",
+          "code": "ENTITY-REGISTRATION-REQUEST-EXCEPTION"
+        }
+      }
+    }
+  },
+  "entityAlreadyExistsTest": {
+    "request": {
+      "endpoint": "/entity",
+      "method": "POST",
+      "body": {
+        "entity": {
+          "tableName": "t15",
+          "features": [
+            {
+              "name": "p_col1",
+              "type": "INT",
+              "description": "something",
+              "tags": [
+                "a",
+                "b"
+              ]
+            },
+            {
+              "name": "p_col2",
+              "type": "INT"
+            },
+            {
+              "name": "p_col3",
+              "type": "INT"
+            }
+          ],
+          "primaryKeys": [
+            "p_col1",
+            "p_col2"
+          ]
+        },
+        "owner": "ujjwal.bagrania@dream11.com",
+        "tags": [
+          "tpp",
+          "suggest"
+        ],
+        "description": "some-description"
+      }
+    },
+    "response": {
+      "status": 400,
+      "body": {
+        "error": {
+          "message": "entity already exists",
+          "cause": "entity already exists",
+          "code": "ENTITY-ALREADY-EXISTS-EXCEPTION"
+        }
+      }
+    }
+  },
+  "successGetEntityTest": {
+    "request": {
+      "endpoint": "/entity",
+      "method": "GET",
+      "params": {
+        "name": "t15"
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "entity": {
+            "tableName": "t15",
+            "features": [
+              {
+                "name": "p_col1",
+                "type": "INT",
+                "description": "something",
+                "tags": [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "name": "p_col2",
+                "type": "INT",
+                "description": "",
+                "tags": []
+              },
+              {
+                "name": "p_col3",
+                "type": "INT",
+                "description": "",
+                "tags": []
+              }
+            ],
+            "primaryKeys": [
+              "p_col1",
+              "p_col2"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "successGetEntityMetadataTest": {
+    "request": {
+      "endpoint": "/entity/metadata",
+      "method": "GET",
+      "params": {
+        "name": "t15"
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "metadata": {
+            "name": "t15",
+            "entity": {
+              "tableName": "t15",
+              "features": [
+                {
+                  "name": "p_col1",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "p_col2",
+                  "type": "INT",
+                  "description": "",
+                  "tags": []
+                },
+                {
+                  "name": "p_col3",
+                  "type": "INT",
+                  "description": "",
+                  "tags": []
+                }
+              ],
+              "primaryKeys": [
+                "p_col1",
+                "p_col2"
+              ]
+            },
+            "state": "LIVE",
+            "owner": "ujjwal.bagrania@dream11.com",
+            "tags": [
+              "tpp",
+              "suggest"
+            ],
+            "description": "some-description",
+            "createdAt": 1708419407000,
+            "updatedAt": 1708419407000
+          }
+        }
+      }
+    }
+  },
+  "failedGetEntityTest": {
+    "request": {
+      "endpoint": "/entity",
+      "method": "GET",
+      "params": {
+        "name": "t151"
+      }
+    },
+    "response": {
+      "status": 404,
+      "body": {
+        "error": {
+          "message": "entity not found",
+          "cause": "entity not found",
+          "code": "ENTITY-NOT-FOUND-EXCEPTION"
+        }
+      }
+    }
+  },
+  "invalidRequestGetEntityTest": {
+    "request": {
+      "endpoint": "/entity",
+      "method": "GET",
+      "params": {
+      }
+    },
+    "response": {
+      "status": 400,
+      "body": {
+        "error": {
+          "message": "getEntity.arg0: name must not be null",
+          "cause": "Constraint Violation",
+          "code": "INVALID_REQUEST"
+        }
+      }
+    }
+  },
+  "createEntityInvalidSchemaTest1": {
+    "request": {
+      "endpoint": "/entity",
+      "method": "POST",
+      "body": {
+        "entity": {
+          "tableName": "t10",
+          "features": [
+            {
+              "name": "p_col1",
+              "type": "INT"
+            },
+            {
+              "name": "p_col2",
+              "type": "INT"
+            },
+            {
+              "name": "p_col3",
+              "type": "INT"
+            }
+          ],
+          "primaryKeys": [
+            "p_col1",
+            "p_col2",
+            "p_col5"
+          ]
+        },
+        "owner": "ujjwal.bagrania@dream11.com"
+      }
+    },
+    "response": {
+      "status": 400,
+      "body": {
+        "error": {
+          "message": "invalid entity schema",
+          "cause": "invalid entity schema",
+          "code": "ENTITY-SCHEMA-VALIDATION-EXCEPTION"
+        }
+      }
+    }
+  },
+  "createEntityInvalidSchemaTest2": {
+    "request": {
+      "endpoint": "/entity",
+      "method": "POST",
+      "body": {
+        "entity": {
+          "tableName": "t10",
+          "features": [
+            {
+              "name": "p_col1",
+              "type": "INT"
+            },
+            {
+              "name": "p_col2",
+              "type": "INT"
+            },
+            {
+              "name": "p_col3",
+              "type": "INT"
+            }
+          ],
+          "primaryKeys": [
+            "p_col1",
+            "p_col1",
+            "p_col2"
+          ]
+        },
+        "owner": "ujjwal.bagrania@dream11.com"
+      }
+    },
+    "response": {
+      "status": 400,
+      "body": {
+        "error": {
+          "message": "invalid entity schema",
+          "cause": "invalid entity schema",
+          "code": "ENTITY-SCHEMA-VALIDATION-EXCEPTION"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,580 @@
+{
+  "getAllEntitiesMock": {
+    "endpoint": "/entity/all",
+    "params": {},
+    "headers": {"compressed-response": false},
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "data": "{\"entities\":[{\"name\":\"t10\",\"entity\":{\"tableName\":\"t10\",\"features\":[{\"name\":\"p_col1\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"p_col2\",\"type\":\"INT\",\"description\":\"\",\"tags\":[]},{\"name\":\"p_col3\",\"type\":\"INT\",\"description\":\"\",\"tags\":[]}],\"primaryKeys\":[\"p_col1\",\"p_col2\"]},\"state\":\"LIVE\",\"owner\":\"ujjwal.bagrania@dream11.com\",\"tags\":[\"tpp\",\"suggest\"],\"description\":\"some-description\",\"createdAt\":1708419407000,\"updatedAt\":1708423028000},{\"name\":\"t15\",\"entity\":{\"tableName\":\"t15\",\"features\":[{\"name\":\"p_col1\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"p_col2\",\"type\":\"INT\",\"description\":\"\",\"tags\":[]},{\"name\":\"p_col3\",\"type\":\"INT\",\"description\":\"\",\"tags\":[]}],\"primaryKeys\":[\"p_col1\",\"p_col2\"]},\"state\":\"LIVE\",\"owner\":\"ujjwal.bagrania@dream11.com\",\"tags\":[\"tpp\",\"suggest\"],\"description\":\"some-description\",\"createdAt\":1708419407000,\"updatedAt\":1708419407000}]}"
+    }
+  },
+  "getAllUpdatedEntitiesMock": {
+    "endpoint": "/entity/all-updated",
+    "params": {},
+    "headers": {"compressed-response": false},
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "data": "{\"entities\":[{\"name\":\"t10\",\"entity\":{\"tableName\":\"t10\",\"features\":[{\"name\":\"p_col1\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"p_col2\",\"type\":\"INT\",\"description\":\"\",\"tags\":[]},{\"name\":\"p_col3\",\"type\":\"INT\",\"description\":\"\",\"tags\":[]}],\"primaryKeys\":[\"p_col1\",\"p_col2\"]},\"state\":\"LIVE\",\"owner\":\"ujjwal.bagrania@dream11.com\",\"tags\":[\"tpp\",\"suggest\"],\"description\":\"some-description\",\"createdAt\":1708419407000,\"updatedAt\":1708423028000}]}"
+    }
+  },
+  "getAllFeatureGroupsMock": {
+    "endpoint": "/feature-group/all",
+    "params": {},
+    "headers": {"compressed-response": false},
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "data": "{\"featureGroups\":[{\"name\":\"f300\",\"versionEnabled\":true,\"version\":\"v1\",\"featureGroupType\":\"ONLINE\",\"featureGroup\":{\"featureGroupName\":\"f300\",\"versionEnabled\":true,\"featureGroupType\":\"ONLINE\",\"entityName\":\"t15\",\"features\":[{\"name\":\"col1\",\"type\":\"TEXT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col2\",\"type\":\"ASCII\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col3\",\"type\":\"VARCHAR\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col4\",\"type\":\"BLOB\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col5\",\"type\":\"BOOLEAN\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col6\",\"type\":\"DECIMAL\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col7\",\"type\":\"DOUBLE\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col8\",\"type\":\"FLOAT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col9\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col10\",\"type\":\"BIGINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col11\",\"type\":\"TIMESTAMP\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col12\",\"type\":\"TIMEUUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col13\",\"type\":\"UUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col14\",\"type\":\"INET\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col15\",\"type\":\"VARINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]}]},\"owner\":\"bot@dream11.com\",\"state\":\"LIVE\",\"tags\":[\"t1\",\"t2\"],\"tenant\":{\"read\":\"default-tenant\",\"write\":\"default-tenant\",\"consume\":\"default-tenant\"},\"description\":\"some-description\",\"createdAt\":1708419428000,\"updatedAt\":1708423028000},{\"name\":\"f400\",\"versionEnabled\":true,\"version\":\"v1\",\"featureGroupType\":\"ONLINE\",\"featureGroup\":{\"featureGroupName\":\"f400\",\"versionEnabled\":true,\"featureGroupType\":\"ONLINE\",\"entityName\":\"t15\",\"features\":[{\"name\":\"col1\",\"type\":\"TEXT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col2\",\"type\":\"ASCII\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col3\",\"type\":\"VARCHAR\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col4\",\"type\":\"BLOB\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col5\",\"type\":\"BOOLEAN\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col6\",\"type\":\"DECIMAL\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col7\",\"type\":\"DOUBLE\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col8\",\"type\":\"FLOAT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col9\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col10\",\"type\":\"BIGINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col11\",\"type\":\"TIMESTAMP\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col12\",\"type\":\"TIMEUUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col13\",\"type\":\"UUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col14\",\"type\":\"INET\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col15\",\"type\":\"VARINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]}]},\"owner\":\"bot@dream11.com\",\"state\":\"LIVE\",\"tags\":[\"t1\",\"t2\"],\"tenant\":{\"read\":\"default-tenant\",\"write\":\"default-tenant\",\"consume\":\"default-tenant\"},\"description\":\"some-description\",\"createdAt\":1708419428000,\"updatedAt\":1708423028000},{\"name\":\"f500\",\"versionEnabled\":true,\"version\":\"v1\",\"featureGroupType\":\"ONLINE\",\"featureGroup\":{\"featureGroupName\":\"f500\",\"versionEnabled\":true,\"featureGroupType\":\"ONLINE\",\"entityName\":\"t15\",\"features\":[{\"name\":\"col1\",\"type\":\"TEXT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col2\",\"type\":\"ASCII\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col3\",\"type\":\"VARCHAR\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col4\",\"type\":\"BLOB\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col5\",\"type\":\"BOOLEAN\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col6\",\"type\":\"DECIMAL\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col7\",\"type\":\"DOUBLE\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col8\",\"type\":\"FLOAT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col9\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col10\",\"type\":\"BIGINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col11\",\"type\":\"TIMESTAMP\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col12\",\"type\":\"TIMEUUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col13\",\"type\":\"UUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col14\",\"type\":\"INET\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col15\",\"type\":\"VARINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]}]},\"owner\":\"bot@dream11.com\",\"state\":\"LIVE\",\"tags\":[\"t1\",\"t2\"],\"tenant\":{\"read\":\"default-tenant\",\"write\":\"default-tenant\",\"consume\":\"default-tenant\"},\"description\":\"some-description\",\"createdAt\":1708419428000,\"updatedAt\":1708419428000},{\"name\":\"f500\",\"versionEnabled\":true,\"version\":\"v2\",\"featureGroupType\":\"ONLINE\",\"featureGroup\":{\"featureGroupName\":\"f500\",\"versionEnabled\":true,\"featureGroupType\":\"ONLINE\",\"entityName\":\"t15\",\"features\":[{\"name\":\"col1\",\"type\":\"TEXT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col2\",\"type\":\"ASCII\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col3\",\"type\":\"VARCHAR\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col4\",\"type\":\"BLOB\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col5\",\"type\":\"BOOLEAN\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col6\",\"type\":\"DECIMAL\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col7\",\"type\":\"DOUBLE\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col8\",\"type\":\"FLOAT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col9\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col10\",\"type\":\"BIGINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col11\",\"type\":\"TIMESTAMP\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col12\",\"type\":\"TIMEUUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col13\",\"type\":\"UUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col14\",\"type\":\"INET\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col15\",\"type\":\"VARINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]}]},\"owner\":\"bot@dream11.com\",\"state\":\"LIVE\",\"tags\":[\"t1\",\"t2\"],\"tenant\":{\"read\":\"default-tenant\",\"write\":\"default-tenant\",\"consume\":\"default-tenant\"},\"description\":\"some-description\",\"createdAt\":1708419428000,\"updatedAt\":1708419428000},{\"name\":\"f600\",\"versionEnabled\":false,\"version\":\"v1\",\"featureGroupType\":\"ONLINE\",\"featureGroup\":{\"featureGroupName\":\"f600\",\"versionEnabled\":false,\"featureGroupType\":\"ONLINE\",\"entityName\":\"t15\",\"features\":[{\"name\":\"col1\",\"type\":\"TEXT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col2\",\"type\":\"ASCII\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col3\",\"type\":\"VARCHAR\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col4\",\"type\":\"BLOB\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col5\",\"type\":\"BOOLEAN\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col6\",\"type\":\"DECIMAL\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col7\",\"type\":\"DOUBLE\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col8\",\"type\":\"FLOAT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col9\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col10\",\"type\":\"BIGINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col11\",\"type\":\"TIMESTAMP\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col12\",\"type\":\"TIMEUUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col13\",\"type\":\"UUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col14\",\"type\":\"INET\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col15\",\"type\":\"VARINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]}]},\"owner\":\"bot@dream11.com\",\"state\":\"LIVE\",\"tags\":[\"t1\",\"t2\"],\"tenant\":{\"read\":\"default-tenant\",\"write\":\"default-tenant\",\"consume\":\"default-tenant\"},\"description\":\"some-description\",\"createdAt\":1708419428000,\"updatedAt\":1708419428000},{\"name\":\"f700\",\"versionEnabled\":true,\"version\":\"v1\",\"featureGroupType\":\"ONLINE\",\"featureGroup\":{\"featureGroupName\":\"f700\",\"versionEnabled\":true,\"featureGroupType\":\"ONLINE\",\"entityName\":\"t15\",\"features\":[{\"name\":\"col1\",\"type\":\"TEXT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col2\",\"type\":\"ASCII\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col3\",\"type\":\"VARCHAR\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col4\",\"type\":\"BLOB\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col5\",\"type\":\"BOOLEAN\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col6\",\"type\":\"DECIMAL\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col7\",\"type\":\"DOUBLE\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col8\",\"type\":\"FLOAT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col9\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col10\",\"type\":\"BIGINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col11\",\"type\":\"TIMESTAMP\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col12\",\"type\":\"TIMEUUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col13\",\"type\":\"UUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col14\",\"type\":\"INET\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col15\",\"type\":\"VARINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]}]},\"owner\":\"bot@dream11.com\",\"state\":\"LIVE\",\"tags\":[\"t1\",\"t2\"],\"tenant\":{\"read\":\"t1\",\"write\":\"default-tenant\",\"consume\":\"t1\"},\"description\":\"some-description\",\"createdAt\":1708419428000,\"updatedAt\":1708419428000}]}"
+    }
+  },
+  "getAllUpdatedFeatureGroupsMock": {
+    "endpoint": "/feature-group/all-updated/",
+    "params": {},
+    "headers": {"compressed-response": false},
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "data": "{\"featureGroups\":[{\"name\":\"f300\",\"versionEnabled\":true,\"version\":\"v1\",\"featureGroupType\":\"ONLINE\",\"featureGroup\":{\"featureGroupName\":\"f300\",\"versionEnabled\":true,\"featureGroupType\":\"ONLINE\",\"entityName\":\"t15\",\"features\":[{\"name\":\"col1\",\"type\":\"TEXT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col2\",\"type\":\"ASCII\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col3\",\"type\":\"VARCHAR\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col4\",\"type\":\"BLOB\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col5\",\"type\":\"BOOLEAN\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col6\",\"type\":\"DECIMAL\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col7\",\"type\":\"DOUBLE\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col8\",\"type\":\"FLOAT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col9\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col10\",\"type\":\"BIGINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col11\",\"type\":\"TIMESTAMP\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col12\",\"type\":\"TIMEUUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col13\",\"type\":\"UUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col14\",\"type\":\"INET\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col15\",\"type\":\"VARINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]}]},\"owner\":\"bot@dream11.com\",\"state\":\"LIVE\",\"tags\":[\"t1\",\"t2\"],\"description\":\"some-description\",\"createdAt\":1708419428000,\"updatedAt\":1708423028000},{\"name\":\"f400\",\"versionEnabled\":true,\"version\":\"v1\",\"featureGroupType\":\"ONLINE\",\"featureGroup\":{\"featureGroupName\":\"f400\",\"versionEnabled\":true,\"featureGroupType\":\"ONLINE\",\"entityName\":\"t15\",\"features\":[{\"name\":\"col1\",\"type\":\"TEXT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col2\",\"type\":\"ASCII\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col3\",\"type\":\"VARCHAR\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col4\",\"type\":\"BLOB\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col5\",\"type\":\"BOOLEAN\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col6\",\"type\":\"DECIMAL\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col7\",\"type\":\"DOUBLE\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col8\",\"type\":\"FLOAT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col9\",\"type\":\"INT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col10\",\"type\":\"BIGINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col11\",\"type\":\"TIMESTAMP\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col12\",\"type\":\"TIMEUUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col13\",\"type\":\"UUID\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col14\",\"type\":\"INET\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]},{\"name\":\"col15\",\"type\":\"VARINT\",\"description\":\"something\",\"tags\":[\"a\",\"b\"]}]},\"owner\":\"bot@dream11.com\",\"state\":\"LIVE\",\"tags\":[\"t1\",\"t2\"],\"description\":\"some-description\",\"createdAt\":1708419428000,\"updatedAt\":1708423028000}]}"
+    }
+  },
+  "getAllFeatureGroupsLatestVersionMock": {
+    "endpoint": "/feature-group/version/all",
+    "params": {},
+    "headers": {"compressed-response": false},
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "data": "{\"versions\":[{\"name\":\"f300\",\"latestVersion\":\"v1\",\"updatedAt\":1708423033000},{\"name\":\"f400\",\"latestVersion\":\"v1\",\"updatedAt\":1708423033000},{\"name\":\"f500\",\"latestVersion\":\"v2\",\"updatedAt\":1708419433000},{\"name\":\"f600\",\"latestVersion\":\"v1\",\"updatedAt\":1708419433000},{\"name\":\"f700\",\"latestVersion\":\"v1\",\"updatedAt\":1708419433000}]}"
+    }
+  },
+  "getAllUpdatedFeatureGroupsLatestVersionMock": {
+    "endpoint": "/feature-group/version/all-updated/",
+    "params": {},
+    "headers": {"compressed-response": false},
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "data": "{\"versions\":[{\"name\":\"f300\",\"latestVersion\":\"v1\",\"updatedAt\":1708423033000},{\"name\":\"f400\",\"latestVersion\":\"v1\",\"updatedAt\":1708423033000}]}"
+    }
+  },
+  "getNotFoundFeatureGroup": {
+    "endpoint": "/feature-group/metadata",
+    "params": {},
+    "method": "GET",
+    "status": 404,
+    "body": {
+      "error": {
+        "message": "feature group not found",
+        "cause": "feature group not found",
+        "code": "FEATURE-GROUP-NOT-FOUND-EXCEPTION"
+      }
+    }
+  },
+  "getNotFoundFeatureGroupVersion": {
+    "endpoint": "/feature-group/version",
+    "params": {},
+    "method": "GET",
+    "status": 404,
+    "body": {
+      "error": {
+        "message": "feature group not found",
+        "cause": "feature group not found",
+        "code": "FEATURE-GROUP-NOT-FOUND-EXCEPTION"
+      }
+    }
+  },
+  "successCreateEntityTest": {
+    "endpoint": "/entity",
+    "params": {},
+    "method": "POST",
+    "status": 200,
+    "requestBody": {
+      "entity": {
+        "tableName": "t10",
+        "features": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col3",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "ttl": 0
+      },
+      "owner": "old_fct@dream11.com",
+      "tags": [],
+      "description": ""
+    },
+    "body": {
+      "data": {
+        "entity": {
+          "tableName": "t10",
+          "features": [
+            {
+              "name": "p_col1",
+              "type": "INT",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "p_col2",
+              "type": "INT",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "p_col3",
+              "type": "INT",
+              "description": "",
+              "tags": []
+            }
+          ],
+          "primaryKeys": [
+            "p_col1",
+            "p_col2"
+          ],
+          "ttl": 0
+        }
+      }
+    }
+  },
+  "alreadyExistsCreateEntityTest": {
+    "endpoint": "/entity",
+    "params": {},
+    "method": "POST",
+    "status": 400,
+    "requestBody": {
+      "entity": {
+        "tableName": "t15",
+        "features": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col3",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2"
+        ],
+        "ttl": 0
+      },
+      "owner": "old_fct@dream11.com",
+      "tags": [],
+      "description": ""
+    },
+    "body": {
+      "error": {
+        "message": "entity already exists",
+        "cause": "entity already exists",
+        "code": "ENTITY-ALREADY-EXISTS-EXCEPTION"
+      }
+    }
+  },
+  "invalidSchemaCreateEntityTest": {
+    "endpoint": "/entity",
+    "params": {},
+    "method": "POST",
+    "status": 400,
+    "requestBody": {
+      "entity": {
+        "tableName": "t12",
+        "features": [
+          {
+            "name": "p_col1",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col2",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "p_col3",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          }
+        ],
+        "primaryKeys": [
+          "p_col1",
+          "p_col2",
+          "p_col31"
+        ],
+        "ttl": 0
+      },
+      "owner": "old_fct@dream11.com",
+      "tags": [],
+      "description": ""
+    },
+    "body": {
+      "error": {
+        "message": "invalid entity schema",
+        "cause": "invalid entity schema",
+        "code": "ENTITY-SCHEMA-VALIDATION-EXCEPTION"
+      }
+    }
+  },
+  "successCreateFeatureGroupTest": {
+    "endpoint": "/feature-group",
+    "params": {},
+    "method": "POST",
+    "status": 200,
+    "requestBody": {
+      "featureGroup": {
+        "featureGroupName": "f20",
+        "versionEnabled": false,
+        "featureGroupType": "ONLINE",
+        "entityName": "t20",
+        "features": [
+          {
+            "name": "col1",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "ASCII",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col11",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col12",
+            "type": "TIMEUUID",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col13",
+            "type": "UUID",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col14",
+            "type": "INET",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col15",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          }
+        ]
+      },
+      "owner": "old_fct@dream11.com",
+      "tags": [],
+      "description": ""
+    },
+    "body": {
+      "data": {
+        "featureGroup": {
+          "featureGroupName": "f20",
+          "versionEnabled": false,
+          "featureGroupType": "ONLINE",
+          "entityName": "t20",
+          "features": [
+            {
+              "name": "col1",
+              "type": "TEXT",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col2",
+              "type": "ASCII",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col3",
+              "type": "VARCHAR",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col4",
+              "type": "BLOB",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col5",
+              "type": "BOOLEAN",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col6",
+              "type": "DECIMAL",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col7",
+              "type": "DOUBLE",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col8",
+              "type": "FLOAT",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col9",
+              "type": "INT",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col10",
+              "type": "BIGINT",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col11",
+              "type": "TIMESTAMP",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col12",
+              "type": "TIMEUUID",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col13",
+              "type": "UUID",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col14",
+              "type": "INET",
+              "description": "",
+              "tags": []
+            },
+            {
+              "name": "col15",
+              "type": "VARINT",
+              "description": "",
+              "tags": []
+            }
+          ]
+        },
+        "version": "v1"
+      }
+    }
+  },
+  "alreadyExistsCreateFeatureGroupTest": {
+    "endpoint": "/feature-group",
+    "params": {},
+    "method": "POST",
+    "status": 400,
+    "requestBody": {
+      "featureGroup": {
+        "featureGroupName": "f25",
+        "versionEnabled": false,
+        "featureGroupType": "ONLINE",
+        "entityName": "t20",
+        "features": [
+          {
+            "name": "col1",
+            "type": "TEXT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col2",
+            "type": "ASCII",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col3",
+            "type": "VARCHAR",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col4",
+            "type": "BLOB",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col5",
+            "type": "BOOLEAN",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col6",
+            "type": "DECIMAL",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col7",
+            "type": "DOUBLE",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col8",
+            "type": "FLOAT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col9",
+            "type": "INT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col10",
+            "type": "BIGINT",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col11",
+            "type": "TIMESTAMP",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col12",
+            "type": "TIMEUUID",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col13",
+            "type": "UUID",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col14",
+            "type": "INET",
+            "description": "",
+            "tags": []
+          },
+          {
+            "name": "col15",
+            "type": "VARINT",
+            "description": "",
+            "tags": []
+          }
+        ]
+      },
+      "owner": "old_fct@dream11.com",
+      "tags": [],
+      "description": ""
+    },
+    "body": {
+      "error": {
+        "message": "feature group already exists",
+        "cause": "feature group already exists",
+        "code": "FEATURE-GROUP-ALREADY-EXISTS-EXCEPTION"
+      }
+    }
+  }
+}

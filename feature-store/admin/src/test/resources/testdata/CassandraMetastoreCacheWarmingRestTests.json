@@ -1,0 +1,1409 @@
+{
+  "getAllEntitiesTest": {
+    "request": {
+      "endpoint": "/entity/all",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": "7ZE9T8MwEIb/y82mstNWLZlgYKhAnRALitAluRpXiWPZF1VRlP+Ow2ciUMXIwOb3Hr+v7qMHsmzYUID0sQeLNUEKrCSIN9JB2gNjXtF+yg6E3Pq5yz0VTaUi5M6Nere/j6KkUHjj2DQ21kJTEz8bq8dvqEc/YHznkA1inpScT/oK+OZc/t6ZCXDe1Oi7W+peu/mc4r2JmA6Bkce0u93DTSTNyZKPsj0eT1gtctQercGr0hPWSi2Kpp6Mx85FFVqtKTBkP23kYloSUMQcpvKaIVUbuV2py5XcSCkFtK6ckWQpk20kkw2wWp+53fr/dn/ldh9kyIYX"
+      },
+      "decompressedBody": {
+        "entities": [
+          {
+            "name": "t10",
+            "entity": {
+              "tableName": "t10",
+              "features": [
+                {
+                  "name": "p_col1",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "p_col2",
+                  "type": "INT",
+                  "description": "",
+                  "tags": []
+                },
+                {
+                  "name": "p_col3",
+                  "type": "INT",
+                  "description": "",
+                  "tags": []
+                }
+              ],
+              "primaryKeys": [
+                "p_col1",
+                "p_col2"
+              ]
+            },
+            "state": "LIVE",
+            "owner": "ujjwal.bagrania@dream11.com",
+            "tags": [
+              "tpp",
+              "suggest"
+            ],
+            "description": "some-description",
+            "createdAt": 1708419407000,
+            "updatedAt": 1708423028000
+          },
+          {
+            "name": "t15",
+            "entity": {
+              "tableName": "t15",
+              "features": [
+                {
+                  "name": "p_col1",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "p_col2",
+                  "type": "INT",
+                  "description": "",
+                  "tags": []
+                },
+                {
+                  "name": "p_col3",
+                  "type": "INT",
+                  "description": "",
+                  "tags": []
+                }
+              ],
+              "primaryKeys": [
+                "p_col1",
+                "p_col2"
+              ]
+            },
+            "state": "LIVE",
+            "owner": "ujjwal.bagrania@dream11.com",
+            "tags": [
+              "tpp",
+              "suggest"
+            ],
+            "description": "some-description",
+            "createdAt": 1708419407000,
+            "updatedAt": 1708419407000
+          }
+        ]
+      }
+    }
+  },
+  "getAllUpdatedEntitiesTest": {
+    "request": {
+      "endpoint": "/entity/all-updated",
+      "method": "GET",
+      "params": {
+        "timestamp": 1708423020000
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": "jZDBSsQwEIbfZc5xSboLu/akBw+Ly54WL1Jk2o7ZLG0SkilLKX13UxVtUcRb/nz5P2YyAFk2bChC/jyAxZYgB1YSxAfpIR+AsWzoOGevhNyFZcu/VK5RCXLvp7w/nlKoKVbBeDbOprvoWuKzsXp6hnrqA6ZzCcUolqbsb9O34Edz/f9mIcAH02LoH6l/n+Zri88hkh0iI0+2w/7pIRF3tRRS7C6XKzarEnVAa/CuDoStUqvKtbP12PuUYqc1RYbitx+5mV8JqJKHqb5nyNVW7jbqdiO3UkoBna8XJFvLbJfIWIxv"
+      },
+      "decompressedBody": {
+        "entities": [
+          {
+            "name": "t10",
+            "entity": {
+              "tableName": "t10",
+              "features": [
+                {
+                  "name": "p_col1",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "p_col2",
+                  "type": "INT",
+                  "description": "",
+                  "tags": []
+                },
+                {
+                  "name": "p_col3",
+                  "type": "INT",
+                  "description": "",
+                  "tags": []
+                }
+              ],
+              "primaryKeys": [
+                "p_col1",
+                "p_col2"
+              ]
+            },
+            "state": "LIVE",
+            "owner": "ujjwal.bagrania@dream11.com",
+            "tags": [
+              "tpp",
+              "suggest"
+            ],
+            "description": "some-description",
+            "createdAt": 1708419407000,
+            "updatedAt": 1708423028000
+          }
+        ]
+      }
+    }
+  },
+  "getAllFeatureGroupsTest": {
+    "request": {
+      "endpoint": "/feature-group/all",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": "7ZRbb4IwFID/S5/ZAgheeBpq55ogLIpmyeIDQnEkcglUF2P87yu6jbIY46jxqW+055zv0EP59iDEHtnkeJSnm6wAxvseJF6MgQHCliwDCWxxXkRpAhNvucYBMEi+wb+7NG2r0CQW4u6ystyxLWTDPzFg7Gtr+4pWl9g4IRHZfVOIolftakfx03X5luRU7cI3l64CXPh5lJHTMYo0xuQjSlZlnrcqy4FHn5dgcZBYkFqBzOkAoeakVkWam5PBizlpztIqVt9y+s1BOgNyHAuadnNWu2IN4QCNTas5q8OwnFnfgs1R3Qr1bDkmx13oVSRkc3AUmZk6GvGx2JuOxnDqmuNXDpxax81maMhBY+48J0ljZw95BqbX/sP/Dp/SQPqZ4JzmLVPyFOTYixXl0U9jmlEQj5RgC80hU0yOH0kFi3OdHtgtCfgUSHBgEmAoHbmrKT1N7cqyLIFNFtQiaks+Rpjzhdr9JK4JiQuJC4kLiQuJ31ji+v0krguJC4kLiQuJC4lzSPwnwkq8fdasobcubm/xi72ExoXGhcaFxoXGr9b44vAF"
+      },
+      "decompressedBody": {
+        "featureGroups": [
+          {
+            "name": "f300",
+            "versionEnabled": true,
+            "version": "v1",
+            "featureGroupType": "ONLINE",
+            "featureGroup": {
+              "featureGroupName": "f300",
+              "versionEnabled": true,
+              "featureGroupType": "ONLINE",
+              "entityName": "t15",
+              "features": [
+                {
+                  "name": "col1",
+                  "type": "TEXT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col2",
+                  "type": "ASCII",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col3",
+                  "type": "VARCHAR",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col4",
+                  "type": "BLOB",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col5",
+                  "type": "BOOLEAN",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col6",
+                  "type": "DECIMAL",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col7",
+                  "type": "DOUBLE",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col8",
+                  "type": "FLOAT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col9",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col10",
+                  "type": "BIGINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col11",
+                  "type": "TIMESTAMP",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col12",
+                  "type": "TIMEUUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col13",
+                  "type": "UUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col14",
+                  "type": "INET",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col15",
+                  "type": "VARINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                }
+              ]
+            },
+            "owner": "bot@dream11.com",
+            "state": "LIVE",
+            "tags": [
+              "t1",
+              "t2"
+            ],
+            "tenant": {
+              "read": "default-tenant",
+              "write": "default-tenant",
+              "consume": "default-tenant"
+            },
+            "description": "some-description",
+            "createdAt": 1708419428000,
+            "updatedAt": 1708423028000
+          },
+          {
+            "name": "f400",
+            "versionEnabled": true,
+            "version": "v1",
+            "featureGroupType": "ONLINE",
+            "featureGroup": {
+              "featureGroupName": "f400",
+              "versionEnabled": true,
+              "featureGroupType": "ONLINE",
+              "entityName": "t15",
+              "features": [
+                {
+                  "name": "col1",
+                  "type": "TEXT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col2",
+                  "type": "ASCII",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col3",
+                  "type": "VARCHAR",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col4",
+                  "type": "BLOB",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col5",
+                  "type": "BOOLEAN",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col6",
+                  "type": "DECIMAL",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col7",
+                  "type": "DOUBLE",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col8",
+                  "type": "FLOAT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col9",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col10",
+                  "type": "BIGINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col11",
+                  "type": "TIMESTAMP",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col12",
+                  "type": "TIMEUUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col13",
+                  "type": "UUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col14",
+                  "type": "INET",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col15",
+                  "type": "VARINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                }
+              ]
+            },
+            "owner": "bot@dream11.com",
+            "state": "LIVE",
+            "tags": [
+              "t1",
+              "t2"
+            ],
+            "tenant": {
+              "read": "default-tenant",
+              "write": "default-tenant",
+              "consume": "default-tenant"
+            },
+            "description": "some-description",
+            "createdAt": 1708419428000,
+            "updatedAt": 1708423028000
+          },
+          {
+            "name": "f500",
+            "versionEnabled": true,
+            "version": "v1",
+            "featureGroupType": "ONLINE",
+            "featureGroup": {
+              "featureGroupName": "f500",
+              "versionEnabled": true,
+              "featureGroupType": "ONLINE",
+              "entityName": "t15",
+              "features": [
+                {
+                  "name": "col1",
+                  "type": "TEXT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col2",
+                  "type": "ASCII",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col3",
+                  "type": "VARCHAR",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col4",
+                  "type": "BLOB",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col5",
+                  "type": "BOOLEAN",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col6",
+                  "type": "DECIMAL",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col7",
+                  "type": "DOUBLE",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col8",
+                  "type": "FLOAT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col9",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col10",
+                  "type": "BIGINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col11",
+                  "type": "TIMESTAMP",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col12",
+                  "type": "TIMEUUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col13",
+                  "type": "UUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col14",
+                  "type": "INET",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col15",
+                  "type": "VARINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                }
+              ]
+            },
+            "owner": "bot@dream11.com",
+            "state": "LIVE",
+            "tags": [
+              "t1",
+              "t2"
+            ],
+            "tenant": {
+              "read": "default-tenant",
+              "write": "default-tenant",
+              "consume": "default-tenant"
+            },
+            "description": "some-description",
+            "createdAt": 1708419428000,
+            "updatedAt": 1708419428000
+          },
+          {
+            "name": "f600",
+            "versionEnabled": false,
+            "version": "v1",
+            "featureGroupType": "ONLINE",
+            "featureGroup": {
+              "featureGroupName": "f600",
+              "versionEnabled": false,
+              "featureGroupType": "ONLINE",
+              "entityName": "t15",
+              "features": [
+                {
+                  "name": "col1",
+                  "type": "TEXT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col2",
+                  "type": "ASCII",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col3",
+                  "type": "VARCHAR",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col4",
+                  "type": "BLOB",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col5",
+                  "type": "BOOLEAN",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col6",
+                  "type": "DECIMAL",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col7",
+                  "type": "DOUBLE",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col8",
+                  "type": "FLOAT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col9",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col10",
+                  "type": "BIGINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col11",
+                  "type": "TIMESTAMP",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col12",
+                  "type": "TIMEUUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col13",
+                  "type": "UUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col14",
+                  "type": "INET",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col15",
+                  "type": "VARINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                }
+              ]
+            },
+            "owner": "bot@dream11.com",
+            "state": "LIVE",
+            "tags": [
+              "t1",
+              "t2"
+            ],
+            "tenant": {
+              "read": "default-tenant",
+              "write": "default-tenant",
+              "consume": "default-tenant"
+            },
+            "description": "some-description",
+            "createdAt": 1708419428000,
+            "updatedAt": 1708419428000
+          },
+          {
+            "name": "f700",
+            "versionEnabled": true,
+            "version": "v1",
+            "featureGroupType": "ONLINE",
+            "featureGroup": {
+              "featureGroupName": "f700",
+              "versionEnabled": true,
+              "featureGroupType": "ONLINE",
+              "entityName": "t15",
+              "features": [
+                {
+                  "name": "col1",
+                  "type": "TEXT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col2",
+                  "type": "ASCII",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col3",
+                  "type": "VARCHAR",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col4",
+                  "type": "BLOB",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col5",
+                  "type": "BOOLEAN",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col6",
+                  "type": "DECIMAL",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col7",
+                  "type": "DOUBLE",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col8",
+                  "type": "FLOAT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col9",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col10",
+                  "type": "BIGINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col11",
+                  "type": "TIMESTAMP",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col12",
+                  "type": "TIMEUUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col13",
+                  "type": "UUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col14",
+                  "type": "INET",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col15",
+                  "type": "VARINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                }
+              ]
+            },
+            "owner": "bot@dream11.com",
+            "state": "LIVE",
+            "tags": [
+              "t1",
+              "t2"
+            ],
+            "tenant": {
+              "read": "t1",
+              "write": "t1",
+              "consume": "t1"
+            },
+            "description": "some-description",
+            "createdAt": 1708419428000,
+            "updatedAt": 1708419428000
+          }
+        ]
+      }
+    }
+  },
+  "getAllUpdatedFeatureGroupsTest": {
+    "request": {
+      "endpoint": "/feature-group/all-updated",
+      "method": "GET",
+      "params": {
+        "timestamp": 1708423020000
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": "7dRPb4IwFADw7/LObCmIUzmtaueaICyKZsniAaE6EvkTKC7G+N1X1IyyLMsGy07caPver/RR3hE2zOV5yiZpnCcZGC9HiNyQgQGbDkKgwJ6lWRBHJHLXO+aDwdOcfcyKsL0qgmTEOSRFum2Z1CKf1sA4VsbWD7b6zmYRD/jhqnC1W25XOYoX74q35Jdshzw7YuSzzEuDhF+OkcUh469BtC3i3G2RDq54XsPqpMiQVkJ4PqK0vtQppSWejR7xrL6ll9bQtIf1oa4E2bZJsFXfuiutMRnRKTbrWz3JshdDk9Sn+iX1YNq4wV0YlBK1GjgqkqpOJ80s+abTKZk7ePrUgNOq3GJBxw006c43lHS59qRJwbqV//C3xRcaxG8RS0XcOub3fsrcUFVvvTgUERl3eQGbdEmkZH7+SBqsvtrpRp5SwBMgZz7mYKg91NfVga71EUIK5IlfWdE66LwinW+j/18T19sm3jbxtom3Tbxt4n/RxFendw=="
+      },
+      "decompressedBody": {
+        "featureGroups": [
+          {
+            "name": "f300",
+            "versionEnabled": true,
+            "version": "v1",
+            "featureGroupType": "ONLINE",
+            "featureGroup": {
+              "featureGroupName": "f300",
+              "versionEnabled": true,
+              "featureGroupType": "ONLINE",
+              "entityName": "t15",
+              "features": [
+                {
+                  "name": "col1",
+                  "type": "TEXT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col2",
+                  "type": "ASCII",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col3",
+                  "type": "VARCHAR",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col4",
+                  "type": "BLOB",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col5",
+                  "type": "BOOLEAN",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col6",
+                  "type": "DECIMAL",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col7",
+                  "type": "DOUBLE",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col8",
+                  "type": "FLOAT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col9",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col10",
+                  "type": "BIGINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col11",
+                  "type": "TIMESTAMP",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col12",
+                  "type": "TIMEUUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col13",
+                  "type": "UUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col14",
+                  "type": "INET",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col15",
+                  "type": "VARINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                }
+              ]
+            },
+            "owner": "bot@dream11.com",
+            "state": "LIVE",
+            "tags": [
+              "t1",
+              "t2"
+            ],
+            "tenant": {
+              "read": "default-tenant",
+              "write": "default-tenant",
+              "consume": "default-tenant"
+            },
+            "description": "some-description",
+            "createdAt": 1708419428000,
+            "updatedAt": 1708423028000
+          },
+          {
+            "name": "f400",
+            "versionEnabled": true,
+            "version": "v1",
+            "featureGroupType": "ONLINE",
+            "featureGroup": {
+              "featureGroupName": "f400",
+              "versionEnabled": true,
+              "featureGroupType": "ONLINE",
+              "entityName": "t15",
+              "features": [
+                {
+                  "name": "col1",
+                  "type": "TEXT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col2",
+                  "type": "ASCII",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col3",
+                  "type": "VARCHAR",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col4",
+                  "type": "BLOB",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col5",
+                  "type": "BOOLEAN",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col6",
+                  "type": "DECIMAL",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col7",
+                  "type": "DOUBLE",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col8",
+                  "type": "FLOAT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col9",
+                  "type": "INT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col10",
+                  "type": "BIGINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col11",
+                  "type": "TIMESTAMP",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col12",
+                  "type": "TIMEUUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col13",
+                  "type": "UUID",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col14",
+                  "type": "INET",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                },
+                {
+                  "name": "col15",
+                  "type": "VARINT",
+                  "description": "something",
+                  "tags": [
+                    "a",
+                    "b"
+                  ]
+                }
+              ]
+            },
+            "owner": "bot@dream11.com",
+            "state": "LIVE",
+            "tags": [
+              "t1",
+              "t2"
+            ],
+            "tenant": {
+              "read": "default-tenant",
+              "write": "default-tenant",
+              "consume": "default-tenant"
+            },
+            "description": "some-description",
+            "createdAt": 1708419428000,
+            "updatedAt": 1708423028000
+          }
+        ]
+      }
+    }
+  },
+  "getAllFeatureGroupsLatestVersionTest": {
+    "request": {
+      "endpoint": "/feature-group/version/all",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": "q1YqSy0qzszPK1ayiq5WykvMTVWyUkozNjBQ0lHKSSxJLS4JgygACpcZAgVLC1KAwimOJUpWhuYGFiZGxgbGQOUGtToI7SaUaTclXruhpQmGdjMytMfWAgA="
+      },
+      "decompressedBody": {
+        "versions": [
+          {
+            "name": "f300",
+            "latestVersion": "v1",
+            "updatedAt": 1708423033000
+          },
+          {
+            "name": "f400",
+            "latestVersion": "v1",
+            "updatedAt": 1708423033000
+          },
+          {
+            "name": "f500",
+            "latestVersion": "v1",
+            "updatedAt": 1708419433000
+          },
+          {
+            "name": "f600",
+            "latestVersion": "v1",
+            "updatedAt": 1708419433000
+          },
+          {
+            "name": "f700",
+            "latestVersion": "v1",
+            "updatedAt": 1708419433000
+          }
+        ]
+      }
+    }
+  },
+  "getAllUpdatedFeatureGroupsLatestVersionTest": {
+    "request": {
+      "endpoint": "/feature-group/version/all-updated",
+      "method": "GET",
+      "params": {
+        "timestamp": 1708423020000
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": "q1YqSy0qzszPK1ayiq5WykvMTVWyUkozNjBQ0lHKSSxJLS4JgygACpcZAgVLC1KAwimOJUpWhuYGFiZGxgbGQOUGtToI7SZkaI+tBQA="
+      },
+      "decompressedBody": {
+        "versions": [
+          {
+            "name": "f400",
+            "latestVersion": "v1",
+            "updatedAt": 1708423033000
+          },
+          {
+            "name": "f300",
+            "latestVersion": "v1",
+            "updatedAt": 1708423033000
+          }
+        ]
+      }
+    }
+  }
+}

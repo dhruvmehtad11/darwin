@@ -1,0 +1,250 @@
+{
+  "legacyWriteFeaturesMock" : {
+    "endpoint" : "/ofs/async-batch-write",
+    "method" : "POST",
+    "status" : 200,
+    "requestBody" : {
+      "Body" : [
+        {
+          "EntityName" : "t5",
+          "Entities" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "FeatureGroup" : "f15",
+          "Features" : {
+            "p_col1" : "1",
+            "p_col2" : "2",
+            "col1" : "1",
+            "col2" : "name"
+          }
+        }
+      ]
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "Success" : true,
+        "Message" : "Total successfulRecords: 1",
+        "Successful_records" : 1,
+        "Failed_records" : []
+      }
+    }
+  },
+  "legacyWriteFeaturesMock1" : {
+    "endpoint" : "/ofs/async-batch-write",
+    "method" : "POST",
+    "status" : 200,
+    "requestBody" : {
+      "Body" : [
+        {
+          "EntityName" : "t5",
+          "Entities" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "FeatureGroup" : "f15",
+          "Features" : {
+            "p_col1" : "1",
+            "p_col2" : "2",
+            "col1" : "1a",
+            "col2" : "name"
+          }
+        }
+      ]
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "Success" : true,
+        "Message" : "Total successfulRecords: 0",
+        "Successful_records" : 0,
+        "Failed_records" : [
+          {
+            "success" : false,
+            "error" : "",
+            "record" : {
+              "EntityName" : "t5",
+              "Entities" : [
+                "p_col1",
+                "p_col2"
+              ],
+              "FeatureGroup" : "f15",
+              "Features" : {
+                "p_col1" : "1",
+                "p_col2" : "2",
+                "col1" : "1a",
+                "col2" : "name"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "ofsV2WriteDataV1Mock1" : {
+    "endpoint" : "/feature-group/write-features-v1",
+    "method" : "POST",
+    "status" : 200,
+    "requestBody" : {
+      "batches" : [
+        {
+          "featureGroupName" : "f15",
+          "features" : {
+            "names" : [
+              "p_col1",
+              "p_col2",
+              "col1",
+              "col2"
+            ],
+            "values" : [
+              [
+                "1",
+                "2",
+                "1",
+                "name"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "body" : {
+      "data" : {
+        "batches" : [
+          {
+            "featureGroupName" : "f15",
+            "featureGroupVersion" : "v1",
+            "featureColumns": [
+              "p_col1",
+              "p_col2",
+              "col1",
+              "col2"
+            ],
+            "successfulRows" : [
+              [
+                "1",
+                "2",
+                "1",
+                "name"
+              ]
+            ],
+            "failedRows" : []
+          }
+        ],
+        "failedBatches" : []
+      }
+    }
+  },
+  "ofsV2WriteDataV1Mock2" : {
+    "endpoint" : "/feature-group/write-features-v1",
+    "method" : "POST",
+    "status" : 200,
+    "requestBody" : {
+      "batches" : [
+        {
+          "featureGroupName" : "f15",
+          "features" : {
+            "names" : [
+              "p_col1",
+              "p_col2",
+              "col1",
+              "col2"
+            ],
+            "values" : [
+              [
+                "1",
+                "2",
+                "1a",
+                "name"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "body" : {
+      "data" : {
+        "batches" : [
+          {
+            "featureGroupName" : "f15",
+            "featureGroupVersion" : "v1",
+            "featureColumns": [
+              "p_col1",
+              "p_col2",
+              "col1",
+              "col2"
+            ],
+            "successfulRows" : [],
+            "failedRows" : [
+              [
+                "1",
+                "2",
+                "1a",
+                "name"
+              ]
+            ]
+          }
+        ],
+        "failedBatches" : []
+      }
+    }
+  },
+  "ofsV2WriteDataV1Mock3" : {
+    "endpoint" : "/feature-group/write-features-v1",
+    "method" : "POST",
+    "status" : 200,
+    "requestBody" : {
+      "batches" : [
+        {
+          "featureGroupName" : "f16",
+          "features" : {
+            "names" : [
+              "p_col1",
+              "p_col2",
+              "col1",
+              "col2"
+            ],
+            "values" : [
+              [
+                "1",
+                "2",
+                "1a",
+                "name"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "body" : {
+      "data" : {
+        "batches" : [],
+        "failedBatches" : [
+          {
+            "error": "feature group not found",
+            "batch": {
+              "featureGroupName" : "f16",
+              "features" : {
+                "names" : [
+                  "p_col1",
+                  "p_col2",
+                  "col1",
+                  "col2"
+                ],
+                "values" : [
+                  [
+                    "1",
+                    "2",
+                    "1a",
+                    "name"
+                  ]
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+FROM spark:3.5.4-scala2.12-java11-ubuntu
+WORKDIR /app
+
+USER root
+
+RUN set -ex; \
+    apt-get update; \
+    apt-get install -y software-properties-common; \
+    add-apt-repository ppa:deadsnakes/ppa; \
+    apt-get update; \
+    apt-get install -y python3.11 python3-pip; \
+    rm -rf /var/lib/apt/lists/*
+
+
+# ENV TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal
+ENV WIREMOCK_DIND true
+
+COPY . .
+
+WORKDIR ofs_sdk
+RUN --mount=type=cache,mode=0755,target=/root/.cache/pip python3 -m pip install -e .[test]
+
+CMD ["pytest", "--asyncio-mode=auto"]

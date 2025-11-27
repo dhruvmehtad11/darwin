@@ -1,0 +1,1201 @@
+{
+  "successReadFeaturesTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f500",
+        "featureColumns" : [
+          "p_col3",
+          "p_col1",
+          "p_col2",
+          "col7",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1,
+              15
+            ],
+            [
+              1,
+              17
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "featureGroupName" : "f500",
+          "featureGroupVersion" : "v2",
+          "successfulKeys" : [
+            {
+              "key" : [
+                1,
+                15
+              ],
+              "features" : [
+                3,
+                1,
+                15,
+                3.14159,
+                "SampleText",
+                "SampleASCII",
+                "SampleVARCHAR",
+                "YmFzZTY0IGVuY29kaW5n",
+                true,
+                123.456,
+                2.71828,
+                42,
+                123456789012,
+                1706467711029,
+                "1d85be70-1d68-11ec-9621-0242ac130002",
+                "550e8400-e29b-41d4-a716-446655440000",
+                "192.0.2.1",
+                1234567890
+              ]
+            }
+          ],
+          "failedKeys" : [
+            [
+              1,
+              17
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "successReadNullFeaturesTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f500",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1,
+              20
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "featureGroupName" : "f500",
+          "featureGroupVersion" : "v2",
+          "successfulKeys" : [
+            {
+              "key" : [
+                1,
+                20
+              ],
+              "features" : [
+                1,
+                20,
+                null,
+                "SampleText",
+                "SampleASCII",
+                "SampleVARCHAR",
+                "YmFzZTY0IGVuY29kaW5n",
+                null,
+                123.456,
+                3.14159,
+                2.71828,
+                42,
+                123456789012,
+                1706467711029,
+                "1d85be70-1d68-11ec-9621-0242ac130002",
+                "550e8400-e29b-41d4-a716-446655440000",
+                "192.0.2.1",
+                1234567890
+              ]
+            }
+          ],
+          "failedKeys" : []
+        }
+      }
+    }
+  },
+  "failForAllNullFeaturesTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f300",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1,
+              20
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "featureGroupName" : "f300",
+          "featureGroupVersion" : "v1",
+          "successfulKeys" : [],
+          "failedKeys" : [
+            [
+              1,
+              20
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "failForAllRowsNotBindingTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f300",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1,
+              "avb"
+            ],
+            [
+              "cdf",
+              "avb"
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "featureGroupName" : "f300",
+          "featureGroupVersion" : "v1",
+          "successfulKeys" : [],
+          "failedKeys" : [
+            [
+              1,
+              "avb"
+            ],
+            [
+              "cdf",
+              "avb"
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "readFeaturesBadRequestColumnNotFoundTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f500",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15",
+          "col16"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1,
+              15
+            ],
+            [
+              1,
+              16
+            ],
+            [
+              1,
+              17
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error" : {
+          "message" : "invalid feature group schema",
+          "cause" : "invalid feature group schema",
+          "code" : "FEATURE-GROUP-SCHEMA-VALIDATION-EXCEPTION"
+        }
+      }
+    }
+  },
+  "readFeaturesBadRequestMissingPrimaryColumnsTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f500",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col3"
+          ],
+          "values" : [
+            [
+              1,
+              15
+            ],
+            [
+              1,
+              16
+            ],
+            [
+              1,
+              17
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error" : {
+          "message" : "invalid feature group schema",
+          "cause" : "invalid feature group schema",
+          "code" : "FEATURE-GROUP-SCHEMA-VALIDATION-EXCEPTION"
+        }
+      }
+    }
+  },
+  "readFeaturesBadRequestDuplicateColumnsTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f500",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1,
+              15
+            ],
+            [
+              1,
+              16
+            ],
+            [
+              1,
+              17
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error" : {
+          "message" : "invalid feature group schema",
+          "cause" : "invalid feature group schema",
+          "code" : "FEATURE-GROUP-SCHEMA-VALIDATION-EXCEPTION"
+        }
+      }
+    }
+  },
+  "readFeaturesBadRequestInvalidVectorSizeTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f500",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1
+            ],
+            [
+              1
+            ],
+            [
+              1,
+              17
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error" : {
+          "message" : "invalid feature group schema",
+          "cause" : "invalid feature group schema",
+          "code" : "FEATURE-GROUP-SCHEMA-VALIDATION-EXCEPTION"
+        }
+      }
+    }
+  },
+  "readFeaturesNotFoundTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f1000",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              17
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error" : {
+          "message" : "feature group not found",
+          "cause" : "feature group not found",
+          "code" : "OFS-V2-ADMIN-SERVICE-EXCEPTION"
+        }
+      }
+    }
+  },
+  "successMultiReadFeaturesTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/multi-read-features",
+      "method" : "GET",
+      "body" : {
+        "batches" : [
+          {
+            "featureGroupName" : "f500",
+            "featureColumns" : [
+              "p_col3",
+              "p_col1",
+              "p_col2",
+              "col7",
+              "col1",
+              "col2",
+              "col3",
+              "col4",
+              "col5",
+              "col6",
+              "col8",
+              "col9",
+              "col10",
+              "col11",
+              "col12",
+              "col13",
+              "col14",
+              "col15"
+            ],
+            "primaryKeys" : {
+              "names" : [
+                "p_col1",
+                "p_col2"
+              ],
+              "values" : [
+                [
+                  1,
+                  15
+                ],
+                [
+                  1,
+                  17
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : [
+          {
+            "featureGroupName" : "f500",
+            "featureGroupVersion" : "v2",
+            "successfulKeys" : [
+              {
+                "key" : [
+                  1,
+                  15
+                ],
+                "features" : [
+                  3,
+                  1,
+                  15,
+                  3.14159,
+                  "SampleText",
+                  "SampleASCII",
+                  "SampleVARCHAR",
+                  "YmFzZTY0IGVuY29kaW5n",
+                  true,
+                  123.456,
+                  2.71828,
+                  42,
+                  123456789012,
+                  1706467711029,
+                  "1d85be70-1d68-11ec-9621-0242ac130002",
+                  "550e8400-e29b-41d4-a716-446655440000",
+                  "192.0.2.1",
+                  1234567890
+                ]
+              }
+            ],
+            "failedKeys" : [
+              [
+                1,
+                17
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "successMultiReadFeaturesWithErrorTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/multi-read-features",
+      "method" : "GET",
+      "body" : {
+        "batches" : [
+          {
+            "featureGroupName" : "f1000",
+            "featureColumns" : [
+              "p_col1",
+              "p_col2",
+              "p_col3",
+              "col1",
+              "col2",
+              "col3",
+              "col4",
+              "col5",
+              "col6",
+              "col7",
+              "col8",
+              "col9",
+              "col10",
+              "col11",
+              "col12",
+              "col13",
+              "col14",
+              "col15"
+            ],
+            "primaryKeys" : {
+              "names" : [
+                "p_col1",
+                "p_col2"
+              ],
+              "values" : [
+                [
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  3
+                ],
+                [
+                  1,
+                  17
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : [
+          {
+            "featureGroupName" : "f1000",
+            "error" : "feature group not found"
+          }
+        ]
+      }
+    }
+  },
+  "failedMultiReadFeaturesInvalidBatchSizeTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/multi-read-features",
+      "method" : "GET",
+      "body" : {
+        "batches" : [
+          {
+            "featureGroupName" : "f1000",
+            "featureColumns" : [
+              "p_col1",
+              "p_col2",
+              "p_col3",
+              "col1",
+              "col2",
+              "col3",
+              "col4",
+              "col5",
+              "col6",
+              "col7",
+              "col8",
+              "col9",
+              "col10",
+              "col11",
+              "col12",
+              "col13",
+              "col14",
+              "col15"
+            ],
+            "primaryKeys" : {
+              "names" : [
+                "p_col1",
+                "p_col2"
+              ],
+              "values" : [
+                [
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  3
+                ],
+                [
+                  1,
+                  17
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  3
+                ],
+                [
+                  1,
+                  17
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  3
+                ],
+                [
+                  1,
+                  17
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  3
+                ],
+                [
+                  1,
+                  17
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error" : {
+          "message" : "number of rows per cannot be greater than 10",
+          "cause" : "number of rows per cannot be greater than 10",
+          "code" : "MULTI-READ-FEATURE-GROUP-INVALID-BATCH-SIZE-EXCEPTION"
+        }
+      }
+    }
+  },
+  "tenantSuccessReadFeaturesTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f700",
+        "featureColumns" : [
+          "p_col3",
+          "p_col1",
+          "p_col2",
+          "col7",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1,
+              15
+            ],
+            [
+              1,
+              17
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "featureGroupName" : "f700",
+          "featureGroupVersion" : "v1",
+          "successfulKeys" : [
+            {
+              "key" : [
+                1,
+                15
+              ],
+              "features" : [
+                3,
+                1,
+                15,
+                3.14159,
+                "SampleText",
+                "SampleASCII",
+                "SampleVARCHAR",
+                "YmFzZTY0IGVuY29kaW5n",
+                true,
+                123.456,
+                2.71828,
+                42,
+                123456789012,
+                1706467711029,
+                "1d85be70-1d68-11ec-9621-0242ac130002",
+                "550e8400-e29b-41d4-a716-446655440000",
+                "192.0.2.1",
+                1234567890
+              ]
+            }
+          ],
+          "failedKeys" : [
+            [
+              1,
+              17
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "tenantReplicatedSuccessWriteFeaturesTest": {
+    "request": {
+      "endpoint": "/feature-group/write-features-v2",
+      "method": "POST",
+      "body": {
+        "featureGroupName": "f700",
+        "features": {
+          "names": [
+            "p_col1",
+            "p_col2",
+            "p_col3",
+            "col1",
+            "col2",
+            "col3",
+            "col4",
+            "col5",
+            "col6",
+            "col7",
+            "col8",
+            "col9",
+            "col10",
+            "col11",
+            "col12",
+            "col13",
+            "col14",
+            "col15"
+          ],
+          "values": [
+            [
+              1,
+              21,
+              3,
+              "SampleText",
+              "SampleASCII",
+              "SampleVARCHAR",
+              "YmFzZTY0IGVuY29kaW5n",
+              true,
+              123.456,
+              3.14159,
+              2.71828,
+              42,
+              123456789012,
+              1706467711029,
+              "1d85be70-1d68-11ec-9621-0242ac130002",
+              "550e8400-e29b-41d4-a716-446655440000",
+              "192.0.2.1",
+              1234567890
+            ]
+          ]
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "featureGroupName": "f700",
+          "featureGroupVersion":"v1",
+          "featureColumns": [
+            "p_col1",
+            "p_col2",
+            "p_col3",
+            "col1",
+            "col2",
+            "col3",
+            "col4",
+            "col5",
+            "col6",
+            "col7",
+            "col8",
+            "col9",
+            "col10",
+            "col11",
+            "col12",
+            "col13",
+            "col14",
+            "col15"
+          ],
+          "successfulRows": [
+            [
+              1,
+              21,
+              3,
+              "SampleText",
+              "SampleASCII",
+              "SampleVARCHAR",
+              "YmFzZTY0IGVuY29kaW5n",
+              true,
+              123.456,
+              3.14159,
+              2.71828,
+              42,
+              123456789012,
+              1706467711029,
+              "1d85be70-1d68-11ec-9621-0242ac130002",
+              "550e8400-e29b-41d4-a716-446655440000",
+              "192.0.2.1",
+              1234567890
+            ]
+          ],
+          "failedRows": []
+        }
+      }
+    }
+  },
+  "tenantReplicatedSuccessReadFeaturesTest": {
+    "request" : {
+      "endpoint" : "/feature-group/read-features",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f700",
+        "featureColumns" : [
+          "p_col3",
+          "p_col1",
+          "p_col2",
+          "col7",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "primaryKeys" : {
+          "names" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "values" : [
+            [
+              1,
+              21
+            ]
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "featureGroupName" : "f700",
+          "featureGroupVersion" : "v1",
+          "successfulKeys" : [
+            {
+              "key" : [
+                1,
+                21
+              ],
+              "features" : [
+                3,
+                1,
+                21,
+                3.14159,
+                "SampleText",
+                "SampleASCII",
+                "SampleVARCHAR",
+                "YmFzZTY0IGVuY29kaW5n",
+                true,
+                123.456,
+                2.71828,
+                42,
+                123456789012,
+                1706467711029,
+                "1d85be70-1d68-11ec-9621-0242ac130002",
+                "550e8400-e29b-41d4-a716-446655440000",
+                "192.0.2.1",
+                1234567890
+              ]
+            }
+          ],
+          "failedKeys" : []
+        }
+      }
+    }
+  },
+  "successReadPartitionTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/read-partition",
+      "method" : "GET",
+      "body" : {
+        "featureGroupName" : "f500",
+        "featureColumns" : [
+          "p_col3",
+          "p_col1",
+          "p_col2",
+          "col7",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "partitionKey" : {
+          "names" : [
+            "p_col1"
+          ],
+          "values" : [
+            15
+          ]
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "featureGroupName" : "f500",
+          "featureGroupVersion" : "v2",
+          "features" : [
+            [
+              5,
+              15,
+              25,
+              3.14159,
+              "SampleText",
+              "SampleASCII",
+              "SampleVARCHAR",
+              "YmFzZTY0IGVuY29kaW5n",
+              true,
+              123.456,
+              2.71828,
+              42,
+              123456789012,
+              1706467711029,
+              "1d85be70-1d68-11ec-9621-0242ac130002",
+              "550e8400-e29b-41d4-a716-446655440000",
+              "192.0.2.1",
+              1234567890
+            ],
+            [
+              6,
+              15,
+              30,
+              3.14159,
+              "SampleText",
+              "SampleASCII",
+              "SampleVARCHAR",
+              "YmFzZTY0IGVuY29kaW5n",
+              true,
+              123.456,
+              2.71828,
+              42,
+              123456789012,
+              1706467711029,
+              "1d85be70-1d68-11ec-9621-0242ac130002",
+              "550e8400-e29b-41d4-a716-446655440000",
+              "192.0.2.1",
+              1234567890
+            ]
+          ]
+        }
+      }
+    }
+  }
+}

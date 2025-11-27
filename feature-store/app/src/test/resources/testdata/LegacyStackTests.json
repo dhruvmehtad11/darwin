@@ -1,0 +1,1814 @@
+{
+  "createTableSuccess" : {
+    "request" : {
+      "endpoint" : "/ofs/create-table",
+      "method" : "POST",
+      "body" : {
+        "Name" : "t10",
+        "Columns" : {
+          "p_col1" : "int",
+          "p_col2" : "int",
+          "p_col3" : "int"
+        },
+        "PrimaryKeys" : [
+          "p_col1",
+          "p_col2"
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "code" : 200,
+        "message" : "Successfully created the table."
+      }
+    }
+  },
+  "createTableEntityExists" : {
+    "request" : {
+      "endpoint" : "/ofs/create-table",
+      "method" : "POST",
+      "body" : {
+        "Name" : "t15",
+        "Columns" : {
+          "p_col1" : "int",
+          "p_col2" : "int",
+          "p_col3" : "int"
+        },
+        "PrimaryKeys" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "Ttl" : 0
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "body" : {
+          "Name" : "t15",
+          "Columns" : {
+            "p_col1" : "int",
+            "p_col2" : "int",
+            "p_col3" : "int"
+          },
+          "PrimaryKeys" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "Ttl" : 0
+        },
+        "code" : 400,
+        "message" : "entity already exists"
+      }
+    }
+  },
+  "createTableInvalidSchema" : {
+    "request" : {
+      "endpoint" : "/ofs/create-table",
+      "method" : "POST",
+      "body" : {
+        "Name" : "t12",
+        "Columns" : {
+          "p_col1" : "int",
+          "p_col2" : "int",
+          "p_col3" : "int"
+        },
+        "PrimaryKeys" : [
+          "p_col1",
+          "p_col2",
+          "p_col31"
+        ],
+        "Ttl" : 0
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "body" : {
+          "Name" : "t12",
+          "Columns" : {
+            "p_col1" : "int",
+            "p_col2" : "int",
+            "p_col3" : "int"
+          },
+          "PrimaryKeys" : [
+            "p_col1",
+            "p_col2",
+            "p_col31"
+          ],
+          "Ttl" : 0
+        },
+        "code" : 400,
+        "message" : "invalid entity schema"
+      }
+    }
+  },
+  "alterTableSuccess" : {
+    "request" : {
+      "endpoint" : "/ofs/alter-table",
+      "method" : "POST",
+      "body" : {
+        "Name" : "t20",
+        "Columns" : {
+          "f20__col1" : "text",
+          "f20__col2" : "ascii",
+          "f20__col3" : "varchar",
+          "f20__col4" : "blob",
+          "f20__col5" : "boolean",
+          "f20__col6" : "decimal",
+          "f20__col7" : "double",
+          "f20__col8" : "float",
+          "f20__col9" : "int",
+          "f20__col10" : "bigint",
+          "f20__col11" : "timestamp",
+          "f20__col12" : "timeuuid",
+          "f20__col13" : "uuid",
+          "f20__col14" : "inet",
+          "f20__col15" : "varint"
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "code" : 200,
+        "message" : "Successfully Altered the table"
+      }
+    }
+  },
+  "alterTableFeatureGroupExists" : {
+    "request" : {
+      "endpoint" : "/ofs/alter-table",
+      "method" : "POST",
+      "body" : {
+        "Name" : "t20",
+        "Columns" : {
+          "f25__col1" : "text",
+          "f25__col2" : "ascii",
+          "f25__col3" : "varchar",
+          "f25__col4" : "blob",
+          "f25__col5" : "boolean",
+          "f25__col6" : "decimal",
+          "f25__col7" : "double",
+          "f25__col8" : "float",
+          "f25__col9" : "int",
+          "f25__col10" : "bigint",
+          "f25__col11" : "timestamp",
+          "f25__col12" : "timeuuid",
+          "f25__col13" : "uuid",
+          "f25__col14" : "inet",
+          "f25__col15" : "varint"
+        }
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "body" : {
+          "Name" : "t20",
+          "Columns" : {
+            "f25__col1" : "text",
+            "f25__col2" : "ascii",
+            "f25__col3" : "varchar",
+            "f25__col4" : "blob",
+            "f25__col5" : "boolean",
+            "f25__col6" : "decimal",
+            "f25__col7" : "double",
+            "f25__col8" : "float",
+            "f25__col9" : "int",
+            "f25__col10" : "bigint",
+            "f25__col11" : "timestamp",
+            "f25__col12" : "timeuuid",
+            "f25__col13" : "uuid",
+            "f25__col14" : "inet",
+            "f25__col15" : "varint"
+          }
+        },
+        "code" : 400,
+        "message" : "feature group already exists"
+      }
+    }
+  },
+  "alterTableInvalidDataType" : {
+    "request" : {
+      "endpoint" : "/ofs/alter-table",
+      "method" : "POST",
+      "body" : {
+        "Name" : "t9",
+        "Columns" : {
+          "f22__col1" : "text",
+          "f22__col2" : "ascii",
+          "f22__col3" : "varchar",
+          "f22__col4" : "b1lob",
+          "f22__col5" : "boolean",
+          "f22__col6" : "decimal",
+          "f22__col7" : "double",
+          "f22__col8" : "float",
+          "f22__col9" : "int",
+          "f22__col10" : "bigint",
+          "f22__col11" : "timestamp",
+          "f22__col12" : "timeuuid",
+          "f22__col13" : "uuid",
+          "f22__col14" : "inet",
+          "f22__col15" : "varint"
+        }
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "body" : {
+          "Name" : "t9",
+          "Columns" : {
+            "f22__col1" : "text",
+            "f22__col2" : "ascii",
+            "f22__col3" : "varchar",
+            "f22__col4" : "b1lob",
+            "f22__col5" : "boolean",
+            "f22__col6" : "decimal",
+            "f22__col7" : "double",
+            "f22__col8" : "float",
+            "f22__col9" : "int",
+            "f22__col10" : "bigint",
+            "f22__col11" : "timestamp",
+            "f22__col12" : "timeuuid",
+            "f22__col13" : "uuid",
+            "f22__col14" : "inet",
+            "f22__col15" : "varint"
+          }
+        },
+        "code" : 400,
+        "message" : "Invalid column data type: b1lob"
+      }
+    }
+  },
+  "legacyReadFeatures" : {
+    "request" : {
+      "endpoint" : "/ofs/get-data",
+      "method" : "GET",
+      "body" : {
+        "TableName" : "t15",
+        "Values" : {
+          "p_col1" : 1,
+          "p_col2" : 15
+        },
+        "Columns" : [
+          {
+            "Name" : "p_col1",
+            "ResponseColumnName" : "pc1"
+          },
+          {
+            "Name" : "p_col2",
+            "ResponseColumnName" : "pc2"
+          },
+          {
+            "Name" : "p_col3",
+            "ResponseColumnName" : "pc3"
+          },
+          {
+            "Name" : "f600__col1",
+            "ResponseColumnName" : "c1"
+          },
+          {
+            "Name" : "f600__col2",
+            "ResponseColumnName" : "c2"
+          },
+          {
+            "Name" : "f600__col3",
+            "ResponseColumnName" : "c3"
+          },
+          {
+            "Name" : "f600__col4",
+            "ResponseColumnName" : "c4"
+          },
+          {
+            "Name" : "f600__col5",
+            "ResponseColumnName" : "c5"
+          },
+          {
+            "Name" : "f600__col6",
+            "ResponseColumnName" : "c6"
+          },
+          {
+            "Name" : "f600__col7",
+            "ResponseColumnName" : "c7"
+          },
+          {
+            "Name" : "f600__col8",
+            "ResponseColumnName" : "c8"
+          },
+          {
+            "Name" : "f600__col9",
+            "ResponseColumnName" : "c9"
+          },
+          {
+            "Name" : "f600__col10",
+            "ResponseColumnName" : "c10"
+          },
+          {
+            "Name" : "f600__col11",
+            "ResponseColumnName" : "c11"
+          },
+          {
+            "Name" : "f600__col12",
+            "ResponseColumnName" : "c12"
+          },
+          {
+            "Name" : "f600__col13",
+            "ResponseColumnName" : "c13"
+          },
+          {
+            "Name" : "f600__col14",
+            "ResponseColumnName" : "c14"
+          },
+          {
+            "Name" : "f600__col15",
+            "ResponseColumnName" : "c15"
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "code" : 200,
+        "message" : {
+          "pc1" : 1,
+          "pc2" : 15,
+          "pc3" : 3,
+          "c1" : "SampleText",
+          "c2" : "SampleASCII",
+          "c3" : "SampleVARCHAR",
+          "c4" : "YmFzZTY0IGVuY29kaW5n",
+          "c5" : true,
+          "c6" : 123.456,
+          "c7" : 3.14159,
+          "c8" : 2.71828,
+          "c9" : 42,
+          "c10" : 123456789012,
+          "c11" : 1706467711029,
+          "c12" : "1d85be70-1d68-11ec-9621-0242ac130002",
+          "c13" : "550e8400-e29b-41d4-a716-446655440000",
+          "c14" : "192.0.2.1",
+          "c15" : 1234567890
+        }
+      }
+    }
+  },
+  "legacyReadFeaturesBadRequest" : {
+    "request" : {
+      "endpoint" : "/ofs/get-data",
+      "method" : "GET",
+      "body" : {
+        "TableName" : "t15",
+        "Values" : {
+          "p_col1" : 1,
+          "p_col2" : 15
+        },
+        "Columns" : [
+          {
+            "Name" : "p_col1",
+            "ResponseColumnName" : "pc1"
+          },
+          {
+            "Name" : "p_col2",
+            "ResponseColumnName" : "pc2"
+          },
+          {
+            "Name" : "p_col3",
+            "ResponseColumnName" : "pc3"
+          },
+          {
+            "Name" : "f600",
+            "ResponseColumnName" : "c1"
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error": {
+          "message": "invalid request",
+          "cause": "invalid request",
+          "code": "READ-FEATURE-GROUP-REQUEST-EXCEPTION"
+        }
+      }
+    }
+  },
+  "legacyBulkReadFeatures" : {
+    "request" : {
+      "endpoint" : "/ofs/bulk-read",
+      "method" : "GET",
+      "body" : {
+        "TableName" : "t15",
+        "PrimaryKeys" : {
+          "p_col1" : 1
+        },
+        "InValArray" : {
+          "ColumnName" : "p_col2",
+          "Values" : [
+            15,
+            16
+          ]
+        },
+        "Columns" : [
+          {
+            "Name" : "p_col1",
+            "ResponseColumnName" : "pc1"
+          },
+          {
+            "Name" : "p_col3",
+            "ResponseColumnName" : "pc3"
+          },
+          {
+            "Name" : "f600__col1",
+            "ResponseColumnName" : "c1"
+          },
+          {
+            "Name" : "f600__col2",
+            "ResponseColumnName" : "c2"
+          },
+          {
+            "Name" : "f600__col3",
+            "ResponseColumnName" : "c3"
+          },
+          {
+            "Name" : "f600__col4",
+            "ResponseColumnName" : "c4"
+          },
+          {
+            "Name" : "f600__col5",
+            "ResponseColumnName" : "c5"
+          },
+          {
+            "Name" : "f600__col6",
+            "ResponseColumnName" : "c6"
+          },
+          {
+            "Name" : "f600__col7",
+            "ResponseColumnName" : "c7"
+          },
+          {
+            "Name" : "f600__col8",
+            "ResponseColumnName" : "c8"
+          },
+          {
+            "Name" : "f600__col9",
+            "ResponseColumnName" : "c9"
+          },
+          {
+            "Name" : "f600__col10",
+            "ResponseColumnName" : "c10"
+          },
+          {
+            "Name" : "f600__col11",
+            "ResponseColumnName" : "c11"
+          },
+          {
+            "Name" : "f600__col12",
+            "ResponseColumnName" : "c12"
+          },
+          {
+            "Name" : "f600__col13",
+            "ResponseColumnName" : "c13"
+          },
+          {
+            "Name" : "f600__col14",
+            "ResponseColumnName" : "c14"
+          },
+          {
+            "Name" : "f600__col15",
+            "ResponseColumnName" : "c15"
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "code" : 200,
+        "data" : [
+          {
+            "pc3" : 3,
+            "c11" : 1706467711029,
+            "c10" : 123456789012,
+            "c13" : "550e8400-e29b-41d4-a716-446655440000",
+            "c12" : "1d85be70-1d68-11ec-9621-0242ac130002",
+            "c15" : 1234567890,
+            "c14" : "192.0.2.1",
+            "c1" : "SampleText",
+            "c2" : "SampleASCII",
+            "c3" : "SampleVARCHAR",
+            "c4" : "YmFzZTY0IGVuY29kaW5n",
+            "c5" : true,
+            "c6" : 123.456,
+            "c7" : 3.14159,
+            "c8" : 2.71828,
+            "c9" : 42,
+            "pc1" : 1
+          },
+          {
+            "pc3" : 3,
+            "c11" : 1706467711029,
+            "c10" : 123456789012,
+            "c13" : "550e8400-e29b-41d4-a716-446655440000",
+            "c12" : "1d85be70-1d68-11ec-9621-0242ac130002",
+            "c15" : 1234567890,
+            "c14" : "192.0.2.1",
+            "c1" : "SampleText",
+            "c2" : "SampleASCII",
+            "c3" : "SampleVARCHAR",
+            "c4" : "YmFzZTY0IGVuY29kaW5n",
+            "c5" : true,
+            "c6" : 123.456,
+            "c7" : 3.14159,
+            "c8" : 2.71828,
+            "c9" : 42,
+            "pc1" : 1
+          }
+        ],
+        "message" : "Data fetched successfully"
+      }
+    }
+  },
+  "legacyAsyncBatchWriteFeatures" : {
+    "request" : {
+      "endpoint" : "/ofs/async-batch-write",
+      "method" : "POST",
+      "body" : {
+        "Body" : [
+          {
+            "EntityName" : "t15",
+            "Entities" : [
+              "p_col1",
+              "p_col2"
+            ],
+            "FeatureGroup" : "f600",
+            "Features" : {
+              "p_col1" : 1,
+              "p_col2" : 2,
+              "col1" : "SampleText",
+              "col2" : "cliché",
+              "col3" : "SampleVARCHAR",
+              "col4" : "YmFzZTY0IGVuY29kaW5n",
+              "col5" : true,
+              "col6" : 123.45,
+              "col7" : 3.14,
+              "col8" : 2.71,
+              "col9" : 42,
+              "col10" : 123456789012,
+              "col11" : 1706467711029,
+              "col12" : "1d85be70-1d68-11ec-9621-0242ac130002",
+              "col13" : "550e8400-e29b-41d4-a716-446655440000",
+              "col14" : "192.0.2.1",
+              "col15" : 1234567890
+            }
+          },
+          {
+            "EntityName" : "t15",
+            "Entities" : [
+              "p_col1",
+              "p_col2"
+            ],
+            "FeatureGroup" : "f600",
+            "Features" : {
+              "p_col1" : 1,
+              "p_col2" : 7,
+              "col1" : "SampleText",
+              "col2" : "SampleASCII",
+              "col3" : "SampleVARCHAR",
+              "col4" : "YmFzZTY0IGVuY29kaW5n",
+              "col5" : true,
+              "col6" : 123.45,
+              "col7" : 3.14,
+              "col8" : 2.71,
+              "col9" : 42,
+              "col10" : 123456789012,
+              "col11" : 1706467711029,
+              "col12" : "1d85be70-1d68-11ec-9621-0242ac130002",
+              "col13" : "550e8400-e29b-41d4-a716-446655440000",
+              "col14" : "192.0.2.1",
+              "col15" : 1234567890
+            }
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "code" : 200,
+        "data" : {
+          "Success" : true,
+          "Message" : "Total successfulRecords: 1",
+          "Successful_records" : 1,
+          "Failed_records" : [
+            {
+              "Success" : false,
+              "Record" : {
+                "EntityName" : "t15",
+                "Entities" : [
+                  "p_col1",
+                  "p_col2"
+                ],
+                "FeatureGroup" : "f600",
+                "Features" : {
+                  "p_col1" : 1,
+                  "p_col2" : 2,
+                  "col1" : "SampleText",
+                  "col2" : "cliché",
+                  "col3" : "SampleVARCHAR",
+                  "col4" : "YmFzZTY0IGVuY29kaW5n",
+                  "col5" : true,
+                  "col6" : 123.45,
+                  "col7" : 3.14,
+                  "col8" : 2.71,
+                  "col9" : 42,
+                  "col10" : 123456789012,
+                  "col11" : 1706467711029,
+                  "col12" : "1d85be70-1d68-11ec-9621-0242ac130002",
+                  "col13" : "550e8400-e29b-41d4-a716-446655440000",
+                  "col14" : "192.0.2.1",
+                  "col15" : 1234567890
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "legacyMultiBulkReadFeatures" : {
+    "request" : {
+      "endpoint" : "/ofs/multi-bulk-read",
+      "method" : "GET",
+      "body" : {
+        "batches" : [
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col2",
+                "ResponseColumnName" : "pc2"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col2",
+                "ResponseColumnName" : "pc2"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "f600" : [
+            {
+              "code" : 200,
+              "message" : {
+                "pc1" : 1,
+                "pc2" : 15,
+                "pc3" : 3,
+                "c1" : "SampleText",
+                "c2" : "SampleASCII",
+                "c3" : "SampleVARCHAR",
+                "c4" : "YmFzZTY0IGVuY29kaW5n",
+                "c5" : true,
+                "c6" : 123.456,
+                "c7" : 3.14159,
+                "c8" : 2.71828,
+                "c9" : 42,
+                "c10" : 123456789012,
+                "c11" : 1706467711029,
+                "c12" : "1d85be70-1d68-11ec-9621-0242ac130002",
+                "c13" : "550e8400-e29b-41d4-a716-446655440000",
+                "c14" : "192.0.2.1",
+                "c15" : 1234567890
+              }
+            },
+            {
+              "code" : 200,
+              "message" : {
+                "pc1" : 1,
+                "pc2" : 15,
+                "pc3" : 3,
+                "c1" : "SampleText",
+                "c2" : "SampleASCII",
+                "c3" : "SampleVARCHAR",
+                "c4" : "YmFzZTY0IGVuY29kaW5n",
+                "c5" : true,
+                "c6" : 123.456,
+                "c7" : 3.14159,
+                "c8" : 2.71828,
+                "c9" : 42,
+                "c10" : 123456789012,
+                "c11" : 1706467711029,
+                "c12" : "1d85be70-1d68-11ec-9621-0242ac130002",
+                "c13" : "550e8400-e29b-41d4-a716-446655440000",
+                "c14" : "192.0.2.1",
+                "c15" : 1234567890
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "legacyMultiBulkReadFeaturesConstraintViolation" : {
+    "request" : {
+      "endpoint" : "/ofs/multi-bulk-read",
+      "method" : "GET",
+      "body" : {
+        "batches" : [
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          },
+          {
+            "TableName" : "t15",
+            "Values" : {
+              "p_col1" : 1,
+              "p_col2" : 15
+            },
+            "Columns" : [
+              {
+                "Name" : "p_col1",
+                "ResponseColumnName" : "pc1"
+              },
+              {
+                "Name" : "p_col3",
+                "ResponseColumnName" : "pc3"
+              },
+              {
+                "Name" : "f600__col1",
+                "ResponseColumnName" : "c1"
+              },
+              {
+                "Name" : "f600__col2",
+                "ResponseColumnName" : "c2"
+              },
+              {
+                "Name" : "f600__col3",
+                "ResponseColumnName" : "c3"
+              },
+              {
+                "Name" : "f600__col4",
+                "ResponseColumnName" : "c4"
+              },
+              {
+                "Name" : "f600__col5",
+                "ResponseColumnName" : "c5"
+              },
+              {
+                "Name" : "f600__col6",
+                "ResponseColumnName" : "c6"
+              },
+              {
+                "Name" : "f600__col7",
+                "ResponseColumnName" : "c7"
+              },
+              {
+                "Name" : "f600__col8",
+                "ResponseColumnName" : "c8"
+              },
+              {
+                "Name" : "f600__col9",
+                "ResponseColumnName" : "c9"
+              },
+              {
+                "Name" : "f600__col10",
+                "ResponseColumnName" : "c10"
+              },
+              {
+                "Name" : "f600__col11",
+                "ResponseColumnName" : "c11"
+              },
+              {
+                "Name" : "f600__col12",
+                "ResponseColumnName" : "c12"
+              },
+              {
+                "Name" : "f600__col13",
+                "ResponseColumnName" : "c13"
+              },
+              {
+                "Name" : "f600__col14",
+                "ResponseColumnName" : "c14"
+              },
+              {
+                "Name" : "f600__col15",
+                "ResponseColumnName" : "c15"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error" : {
+          "message" : "bulkReadData.arg0.Batches: max 10 batches allowed per request",
+          "cause" : "Constraint Violation",
+          "code" : "INVALID_REQUEST"
+        }
+      }
+    }
+  }
+}

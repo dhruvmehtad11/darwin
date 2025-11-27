@@ -1,0 +1,10 @@
+{
+  "prettyPrint": true,
+  "openAPI": {
+    "info": {
+      "version": 1.0.0,
+      "title": darwin-ofs-v2,
+      "description": "darwin-ofs-v2 Service"
+    }
+  }
+}

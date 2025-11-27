@@ -1,0 +1,1 @@
+CREATE KEYSPACE IF NOT EXISTS ofs WITH replication = { 'class' : 'org.apache.cassandra.locator.NetworkTopologyStrategy', '${migrations.datacenter}': '3' };

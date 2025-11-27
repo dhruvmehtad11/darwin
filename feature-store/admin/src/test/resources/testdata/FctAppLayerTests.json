@@ -1,0 +1,194 @@
+{
+  "getFeatureGroupsCountWithoutSearchStringAndFiltersTest" : {
+    "request" : {
+      "endpoint" : "/FeatureStore/feature-groups/count",
+      "method" : "POST",
+      "body" : {
+        "search_string" : "",
+        "filters" : []
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "status" : "SUCCESS",
+        "statusCode" : 200,
+        "data" : {
+          "onlineCount" : 4,
+          "offlineCount" : 2
+        }
+      }
+    }
+  },
+  "getFeatureGroupsCountWithOwnerFiltersAndWithoutSearchStringTest" : {
+    "request" : {
+      "endpoint" : "/FeatureStore/feature-groups/count",
+      "method" : "POST",
+      "body" : {
+        "search_string" : "",
+        "filters" : [
+          {
+            "name" : "owners",
+            "values" : [
+              "owner1@dream11.com",
+              "owner3@dream11.com"
+            ]
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "status" : "SUCCESS",
+        "statusCode" : 200,
+        "data" : {
+          "onlineCount" : 2,
+          "offlineCount" : 1
+        }
+      }
+    }
+  },
+  "getFeatureGroupsCountWithTagFiltersAndWithoutSearchStringTest" : {
+    "request" : {
+      "endpoint" : "/FeatureStore/feature-groups/count",
+      "method" : "POST",
+      "body" : {
+        "search_string" : "",
+        "filters" : [
+          {
+            "name" : "tags",
+            "values" : [
+              "f300t1",
+              "f900f1t1",
+              "f1000f2t2"
+            ]
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "status" : "SUCCESS",
+        "statusCode" : 200,
+        "data" : {
+          "onlineCount" : 1,
+          "offlineCount" : 2
+        }
+      }
+    }
+  },
+  "getFeatureGroupsCountWithAllFiltersAndWithoutSearchStringTest" : {
+    "request" : {
+      "endpoint" : "/FeatureStore/feature-groups/count",
+      "method" : "POST",
+      "body" : {
+        "search_string" : "",
+        "filters" : [
+          {
+            "name" : "tags",
+            "values" : [
+              "f300t1",
+              "f1000f2t1",
+              "f1000f2t2"
+            ]
+          },
+          {
+            "name" : "owners",
+            "values" : [
+              "owner1@dream11.com",
+              "owner3@dream11.com"
+            ]
+          }
+        ]
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "status" : "SUCCESS",
+        "statusCode" : 200,
+        "data" : {
+          "onlineCount" : 1,
+          "offlineCount" : 0
+        }
+      }
+    }
+  },
+  "getFeatureGroupsCountWithoutFiltersAndWithSearchStringTest" : {
+    "request" : {
+      "endpoint" : "/FeatureStore/feature-groups/count",
+      "method" : "POST",
+      "body" : {
+        "search_string" : "300",
+        "filters" : []
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "status" : "SUCCESS",
+        "statusCode" : 200,
+        "data" : {
+          "onlineCount" : 2,
+          "offlineCount" : 0
+        }
+      }
+    }
+  },
+  "getFeatureGroupsFilters" : {
+    "request" : {
+      "endpoint" : "/FeatureStore/group-filters",
+      "method" : "GET"
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "status" : "SUCCESS",
+        "statusCode" : 200,
+        "data" : [
+          {
+            "name" : "tags",
+            "values" : [
+              "f1000f1t1",
+              "f1000f1t2",
+              "f900t1",
+              "f900t2",
+              "t1",
+              "t2",
+              "f1000f2t2",
+              "f1000f2t1",
+              "a",
+              "b",
+              "f300f1t1",
+              "f300f1t2",
+              "f300t2",
+              "f300t1",
+              "f400t1",
+              "f400t2",
+              "f1000t1",
+              "f1000t2",
+              "f400f2t2",
+              "f400f2t1",
+              "f300FakeFeatureName",
+              "f400f1t1",
+              "f400f1t2",
+              "f900f1t2",
+              "f900f1t1"
+            ]
+          },
+          {
+            "name" : "tags",
+            "values" : [
+              "owner3@dream11.com",
+              "owner1@dream11.com",
+              "owner2@dream11.com",
+              "owner4@dream11.com"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,202 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.dream11</groupId>
+    <artifactId>d11-vertx-microservice-parent</artifactId>
+    <version>1.0.12</version>
+    <relativePath>local-repo/com/dream11/d11-vertx-microservice-parent/1.0.12/d11-vertx-microservice-parent-1.0.12.pom</relativePath>
+  </parent>
+
+  <artifactId>darwin-ofs-v2</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>darwin-ofs-v2</name>
+  <modules>
+    <module>core</module>
+    <module>app</module>
+    <module>admin</module>
+    <module>consumer</module>
+    <module>populator</module>
+    <module>spark</module>
+    <module>python</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>local-repo</id>
+      <url>file://${project.basedir}/local-repo</url>
+    </repository>
+  </repositories>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>local-repo</id>
+      <url>file://${project.basedir}/local-repo</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>bom</artifactId>
+        <version>2.27.21</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <properties>
+    <app.name>darwin-ofs-v2</app.name>
+    <main.class>com.dream11.app.MainApplication</main.class>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <app.release.artifact>/target/darwin-ofs-v2</app.release.artifact>
+    <google.guava.version>25.1-jre</google.guava.version>
+    <d11-rest.version>7.3.5</d11-rest.version>
+    <d11-vertx-cassandra.version>2.2.22</d11-vertx-cassandra.version>
+    <d11-vertx-webclient.version>1.0.5</d11-vertx-webclient.version>
+    <d11-vertx-config.version>1.1.21</d11-vertx-config.version>
+    <d11-common.version>4.1.23</d11-common.version>
+    <d11-vertx-mysql.version>1.0.11</d11-vertx-mysql.version>
+    <d11-vertx-caffeine.version>1.0.6</d11-vertx-caffeine.version>
+    <micrometer.version>1.1.0</micrometer.version>
+    <d11-tests.version>1.0.8</d11-tests.version>
+
+    <!-- Use an older version until https://issues.apache.org/jira/browse/MRESOURCES-237 -->
+    <maven.resources.plugin.version>2.7</maven.resources.plugin.version>
+    <argLine>
+      --add-opens java.base/java.lang=ALL-UNNAMED
+    </argLine>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${google.guava.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.dream11</groupId>
+      <artifactId>d11-vertx-cassandra</artifactId>
+      <version>${d11-vertx-cassandra.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-core</artifactId>
+      <version>4.0.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-jmx</artifactId>
+      <version>4.0.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.dream11</groupId>
+      <artifactId>d11-vertx-caffeine</artifactId>
+      <version>${d11-vertx-caffeine.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.dream11</groupId>
+      <artifactId>d11-vertx-mysql</artifactId>
+      <version>${d11-vertx-mysql.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-micrometer-metrics</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-kafka-client</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>sts</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version>
+    </dependency>
+
+    <dependency>
+      <groupId>software.amazon.awssdk.crt</groupId>
+      <artifactId>aws-crt</artifactId>
+      <version>0.30.9</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+      <version>${micrometer.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.30</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.dream11</groupId>
+      <artifactId>d11-vertx-webclient</artifactId>
+      <version>${d11-vertx-webclient.version}</version>
+    </dependency>
+
+<!--    <dependency>-->
+<!--      <groupId>com.dream11</groupId>-->
+<!--      <artifactId>d11-tests</artifactId>-->
+<!--      <version>${d11-tests.version}</version>-->
+<!--      <scope>test</scope>-->
+<!--      <exclusions>-->
+<!--        <exclusion>-->
+<!--          <groupId>com.github.tomakehurst</groupId>-->
+<!--          <artifactId>wiremock-jre8</artifactId>-->
+<!--        </exclusion>-->
+<!--      </exclusions>-->
+<!--    </dependency>-->
+
+<!--    <dependency>-->
+<!--      <groupId>com.github.tomakehurst</groupId>-->
+<!--      <artifactId>wiremock</artifactId>-->
+<!--      <version>3.0.0-beta-1</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.33</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-core</artifactId>
+      <version>4.17.0</version>
+      <scope>test</scope>
+    </dependency>
+
+
+  </dependencies>
+
+</project>
