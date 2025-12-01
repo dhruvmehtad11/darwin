@@ -1,0 +1,88 @@
+replicaCount: 2
+nameOverride: shs-harsh
+fullnameOverride: ""
+
+resource: id-dzj63uqg2iwfeznj
+ttl: 180
+user: harsh.a@dream11.com
+env: prod
+kubeClusterKey: eks-0
+
+serviceAccount:
+  create: false
+  name: ray
+  annotations: {}
+
+image:
+  repository: localhost:5000/darwin
+  tag: spark-history-server-3.3.0
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+service:
+  type: ClusterIP
+  # nodePort: 32000
+  port:
+    number: 18080
+    name: history-port
+  annotations: {}
+
+environment:
+  SPARK_HISTORY_OPTS: "-Dspark.ui.proxyRedirectUri=/ -Dspark.ui.proxyBase=/eks-0/shs-harsh "
+  RESOURCE: id-dzj63uqg2iwfeznj
+  TTL: 180
+  USER: harsh.a@dream11.com
+  ENV: prod
+# Note: do not configure Spark history events directory using SPARK_HISTORY_OPTS. It will be
+# configured by this chart based on the values in "pvc", "gcs" or "hdfs" attribute.
+  # SPARK_HISTORY_OPTS: ...
+  # SPARK_DAEMON_MEMORY: 1g
+  # SPARK_DAEMON_JAVA_OPTS: ...
+  # SPARK_DAEMON_CLASSPATH: ...
+  # SPARK_PUBLIC_DNS: ...
+
+podAnnotations: {}
+
+resources:
+  # To let the application start up quickly give it a big limit
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 100m
+    memory: 512Mi
+
+pvc:
+  # to use a file system path for Spark events dir, set 'enablePVC' to true and mention the
+  # name of an already created persistent volume claim in existingClaimName.
+  # The volume will be mounted on /data in the pod
+  enablePVC: false
+  existingClaimName: fsx-claim
+  eventsDir: "/home/ray/fsx/spark/eventlogs/"
+
+gcs:
+  enableGCS: false
+  enableIAM: false
+  secret: history-secrets
+  key: sparkonk8s.json
+  logDirectory: gs://spark-hs/
+
+s3:
+  enableS3: true
+  enableIAM: true
+  # Omit for IAM role-based or provider-based authentication.
+  secret: ""
+  # accessKeyName is an AWS access key ID. Omit for IAM role-based or provider-based authentication.
+  accessKeyName: ""
+  # secretKey is AWS secret key. Omit for IAM role-based or provider-based authentication.
+  secretKeyName: ""
+  logDirectory: "s3a://darwin-eks-prod/darwin/temp/spark_history_server"
+  # custom s3 endpoint. Keep default for using aws s3 endpoint
+  endpoint: default
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

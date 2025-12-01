@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.dream11</groupId>
+    <artifactId>darwin-ofs-v2</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>app</artifactId>
+  <version>1.0.50-SNAPSHOT</version>
+
+  <properties>
+    <app.release.artifact-name>darwin-ofs-v2</app.release.artifact-name>
+    <app.release.artifact>/target/darwin-ofs-v2</app.release.artifact>
+    <main.class>com.dream11.app.MainApplication</main.class>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <micrometer.version>1.1.0</micrometer.version>
+    <vertx.version>3.9.2</vertx.version>
+    <rsocket.version>1.1.5</rsocket.version>
+    <argLine>
+      --add-opens java.base/java.lang=ALL-UNNAMED
+    </argLine>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>com.dream11</groupId>
+      <artifactId>core</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.dream11</groupId>
+      <artifactId>core</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.2.0</version><!-- Use the latest version -->
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.parent.basedir}/core/src/main/resources</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>copy-resources-to-target</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/${app.release.artifact}/resources</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.parent.basedir}/core/src/main/resources</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--            <plugin>-->
+      <!--                <groupId>io.swagger.core.v3</groupId>-->
+      <!--                <artifactId>swagger-maven-plugin</artifactId>-->
+      <!--            </plugin>-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M5</version>
+        <configuration>
+          <trimStackTrace>false</trimStackTrace>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.8</version>
+        <configuration>
+          <excludes>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.0.0-M5</version>
+        <executions>
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <useModulePath>false</useModulePath>
+              <trimStackTrace>false</trimStackTrace>
+              <excludes>
+                <exclude>com.dream11.app.restintegrationtests.RestIT</exclude>
+                <exclude>com.dream11.app.restfalllbackintegrationtests.RestIT</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>read-write-integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <useModulePath>false</useModulePath>
+              <trimStackTrace>false</trimStackTrace>
+              <includes>
+                <include>com.dream11.app.restintegrationtests.RestIT</include>
+              </includes>
+              <systemPropertyVariables>
+                <setupFile>com.dream11.app.restintegrationtests.SetUp</setupFile>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>read-write-with-fallback-integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <useModulePath>false</useModulePath>
+              <trimStackTrace>false</trimStackTrace>
+              <includes>
+                <include>com.dream11.app.restfalllbackintegrationtests.RestIT</include>
+              </includes>
+              <systemPropertyVariables>
+                <setupFile>com.dream11.app.restfalllbackintegrationtests.SetUp</setupFile>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+      <plugin>
+        <!-- This plugin provides the capability to package the artifact in an uber-jar, including its dependencies and to shade - i.e. rename - the packages of some of the dependencies -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.3</version>
+        <executions>
+          <execution>
+            <id>create-fat-jar</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <transformers>
+                <transformer
+                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>${main.class}</Main-Class>
+                    <X-Compile-Source-JDK>17</X-Compile-Source-JDK>
+                  </manifestEntries>
+                </transformer>
+                <transformer
+                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+              <artifactSet>
+              </artifactSet>
+              <outputFile>${project.basedir}/${app.release.artifact}/${app.release.artifact-name}-fat.jar
+              </outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--copy jar for writer-->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>create target for writer</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>mkdir</executable>
+              <arguments>
+                <argument>-p</argument>
+                <argument>${project.basedir}/${app.release.artifact}-writer</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>copy app jar for writer</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>cp</executable>
+              <arguments>
+                <argument>${project.basedir}/${app.release.artifact}/${app.release.artifact-name}-fat.jar</argument>
+                <argument>${project.basedir}/${app.release.artifact}-writer/${app.release.artifact-name}-writer-fat.jar</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

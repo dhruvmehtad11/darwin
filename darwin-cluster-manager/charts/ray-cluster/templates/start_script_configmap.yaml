@@ -1,0 +1,198 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-script
+  labels: {{- include "ray-cluster.labels" . | nindent 4 }}
+data:
+  head.sh: |
+    cd /home/ray
+    mkdir -p ./logs
+    git config --global --add safe.directory '*'
+
+    START_SCRIPT_LOG="./logs/start_script_configmap.log"
+
+    nohup bash -c "
+      echo 'Starting initialization sequence'
+
+      echo '--- Running libraries.sh ---'
+      /tmp/script/libraries.sh
+      LIBRARIES_STATUS=\$?
+      echo \"--- libraries.sh completed with status \$LIBRARIES_STATUS ---\"
+
+      # echo '--- Running ray_cluster_gcs_health.sh ---'
+      # /tmp/script/ray_cluster_gcs_health.sh
+      # echo '--- ray_cluster_gcs_health.sh completed successfully---'
+
+      # echo '--- Starting Spark Connect Process ---'
+      # nohup /tmp/script/start_spark_connect.sh
+      # /tmp/script/check_spark_connect.sh
+
+      echo '--- Running jupyterlab.sh ---'
+      /tmp/script/jupyterlab.sh >> ./logs/jupyter.log 2>&1
+      JUPYTER_STATUS=\$?
+      echo \"--- jupyterlab.sh completed with status \$JUPYTER_STATUS ---\"
+    " >> $START_SCRIPT_LOG 2>&1 &
+
+    # {{- if not .Values.is_job_cluster }}
+    # /tmp/script/code-server.sh >> $START_SCRIPT_LOG 2>&1 &
+    # {{- end }}
+    nohup /tmp/remote-command/execute-remote-commands.sh > ./logs/remote-command.log &
+
+  worker.sh: |
+    mkdir -p ./logs
+    /tmp/script/libraries.sh worker
+    nohup /tmp/remote-command/execute-remote-commands.sh > ./logs/remote-command.log &
+
+  libraries.sh: |
+    sleep 2
+
+    log_file_uid="$CLUSTER_ID-$(date +%s)"
+
+    # Set log file path
+    if [ "$1" != "worker" ]; then
+      mkdir -p ./fsx/workspace/init_logs
+      LOG_FILE="./fsx/workspace/init_logs/$log_file_uid.log"
+    else
+      LOG_FILE="./logs/$log_file_uid.log"
+    fi
+
+    # Function to send status updates to the API
+    send_status_update() {
+      local status=$1
+      local message=$2
+      curl --retry 5 --location --request PUT $INIT_SCRIPT_API --header "Content-Type: application/json" --data-raw "{\"uid\": \"$log_file_uid\", \"cluster_id\": \"$CLUSTER_ID\", \"status\": \"$status\", \"message\": \"$message\"}"
+    }
+
+    # Log script execution
+    echo "----INIT SCRIPT STARTED----" >> $LOG_FILE
+
+    # Start Execution
+    if [ "$1" != "worker" ]; then
+      send_status_update "STARTED" "Init Script Started"
+    fi
+
+    {{- range $.Values.commands }}
+      element={{ . | quote }}
+      echo "Installing $element" >> $LOG_FILE
+      if var1=$($element 2>&1); then
+        echo "----Success installing <$element>----" >> $LOG_FILE
+        echo "$var1" >> $LOG_FILE
+      else
+        echo "----Error installing <$element>" >> $LOG_FILE
+        echo "$var1" >> $LOG_FILE
+        if [ "$1" != "worker" ]; then
+          send_status_update "FAILED" "Error running the command $element"
+        fi
+        exit 0
+      fi
+    {{- end }}
+
+    if [ "$1" != "worker" ]; then
+      send_status_update "SUCCESS" "Init Script Successful"
+    fi
+
+    echo "----INIT SCRIPT SUCCESS----" >> $LOG_FILE
+
+  code-server.sh: |
+    mkdir -p /home/ray/.local/share/code-server/Machine && cp /home/ray/fsx/workspace/.config/code-server/settings/settings.json /home/ray/.local/share/code-server/Machine
+    sudo mkdir -p /home/ray/fsx/workspace/{{.Values.email}}/.config/code-server/extensions/ &&  sudo chmod -R 777 /home/ray/fsx/workspace/{{.Values.email}}/.config/code-server/extensions/
+    ln -s /home/ray/fsx/workspace/{{.Values.email}}/.config/code-server/extensions/ /home/ray/.local/share/code-server/
+    sudo ln -s /home/ray/fsx/workspace/.config/code-server/extensions/* /home/ray/.local/share/code-server/extensions
+    mkdir -p ~/.local/lib ~/.local/bin && ln -s ~/fsx/workspace/packages/code-server-4.93.1/bin/code-server ~/.local/bin/code-server && PATH="~/.local/bin:$PATH" && code-server --auth none --bind-addr 0.0.0.0 --port 3000 > server.log &
+
+  jupyterlab.sh: |
+    # Run the ipython profile config script
+    # bash /tmp/script/auto_ipython_config.sh
+    # Start Jupyter Lab explicitly
+    echo "Starting Jupyter Lab server..."
+
+    jupyter lab --ServerApp.base_url=/{{.Values.kube_cluster_key}}/{{.Release.Name}}-jupyter \
+      --ip 0.0.0.0 \
+      --port=8888 \
+      --no-browser \
+      --ServerApp.token="" \
+      --allow-root \
+      --ServerApp.disable_check_xsrf=True \
+      --ServerApp.allow_origin="*" \
+      --ServerApp.tornado_settings="{\"headers\":{\"Content-Security-Policy\":\"frame-ancestors self *\"}}" &
+
+    /tmp/script/chronos_event.sh "JUPYTER_LAB_STARTED" "Jupyter server running..."
+
+    # Add Jupyter settings if available
+    mkdir -p /home/ray/.jupyter/lab/user-settings/@jupyterlab
+    if [ -d "/home/ray/fsx/workspace/jupyter-settings/" ]; then
+      cp -r /home/ray/fsx/workspace/jupyter-settings/* /home/ray/.jupyter/lab/user-settings/@jupyterlab/
+      echo "Copied Jupyter Lab settings successfully"
+    else
+      echo "Warning: Jupyter settings directory not found, skipping copy"
+    fi
+
+  start_spark_connect.sh: |
+    LOG_FILE="./logs/start_spark_connect.log"
+    echo '--- Running start_spark_connect.sh ---' >> $LOG_FILE
+    echo "Starting connect client script..." >> $LOG_FILE
+    /tmp/script/chronos_event.sh "SPARK_CONNECT_PROCESS_STARTED" "Code Execution in progress.."
+    python3 /home/ray/anaconda3/lib/python3.10/site-packages/darwin/spark/init_scripts/spark_connect_init_script.py >> $LOG_FILE 2>&1
+
+  ray_cluster_gcs_health.sh: |
+    echo "ray_cluster_gcs_health init" >> ray_cluster_gcs_health.log
+    chmod 0777 /home/ray/anaconda3/lib/python3.10/site-packages/darwin/bash_util_scripts/check_head_node_up.sh
+    /home/ray/anaconda3/lib/python3.10/site-packages/darwin/bash_util_scripts/check_head_node_up.sh
+    echo "ray_cluster_gcs_health success" >> ray_cluster_gcs_health.log
+
+  check_spark_connect.sh: |
+    echo "check_spark_connect init"
+    chmod 0777  /home/ray/anaconda3/lib/python3.10/site-packages/darwin/bash_util_scripts/check_spark_connect.sh
+    /home/ray/anaconda3/lib/python3.10/site-packages/darwin/bash_util_scripts/check_spark_connect.sh
+    EXIT_CODE=$?
+    if [ $EXIT_CODE -eq 1 ]; then
+      echo "check_spark_connect failed"
+      /tmp/script/chronos_event.sh "SPARK_CONNECT_PROCESS_FAILED" "Check logs for details"
+      exit 1
+    fi
+    echo "check_spark_connect success"
+    /tmp/script/chronos_event.sh "SPARK_CONNECT_PROCESS_COMPLETED" "Code execution completed successfully"
+
+  chronos_event.sh: |
+    EVENT="$1"
+    MESSAGE="$2"
+    # Check if CHRONOS_API_URL is set and non-empty
+    if [ -z "$CHRONOS_API_URL" ]; then
+      echo "CHRONOS_API_URL is not set. Exiting gracefully." >> start_script_configmap.log
+      exit 0
+    fi
+    if [ -n "$EVENT" ]; then
+      curl --retry 5 --location --request POST "$CHRONOS_API_URL/api/v1/event" \
+        --header "Content-Type: application/json" \
+        --header "x-event-source: compute" \
+        --data-raw "{\"event_type\": \"$EVENT\", \"cluster_name\": \"$CLUSTER_NAME\", \"cluster_id\": \"$CLUSTER_ID\", \"metadata\": null, \"message\": \"$MESSAGE\"}"
+    fi
+
+  auto_ipython_config.sh: |
+    SOURCE_PROFILE_DIR="/home/ray/fsx/workspace/shared_code/darwin_utils_uat/darwin_utility_scripts"
+    if [ $ENV -eq "prod" ]; then
+      SOURCE_PROFILE_DIR="/home/ray/fsx/workspace/shared_code/darwin_utils/darwin_utility_scripts"
+    fi
+    TARGET_PROFILE_DIR="/home/ray/.ipython/profile_default"
+
+    mkdir -p ${TARGET_PROFILE_DIR}
+
+    if [ -d "${SOURCE_PROFILE_DIR}" ]; then
+      /tmp/script/chronos_event.sh "IPYTHON_INITIALIZATION_STARTED" "Copying IPython profile settings..."
+
+      if rsync -a "${SOURCE_PROFILE_DIR}/" "${TARGET_PROFILE_DIR}/"; then
+        echo "Copied IPython profile settings successfully" >> jupyter.log
+        /tmp/script/chronos_event.sh "IPYTHON_INITIALIZATION_SUCCESS" "Copied IPython profile settings successfully."
+      else
+        echo "Error: Failed to copy IPython profile settings" >> jupyter.log
+        /tmp/script/chronos_event.sh "IPYTHON_INITIALIZATION_FAILED" "Failed to copy IPython profile settings"
+      fi
+    else
+      echo "Warning: Source directory ${SOURCE_PROFILE_DIR} not found, skipping copy" >> jupyter.log
+      /tmp/script/chronos_event.sh "IPYTHON_INITIALIZATION_SKIPPED" "Source directory for IPython profile not found, skipping copy"
+    fi
+
+  spark-defaults.conf: |
+    {{- range $key, $value := .Values.sparkConfig }}
+    {{ $key }}={{ $value }}
+    {{- end }}

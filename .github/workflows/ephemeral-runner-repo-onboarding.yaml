@@ -6,7 +6,7 @@ on: workflow_dispatch
 
 jobs:
   onboarding-job:
-    runs-on: [ self-hosted, linux, X64, prod-onboarding-runner ]
+    runs-on: [ self-hosted, linux, X64, onboarding-runner ]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -16,7 +16,7 @@ jobs:
         uses: dream11/k8s-action-runner@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          values-file : '.ci/actions/ephemeral-runners.yaml.yaml'
+          values-file : '.ci/actions/ephemeral-runners.yaml'
           docker-username: ${{ secrets.JFROG_USERNAME }}
           docker-password: ${{ secrets.JFROG_PASSWORD }}
           helm-username: ${{ secrets.JFROG_USERNAME }}

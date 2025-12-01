@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.dream11</groupId>
+  <artifactId>ofs-sdk</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <logback.version>1.4.12</logback.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.22</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.15.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka_2.12</artifactId>
+      <version>3.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.delta</groupId>
+      <artifactId>delta-spark_2.12</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-aws</artifactId>
+      <version>3.3.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-bundle</artifactId>
+      <version>1.12.31</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-s3</artifactId>
+      <version>1.12.31</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/repository</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>copy-writer-jar</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>verify</phase>
+            <configuration>
+              <executable>bash</executable>
+              <arguments>
+                <argument>-c</argument>
+                <argument>
+                  cp ${project.basedir}/../spark/target/darwin-ofs-v2-spark-*.jar ${project.build.directory}/repository
+                </argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>run-py-11-tests</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>verify</phase>
+            <configuration>
+              <executable>bash</executable>
+              <arguments>
+                <argument>-c</argument>
+                <argument>
+                  python3 -m venv target/test_env \
+                  &amp;&amp; source target/test_env/bin/activate \
+                  &amp;&amp; cd darwin_fs \
+                  &amp;&amp; python3 -m pip install -e .[test] \
+                  &amp;&amp; pytest test/integration/spark_test.py --asyncio-mode=auto \
+                  &amp;&amp; pytest test/integration/crud_test.py --asyncio-mode=auto \
+                  &amp;&amp; cd .. &amp;&amp; deactivate
+                </argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>

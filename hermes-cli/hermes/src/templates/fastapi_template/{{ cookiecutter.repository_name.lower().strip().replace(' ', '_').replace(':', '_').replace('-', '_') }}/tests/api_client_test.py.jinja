@@ -1,0 +1,129 @@
+import pytest
+import aiohttp
+from aiohttp import web
+import asyncio
+from {{ cookiecutter.repository_name.lower().strip().replace(' ', '_').replace(':', '_').replace('-', '_') }}.src.api_client.api_client import APIClient
+from {{ cookiecutter.repository_name.lower().strip().replace(' ', '_').replace(':', '_').replace('-', '_') }}.src.config.config import Config
+
+import socket
+
+# Global variable to maintain the list of all server ports
+server_ports = []
+
+# Helper function to give a random open port
+def get_random_open_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(('', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        port = s.getsockname()[1]
+        server_ports.append(port)
+        return port
+
+# Test server routes
+async def hello(request):
+    return web.json_response({"message": "Hello World"})
+
+async def echo_post(request):
+    data = await request.json()
+    return web.json_response(data)
+
+async def echo_query(request):
+    return web.json_response(dict(request.query))
+
+# Helper function to create test servers
+async def create_test_servers(n: int):
+    servers = []
+    runners = []
+    for i in range(n):
+        app = web.Application()
+        app.router.add_get('/hello', hello)
+        app.router.add_post('/echo', echo_post)
+        app.router.add_get('/query', echo_query)
+        
+        runner = web.AppRunner(app)
+        await runner.setup()
+        port = get_random_open_port()
+        site = web.TCPSite(runner, 'localhost', port)
+        await site.start()
+        servers.append(f'http://localhost:{port}')
+        runners.append(runner)
+    return servers, runners
+
+# Fixtures
+@pytest.fixture
+async def test_server():
+    servers, runners = await create_test_servers(1)
+    yield servers[0]
+    for runner in runners:
+        await runner.cleanup()
+
+@pytest.fixture
+def api_client(test_server):
+    config = Config(env="test")
+    client = APIClient(config)
+    return client
+
+# Tests
+@pytest.mark.asyncio
+async def test_get_request(api_client, test_server):
+    response = await api_client.get('/hello', test_server)
+    assert response == {"message": "Hello World"}
+
+@pytest.mark.asyncio
+async def test_post_request(api_client, test_server):
+    test_data = {"key": "value"}
+    response = await api_client.post('/echo', test_server, body=test_data)
+    assert response == test_data
+
+@pytest.mark.asyncio
+async def test_query_params(api_client, test_server):
+    params = {"name": "test", "value": "123"}
+    response = await api_client.get('/query', test_server, query_params=params)
+    assert response == params
+
+@pytest.mark.asyncio
+async def test_session_reuse(api_client, test_server):
+    # Test that the same session is reused for the same base URL
+    response1 = await api_client.get('/hello', test_server)
+    response2 = await api_client.get('/hello', test_server)
+    assert response1 == response2
+    assert len(api_client._sessions) == 1
+
+@pytest.mark.asyncio
+async def test_error_handling(api_client, test_server):
+    with pytest.raises(aiohttp.ClientError):
+        await api_client.get('/nonexistent', test_server)
+
+@pytest.mark.asyncio
+async def test_concurrent_requests(api_client, test_server):
+    # Test multiple concurrent requests
+    # Test concurrent requests to same endpoint and server
+    tasks = []
+    different_servers :int = 100
+    # Create different servers before firing concurrent requests
+    servers, runners = await create_test_servers(different_servers)
+    for server in servers:
+        tasks.append(api_client.get('/hello', server))
+    
+    responses = await asyncio.gather(*tasks)
+    assert all(r == {"message": "Hello World"} for r in responses)
+
+    # Test concurrent requests to different servers
+    tasks = []
+    for server in servers:
+        tasks.append(api_client.get('/hello', server))
+    
+    responses = await asyncio.gather(*tasks, return_exceptions=True)
+    # Since these servers don't exist, verify they all raise ClientError
+    assert all(not isinstance(r, aiohttp.ClientError) for r in responses)
+    
+    # Cleanup servers
+    for runner in runners:
+        await runner.cleanup()
+
+@pytest.mark.asyncio
+async def test_cleanup(api_client, test_server):
+    await api_client.get('/hello', test_server)
+    assert len(api_client._sessions) > 0
+    await api_client.close()
+    assert all(session.closed for session in api_client._sessions.values())

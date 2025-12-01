@@ -1,0 +1,13 @@
+from pydantic import BaseModel
+from typing import Optional, List, Any,Dict
+
+{% for endpoint in cookiecutter.serve_endpoint_schemas.endpoints %}
+{% if endpoint.method | upper == 'POST' %}
+{% if endpoint.request_schema and endpoint.request_schema.body %}
+class {{ endpoint.endpoint_name | replace('-', ' ') | replace('_', ' ') | replace('-', ' ') | replace('_', ' ') | title | replace(' ', '') | replace(' ', '') }}Request(BaseModel):
+    {% for field in endpoint.request_schema.body %}
+    {{ field.name }}: {% if not field.required %}Optional[{% endif %}{{ field.type }}{% if not field.required %}] = None {% endif %}
+    {% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}

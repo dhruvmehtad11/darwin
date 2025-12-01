@@ -1,0 +1,49 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "required": [],
+    "properties": {
+        "hpa": {
+            "type": "object",
+            "required": [
+                "enabled",
+                "maxReplicas",
+                "cpu",
+                "memory"
+            ],
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "maxReplicas": {
+                    "type": "integer"
+                },
+                "cpu": {
+                    "type": "integer"
+                },
+                "memory": {
+                    "type": "object",
+                    "required": [
+                        "target",
+                        "value"
+                    ],
+                    "properties": {
+                        "target": {
+                            "type": "string",
+                            "enum": [
+                                "Utilization",
+                                "Value"
+                            ]
+                        },
+                        "value": {
+                            "type": "integer"
+                        },
+                        "unit": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

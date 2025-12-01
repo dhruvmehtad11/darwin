@@ -1,0 +1,13 @@
+from pydantic import BaseModel
+from typing import Optional, List, Any,Dict
+
+{% for endpoint in cookiecutter.serve_endpoint_schemas.endpoints %}
+{% if endpoint.response_schema %}
+{% if endpoint.response_schema.body %}
+class {{ endpoint.endpoint_name | replace('-', ' ') | replace('_', ' ') | replace('-', ' ') | replace('_', ' ') | title | replace(' ', '') | replace(' ', '') }}Response(BaseModel):
+    {% for field in endpoint.response_schema.body %}
+    {{ field.name }}: {% if not field.required %}Optional[{% endif %}{{ field.type }}{% if not field.required %}] = None {% endif %}
+    {% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}

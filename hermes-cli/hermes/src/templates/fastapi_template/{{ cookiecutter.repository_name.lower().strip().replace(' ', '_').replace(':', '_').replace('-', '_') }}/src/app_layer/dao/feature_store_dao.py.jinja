@@ -1,0 +1,119 @@
+from typing import List, Dict, Any
+from src.config.config import Config
+from src.feature_store.feature_store import FeatureStoreClient
+
+class FeatureStoreDAO:    
+    def __init__(self, config: Config, feature_store_client: FeatureStoreClient):
+        self.config = config
+        self.feature_store_url = self.config.get_feature_store_url
+        self.feature_store_client = feature_store_client
+
+    async def get_feature_group_data(
+        self,
+        feature_group_name: str,
+        feature_columns: List[str],
+        primary_key_names: List[str],
+        primary_key_values: List[List[Any]]
+    ) -> Dict[str, Any]:
+        """
+        Get feature group data based on primary keys.
+        
+        Args:
+            feature_group_name (str): Name of the feature group
+            feature_columns (List[str]): List of feature columns to retrieve
+            primary_key_names (List[str]): Names of primary key columns
+            primary_key_values (List[List[Any]]): List of primary key value combinations
+            
+        Returns:
+            Dict[str, Any]: Feature group data matching the primary keys
+        """
+        response = await self.feature_store_client.fetch_feature_group_data(
+            feature_group_name=feature_group_name,
+            feature_columns=feature_columns,
+            primary_key_names=primary_key_names,
+            primary_key_values=primary_key_values
+        )
+        failed_keys_values = []
+        successful_keys_values = {}
+        if len(primary_key_values) == 1:
+            if response.get('data', {}).get('failedKeys'):
+                failed_keys_values = response.get('data', {}).get('failedKeys', [])
+        
+        successful_keys = response.get("data", {}).get("successfulKeys", [])
+        failed_keys = response.get("data", {}).get("failedKeys", [])
+
+        return {
+            "successfulKeys": successful_keys,
+            "failedKeys": failed_keys,
+        }
+
+    
+
+    """
+    Response of the following funciton is as follows:
+
+    
+        "successfulKeys": [
+            {
+                "key": [
+                    <primary_key_value_1>,
+                    <primary_key_value_2>
+                ],
+                "features": [
+                    <feature_value_1>,
+                    <feature_value_2>,
+                    <feature_value_3>
+                ]
+            }
+        ],
+        "failedKeys": [
+           {
+                "key": [
+                    <primary_key_value_1>,
+                    <primary_key_value_2>
+                ],
+                "features": [
+                    <feature_value_1>,
+                    <feature_value_2>,
+                    <feature_value_3>
+                ]
+            }]
+    """
+    
+    {%- if cookiecutter.feature_store is not string %}
+    {% for fg in cookiecutter.feature_store.feature_group %}
+    async def get_{{ fg.name }}_data_batch(self, primary_key_value_list: List[List[Any]]) -> Dict[str, Any]:
+        """
+        Get data from {{ fg.name }} feature group for multiple primary key combinations.
+        
+        Args:
+            value_list (List[List[Any]]): List of primary key value combinations.
+                Each inner list should contain values for [{% for pk in fg.primary_keys %}{{ pk }}{% if not loop.last %}, {% endif %}{% endfor %}]
+            
+        Returns:
+            Dict[str, Any]: Feature data containing {{ fg.features|join(', ') }}
+        """
+        return await self.get_feature_group_data(
+            feature_group_name="{{ fg.name }}",
+            feature_columns={{ fg.features }},
+            primary_key_names={{ fg.primary_keys }},
+            primary_key_values=primary_key_value_list
+        )
+
+    async def get_{{ fg.name }}_data(self, {% for pk in fg.primary_keys %}{{ pk }}: Any{% if not loop.last %}, {% endif %}{% endfor %}) -> Dict[str, Any]:
+        """
+        Get data from {{ fg.name }} feature group.
+        
+        Args:
+            {% for pk in fg.primary_keys %}
+            {{ pk }} (Any): Primary key for {{ pk }}
+            {% endfor %}
+            
+        Returns:
+            Dict[str, Any]: Feature data containing {{ fg.features|join(', ') }}
+        """
+        return await self.get_{{ fg.name }}_data_batch([[{% for pk in fg.primary_keys %}{{ pk }}{% if not loop.last %}, {% endif %}{% endfor %}]])
+    {% endfor %}
+    {%- else %}
+    # TODO: implement feature store dao
+    {%- endif %}

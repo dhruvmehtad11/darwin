@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "remote-kernel.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "remote-kernel.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas | default 1 }}
+  selector:
+    matchLabels: {{ include "remote-kernel.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels: {{ include "remote-kernel.labels" . | nindent 8 }}
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      affinity:
+        {{- with .Values.affinity }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{ toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: app
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command : ["/bin/sh","-c"]
+          args:
+            - |
+              jupyter kernelspec remove python3 -y || true &&
+              jupyter kernelspec list &&
+              jupyter lab \
+                --KernelSpecManager.ensure_native_kernel=False \
+                --ServerApp.base_url=/{{ .Values.kubeClusterKey }}/{{ .Release.Name }}-jupyter \
+                --ip 0.0.0.0 \
+                --no-browser \
+                --allow-root \
+                --IdentityProvider.token='' \
+                --ServerApp.disable_check_xsrf=True \
+                --ServerApp.allow_origin='*' \
+                --ServerApp.tornado_settings="{'headers':{'Content-Security-Policy':'frame-ancestors self *'}}" \
+                --KernelManager.kernel_cmd='' \
+                --MappingKernelManager.allowed_message_types=[] \
+                --ServerApp.kernel_manager_class=jupyter_server.services.kernels.kernelmanager.MappingKernelManager \
+                --ServerApp.disable_kernel_creation=True
+          ports:
+            - containerPort: 8888
+              name: jupyter
+              protocol: TCP
+          {{ if .Values.volumeMounts }}
+          volumeMounts: {{- toYaml .Values.volumeMounts | nindent 12 }}
+          {{- end }}
+          resources: {{ toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.env }}
+          env: {{ toYaml .Values.env | nindent 12 }}
+          {{- end }}
+      volumes:
+        {{- if .Values.volumes }}
+        {{- toYaml .Values.volumes | nindent 8 }}
+        {{- end }}

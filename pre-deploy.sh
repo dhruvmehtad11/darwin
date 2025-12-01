@@ -2,6 +2,7 @@
 set -e
 
 YAML_FILE="services.yaml"
+ENABLED_SERVICES_FILE=".setup/enabled-services.yaml"
 
 # Source the config.env file
 set -o allexport
@@ -89,15 +90,31 @@ if [ $# -lt 3 ]; then
     }"
 }
 
-# Loop through YAML using array approach
+# Check that enabled services config exists (from init.sh)
+if [ ! -f "$ENABLED_SERVICES_FILE" ]; then
+  echo "❌ No configuration found at $ENABLED_SERVICES_FILE"
+  echo "   Please run ./init.sh first to configure which services to enable."
+  exit 1
+fi
+
+# Loop through applications and run pre-deploy only for enabled ones
 app_count=$(yq eval '.applications | length' "$YAML_FILE")
 i=0
 while [ $i -lt $app_count ]; do
   application=$(yq eval ".applications[$i].application" "$YAML_FILE")
+
+  # Check enabled status from .setup/enabled-services.yaml
+  is_enabled=$(yq eval ".applications.\"$application\"" "$ENABLED_SERVICES_FILE")
+  if [ "$is_enabled" != "true" ]; then
+    echo "⏭️  Skipping pre-deploy for $application (disabled)"
+    i=$((i + 1))
+    continue
+  fi
+
   image="$DOCKER_REGISTRY/$application:latest"
 
-  # Build extra envs string from YAML
-  extra_envs=$(yq eval ".applications[$i].env[] | .name + \"=\" + .value" "$YAML_FILE" | tr '\n' ' ')
+  # Build extra envs string from YAML (may be empty)
+  extra_envs=$(yq eval ".applications[$i].env[] | .name + \"=\" + .value" "$YAML_FILE" 2>/dev/null | tr '\n' ' ')
 
   echo ">>> Running pre deploy for $application"
   # Use eval to properly expand the env vars as separate arguments

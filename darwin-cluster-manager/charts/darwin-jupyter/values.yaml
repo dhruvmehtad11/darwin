@@ -1,0 +1,42 @@
+nameOverride: ""
+fullnameOverride: id-jup-test
+replicas: 1
+kubeClusterKey: eks-1
+podLabels:
+  org_name: dream11
+  environment_name: uat
+  squad: ml-platform
+  provisioned-by-user: harsh.a
+  domain_name: dream11.com
+  cluster: darwin-prod-eks-cluster-backup
+  service_name: darwin-cluster-manager
+  component_name: remote-kernel
+  component_type: application
+  resource_type: pod
+podAnnotations: {}
+affinity: {}
+nodeSelector: []
+tolerations: []
+imagePullSecrets: ""
+image:
+  pullPolicy: IfNotPresent
+  repository: localhost:5000/ray
+  tag: 2.37.0
+env:
+  - name: SHELL
+    value: /bin/bash
+resources:
+  limits:
+    cpu: 2
+    memory: 4Gi
+  requests:
+    cpu: 2
+    memory: 4Gi
+volumeMounts:
+  - name: persistent-storage
+    mountPath: /home/ray/fsx
+volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: fsx-claim-0
+

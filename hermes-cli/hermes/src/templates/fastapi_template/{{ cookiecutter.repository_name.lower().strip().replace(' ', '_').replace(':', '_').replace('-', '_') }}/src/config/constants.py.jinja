@@ -1,0 +1,12 @@
+CONFIGS_MAP = {
+    "local": {
+        "feature_store_url": "http://localhost/feature-store",
+        {% if cookiecutter.repository_inference_type in ["online", "both"] %}
+        "model_path": "{{ cookiecutter.model_path }}",
+        "model_flavor": "{{ cookiecutter.model_flavor }}",
+        "model_author": "{{ cookiecutter.model_author }}",
+        {% endif %}
+    },
+}
+
+MAX_WORKERS = 10

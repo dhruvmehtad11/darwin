@@ -135,6 +135,7 @@ echo ""
 echo "applications:" >> "$OUTPUT_FILE"
 
 COMPUTE_ENABLED=false
+ML_SERVE_APP_ENABLED=false
 
 app_count=$(yq eval '.applications | length' "$YAML_FILE")
 i=0
@@ -165,6 +166,11 @@ while [ $i -lt $app_count ]; do
     COMPUTE_ENABLED=true
   fi
   
+  # Track if ml-serve-app is enabled for serve-images dependency
+  if [ "$app_name" = "ml-serve-app" ] && [ "$enabled" = "true" ]; then
+    ML_SERVE_APP_ENABLED=true
+  fi
+  
   i=$((i + 1))
 done
 
@@ -189,6 +195,39 @@ else
     image_name=$(yq eval ".ray-images[$i].image-name" "$YAML_FILE")
     
     if [ "$COMPUTE_ENABLED" = "true" ]; then
+      enabled="true"
+    else
+      enabled="false"
+    fi
+    
+    # Quote the image name since it contains colons
+    echo "  \"$image_name\": $enabled" >> "$OUTPUT_FILE"
+    
+    i=$((i + 1))
+  done
+fi
+
+echo "" >> "$OUTPUT_FILE"
+
+# ============================================================================
+# SERVE IMAGES (auto-enabled if ml-serve-app is enabled, no user prompt)
+# ============================================================================
+echo "serve-images:" >> "$OUTPUT_FILE"
+
+# If --all flag is set, enable all serve images
+if [ "$ALL_YES" = "true" ]; then
+  ML_SERVE_APP_ENABLED=true
+fi
+
+serve_count=$(yq eval '.serve-images | length' "$YAML_FILE")
+if [ "$serve_count" = "0" ] || [ "$serve_count" = "null" ]; then
+  echo "  # No serve images defined" >> "$OUTPUT_FILE"
+else
+  i=0
+  while [ $i -lt $serve_count ]; do
+    image_name=$(yq eval ".serve-images[$i].image-name" "$YAML_FILE")
+    
+    if [ "$ML_SERVE_APP_ENABLED" = "true" ]; then
       enabled="true"
     else
       enabled="false"
@@ -248,6 +287,32 @@ else
 fi
 
 # ============================================================================
+# CLI TOOLS
+# ============================================================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "                        CLI TOOLS"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+echo "" >> "$OUTPUT_FILE"
+echo "cli-tools:" >> "$OUTPUT_FILE"
+
+HERMES_CLI_ENABLED=false
+
+# If --all flag is set, enable hermes-cli
+if [ "$ALL_YES" = "true" ]; then
+  HERMES_CLI_ENABLED=true
+else
+  prompt_yn "  Enable hermes-cli (local installation)?" "n"
+  if [ "$PROMPT_RESULT" = "true" ]; then
+    HERMES_CLI_ENABLED=true
+  fi
+fi
+
+echo "  hermes-cli: $HERMES_CLI_ENABLED" >> "$OUTPUT_FILE"
+
+# ============================================================================
 # SUMMARY
 # ============================================================================
 echo ""
@@ -271,9 +336,20 @@ if [ "$COMPUTE_ENABLED" = "true" ]; then
   yq eval '.ray-images | to_entries | .[] | select(.value == true) | "   ✓ " + .key' "$OUTPUT_FILE" 2>/dev/null || echo "   (none)"
 fi
 
+# Show serve images only if ml-serve-app is enabled
+if [ "$ML_SERVE_APP_ENABLED" = "true" ]; then
+  echo ""
+  echo "🚀 Serve Images (auto-enabled with ml-serve-app):"
+  yq eval '.serve-images | to_entries | .[] | select(.value == true) | "   ✓ " + .key' "$OUTPUT_FILE" 2>/dev/null || echo "   (none)"
+fi
+
 echo ""
 echo "🗄️  Datastores:"
 yq eval '.datastores | to_entries | .[] | select(.value == true) | "   ✓ " + .key' "$OUTPUT_FILE" 2>/dev/null || echo "   (none)"
+
+echo ""
+echo "🛠️  CLI Tools:"
+yq eval '.cli-tools | to_entries | .[] | select(.value == true) | "   ✓ " + .key' "$OUTPUT_FILE" 2>/dev/null || echo "   (none)"
 
 echo ""
 echo "Next steps:"

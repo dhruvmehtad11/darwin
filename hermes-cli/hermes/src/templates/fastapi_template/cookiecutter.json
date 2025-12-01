@@ -1,0 +1,28 @@
+{
+
+    "repository_name": "Name of the repository/project",
+    "repository_description": "Brief description of the repository's purpose",
+    "repository_author": "Author/owner of the repository",
+    "repository_type": "Type of repository framework (e.g., FastAPI)",
+    "repository_inference_type": "Type of inference (e.g., online, offline)",
+    "github_username": "your-github-username",
+
+    "model_path": "Path to the model artifacts in mlflow",
+    "model_flavor": "Flavor of the model eg sklearn,xgboost,pytorch,tensorflow,onnx",
+    "model_author": "Author of the model in mlflow, used for authentication",
+
+    "model_input_parameters": "Definition of input parameters required by the model",
+    "model_output_parameters": "Definition of output parameters produced by the model",
+
+
+    "serve_endpoint_schemas":"Request and response schema for the serve REST API",
+
+
+    "runtime_environment": "Environment variables and dependencies for runtime",
+
+
+    "feature_store": "Feature group definitions for the feature store",
+
+    "fastapi_serve_service": "Model class definition for the model",
+    "api_client": "Configuration for external API endpoints that the service interacts with"
+}

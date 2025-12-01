@@ -1,0 +1,98 @@
+{{- if (.Values.flagger.enabled) }}
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: {{ include "service-deployment.fullname" . }}
+spec:
+  # deployment reference
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "service-deployment.fullname" . }}
+  # the maximum time in seconds for the canary deployment
+  # to make progress before it is rollback (default 600s)
+  progressDeadlineSeconds: {{ .Values.flagger.progressDeadlineSeconds }}
+  # HPA reference (optional)
+  autoscalerRef:
+    apiVersion: autoscaling/v2beta2
+    kind: HorizontalPodAutoscaler
+    name: {{ include "service-deployment.fullname" . }}
+  service:
+    # service port number
+    port: 80
+    # container port number or name (optional)
+    targetPort: app-port
+    # Istio gateways (optional)
+    gateways:
+      - {{ template "service-deployment.fullname" . }}-gateway
+    # Istio virtual service host names (optional)
+    hosts:
+    {{- range $.Values.ingressInt.hosts }}
+    - {{ . }}
+    {{- end }}
+    {{- range $.Values.ingressExt.hosts }}
+    - {{ . }}
+    {{- end }}
+    # Istio traffic policy (optional)
+    trafficPolicy:
+      tls:
+        # use ISTIO_MUTUAL when mTLS is enabled
+        mode: DISABLE
+    # Istio retry policy (optional)
+  analysis:
+    alerts:
+      - name: "on-call Slack"
+        severity: info
+        providerRef:
+          name: {{ .Release.Namespace }}-{{ template "service-deployment.fullname" . }}-on-call
+    # schedule interval (default 60s)
+    interval: {{ .Values.flagger.interval }}
+    # max number of failed metric checks before rollback
+    threshold: {{ .Values.flagger.threshold }}
+    # max traffic percentage routed to canary
+    # percentage (0-100)
+    {{- if eq .Values.flagger.type "canary" }}
+    maxWeight: {{ .Values.flagger.maxWeight }}
+    # canary increment step
+    # percentage (0-100)
+    stepWeight: {{ .Values.flagger.stepWeight }}
+    {{- else if eq .Values.flagger.type "immute" }}
+    iterations : {{ .Values.flagger.iterations }}
+    {{- end }}
+    metrics:
+    {{- range $value := $.Values.flagger.metrics }}
+    - name: {{ $value.name }}
+      templateRef:
+        name: {{ $.Release.Namespace }}-{{ template "service-deployment.fullname" $ }}-{{ $value.name }}
+        namespace: monitoring
+      thresholdRange:
+        max: {{ $value.thresholdRange.max }}
+      interval: {{ $value.interval }}
+    {{- end }}
+---
+apiVersion: flagger.app/v1beta1
+kind: MetricTemplate
+metadata:
+  name: {{ .Release.Namespace }}-{{ template "service-deployment.fullname" . }}-sidecar-error-rate-measure
+  namespace: monitoring
+spec:
+  provider:
+    type: datadog
+    address: https://api.datadoghq.com
+    secretRef:
+      name: datadog-flagger
+  query: |-
+    {{ printf "100-sum:sidecar.istio_requests_total{cluster_name:%s,kube_deployment:%s*,kube_namespace:%s,response_code:2*}/sum:sidecar.istio_requests_total{cluster_name:%s,kube_deployment:%s*,kube_namespace:%s}*100" (.Values.cluster_name) ( include "service-deployment.fullname" .) (.Release.Namespace) (.Values.cluster_name) ( include "service-deployment.fullname" .) (.Release.Namespace)  }}
+---
+apiVersion: flagger.app/v1beta1
+kind: AlertProvider
+metadata:
+  name: {{ .Release.Namespace }}-{{ template "service-deployment.fullname" . }}-on-call
+spec:
+  type: slack
+  channel: {{ .Values.flagger.slackChannel }}
+  username: flagger
+  # webhook address (ignored if secretRef is specified)
+  address: https://hooks.slack.com/services/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
+
+{{- end }}

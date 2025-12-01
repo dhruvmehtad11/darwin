@@ -1,0 +1,61 @@
+{% raw %}
+
+name: Linting
+
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on:  [ self-hosted, linux, X64, k8s, {% endraw %}{{ cookiecutter.repository_name.lower().strip().replace(' ', '_').replace(':', '_').replace('-', '_') }}{% raw %} ]
+
+
+    steps:
+    - name: Checkout repository
+      id: checkout-service
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.9"  # Replace with the Python version you need
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint black
+
+    - name: Build Project
+      run: |
+        PIP_CONF_DIR="$HOME/.pip"
+        PIP_CONF_PATH="$PIP_CONF_DIR/pip.conf"
+        
+        # Create the ~/.pip directory if it doesn't exist
+        mkdir -p "$PIP_CONF_DIR"
+        
+        # Create or overwrite the pip.conf file
+        cat > "$PIP_CONF_PATH" <<EOF
+        [global]
+        index-url = http://pypi-server.darwin-d11-stag.local/
+        trusted-host = pypi-server.darwin-d11-stag.local
+        EOF
+        
+        # Requirement Installation
+        pip install -e . --force-reinstall
+
+    - name: Run black
+      run: |
+        black -l 120 --check .
+
+    - name: Run Pylint
+      run: |
+        pylint --max-line-length 120 --fail-under 6 -ry -sy {% endraw %} {{ cookiecutter.repository_name.lower().strip().replace(' ', '_').replace(':', '_').replace('-', '_') }}{% raw %} > pylint.cover
+
+    - name: Output Pylint Report
+      if: always()
+      run: |
+          sed -n '/lines have been analyzed/,$p' pylint.cover
+
+{% endraw %}

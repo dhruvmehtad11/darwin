@@ -1,0 +1,173 @@
+# Project Configuration
+repository: # required
+  name: "mcp-testing4" # required
+  description: "User recommendation service for personalized suggestions" # required
+  author: "user@serve.com" # required
+  output_path: "."
+  type: "api" # required
+  inference_type: "offline" # required
+
+# Model Configuration
+# Schema Definition for the input and output of the REST API
+serve_endpoint_schemas: # optional
+# add endpoint name
+# ask for method type eg Get 
+# multiple request and response schemas to be supported
+  endpoints:
+  - endpoint_name: testing
+    method: GET
+    request_schema:
+      body:
+        - name: "wls_id"
+          type: "int" 
+          description: "Unique identifier for the user"
+          required: true
+        - name: "rounds"
+          type: "List[Any]"
+          description: "List of rounds"
+          required: true
+        - name: "variant"
+          type: "str"
+          description: "Variant of the user"
+          required: true
+    headers:
+        - name: "auth_userId"
+          type: "str"
+          description: "authentication userId added by d11-kong"
+          required: true
+
+    response_schema:
+      body:  
+        - name: "user_id"
+          type: "int" 
+          description: "Unique identifier for the user"
+          required: true
+        - name: "rounds"
+          type: "List[Any]"
+          description: "Orderd List of rounds according to prediction by MCP"
+          required: true
+# Environment Configuration
+runtime_environment: # optional
+  env_variables: # optional
+    - ENV: "production"
+    - API_KEY: "your-api-key-here"
+  dependencies: # optional
+    - "xgboost==2.0.3"
+    - "pandas==2.2.1"
+    - "numpy==1.26.4"
+    - "fastapi==0.110.0"
+    - "uvicorn==0.27.1"
+    - "pytest==8.1.1"
+    - "black==24.2.0"
+
+feature_store: # optional
+  feature_groups: # optional
+    - name: "mcp_variant" # optional
+      version: "v1" # optional
+      primary_keys: ["mcp_variant"] # compulsory
+      features: # compulsory
+        - "prev_count"
+        - "round_recomm"
+
+fastapi_serve_service: # optional
+  
+  pre_processing: # optional
+    schema: # optional
+      output: # optional
+        - name: "features" # optional
+          type: "dict" # optional
+  
+  inference: # optional
+    schema: # optional
+      output: # optional
+        - name: "recon_score" # optional
+          type: "float" # optional
+  
+  post_processing:
+    schema:
+      output: # optional
+        - name: "final_output" # optional
+          type: "float" # optional
+
+  
+
+
+
+api_client:
+  endpoints:
+    -   endpoint_name: user_profile_service
+        url: "http://user-profile-service/api/v1/profiles"
+        path: "/api/v1/profiles"
+        method: "GET"
+        request_schema:
+          query_params:
+            - name: "user_id"
+              type: "str"
+              required: true
+              description: "Unique identifier for the user"
+            - name: "city"
+              type: "str"
+              required: false
+              description: "City of the user"
+          headers:
+            - name: "page"
+              type: "str"
+              required: false
+              description: "Page number"
+            - name: "is_active"
+              type: "bool"
+              required: false
+              description: "Is the user active"
+        response_schema:
+          body:  
+            - name: "user_id"
+              type: "int" 
+              description: "Unique identifier for the user"
+              required: true
+            - name: "rounds"
+              type: "List[Any]"
+              description: "Orderd List of rounds according to prediction by MCP"
+              required: true
+    -   endpoint_name: add_user
+        url: "http://user-profile-service/api/v1/profiles"
+        path: "/api/v1/profiles"
+        method: "POST"
+        request_schema:
+          query_params:
+            - name: "city"
+              type: "str"
+              required: false
+              description: "City of the user"
+          headers:
+            -   name: "page"
+                type: "str"
+                required: false
+                description: "Page number"
+            -   name: "is_active"
+                type: "bool"
+                required: false
+                description: "Is the user active"
+          body:
+            -   name: "user_id"
+                type: "str"
+                required: true
+                description: "Unique identifier for the user"
+            -   name: "devices"
+                type: "List[str]"
+                required: true
+                description: "List of devices"
+            -   name: "metadata"
+                type: "Dict[str,str]"
+                required: true
+                description: "extra metadata" 
+        response_schema:
+          body:  
+            - name: "user_id"
+              type: "int" 
+              description: "Unique identifier for the user"
+              required: true
+            - name: "rounds"
+              type: "List[Any]"
+              description: "Orderd List of rounds according to prediction by MCP"
+              required: true
+            

@@ -1,0 +1,106 @@
+# Project Configuration
+repository: # required
+  name: "ml-serve-testing" # required
+  description: "User recommendation service for personalized suggestions" # required
+  author: "user@serve.com" # required
+  output_path: "examples"
+  type: "api" # required
+  inference_type: "offline" # required
+
+# Schema Definition for the input and output of the REST API
+serve_endpoint_schemas: # optional
+# add endpoint name
+# ask for method type eg Get
+# multiple request and response schemas to be supported
+  endpoints:
+    - endpoint_name: "user_recommendation"
+      method: "POST"
+      request_schema:
+        body:
+          - name: "user_id"
+            type: "int"
+            description: "Unique identifier for the user"
+            required: true
+          - name: "product_id"
+            type: "int"
+            description: "Unique identifier for the product"
+            required: true
+          - name: "product_id"
+            type: "int"
+            description: "Unique identifier for the product"
+            required: true
+          - name: "user_age"
+            type: "int"
+            description: "Age of the user"
+            required: false
+          - name: "user_purchase_history"
+            type: "array"
+            description: "List of past purchases made by the user"
+            required: false
+      response_schema:
+        body:
+          - name: "recommendation_score"
+            type: "float"
+            description: "Score indicating user-round affinity"
+            required: true
+# Environment Configuration
+runtime_environment: # optional
+  dependencies: # optional
+    - "xgboost==2.0.3"
+    - "pandas==2.2.1"
+    - "numpy==1.26.4"
+    - "fastapi==0.110.0"
+    - "uvicorn==0.27.1"
+    - "pytest==8.1.1"
+    - "black==24.2.0"
+# Feature Store Integration
+
+#  check MCP for example on singleton implementation
+#feature_store: # optional
+#  feature_groups: # optional
+#    - name: "user_featuresv11"
+#      version: "v1" # optional
+#      primary_keys: ["user_id"] # optional
+#      features: # optional
+#        - "squad_id"
+
+api_client:
+  endpoints:
+    - endpoint_name: "get_user_profiles"
+      method: "GET"
+      url: "http://user-profile-service/api/v1/profiles"
+      path: "/api/v1/profiles"
+      request_schema:
+        body:
+          - name: "user_id"
+            type: "str"
+            description: "Unique identifier for the user"
+            required: true
+          - name: "city"
+            type: "str"
+            description: "City of the user"
+            required: false
+        query_params:
+          - name: "user_id"
+            type: "str"
+            description: "Unique identifier for the user"
+            required: true
+          - name: "city"
+            type: "str"
+            description: "City of the user"
+            required: false
+        headers:
+          - name: "page"
+            type: "str"
+            description: "Page number"
+            required: false
+          - name: "is_active"
+            type: "bool"
+            description: "Is the user active"
+            required: false
+      response_schema:
+        body:
+          - name: "profiles"
+            type: "List[Dict[str, Any]]"
+            description: "List of user profiles"
+            required: true

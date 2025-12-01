@@ -1,0 +1,14 @@
+{
+  "populatorMetadata" : {
+    "data" : [
+      {
+        "tenantName" : "t1",
+        "numWorkers" : 2
+      },
+      {
+        "tenantName" : "t2",
+        "numWorkers" : 2
+      }
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+# Default values for podinfo.
+
+replicaCount: 1
+logLevel: info
+name: "SERVE_NAME"
+cluster_name: "CLUSTER_NAME"
+ui:
+  color: "#34577c"
+  message: ""
+  logo: ""
+
+pdb:
+  enabled: true
+  minAvailable: 1
+
+# TODO add envs as per the requirements
+envs:
+  ENV: ENV_NAME
+  SERVICE_NAME: SERVICE_NAME
+
+image:
+  repository: CONTAINER_REGISTRY/IMAGE_REPOSITORY
+  tag: IMAGE_TAG
+  pullPolicy: Always
+
+service:
+  enabled: true
+  type: ClusterIP
+  httpPort: 8000
+  externalPort: 80
+
+# enable tls on the podinfo service
+tls:
+  enabled: false
+
+# TODO should be enabled
+hpa:
+  enabled: true
+  maxReplicas: 10
+  # average total CPU usage per pod (1-100)
+  cpu: 60
+  # average of memory usage
+  memory:
+    target: Utilization
+    value: 80
+    unit: Mi
+
+livenessProbe:
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
+
+  httpGet:
+    path: /healthcheck
+    port: 8000
+
+readinessProbe:
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
+
+  httpGet:
+    path: /healthcheck
+    port: 8000
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  enabled: false
+
+serviceMonitor:
+  enabled: false
+  interval: 15s
+
+# TODO
+# expects an healthcheckPath
+# securityGroup should be added
+ingressInt:
+  serviceName: ISTIO_SERVICE_NAME
+  namespace: ISTIO_NAMESPACE
+  ingressClass: KUBE_INGRESS_CLASS
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: HOSTNAME
+    alb.ingress.kubernetes.io/security-groups: SECURITY_GROUPS_LOCAL, SECURITY_GROUPS_PROD
+    alb.ingress.kubernetes.io/subnets: SUBNETS_LOCAL, SUBNETS_PROD
+  enabled: true
+  healthcheckPath: /healthcheck
+  tags: TAGS
+  albLogs:
+    enabled: false
+    bucket: ALB_LOGS_BUCKET
+    prefix: alb-logs
+  path: /*
+  pathType: ImplementationSpecific
+  hosts: ["HOSTNAME"]
+  tls: []
+
+ingressExt:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 2
+    memory: 4Gi
+  requests:
+    cpu: 2
+    memory: 4Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podAnnotations: {}
+
+configServer:
+  enabled: false
+  consulToken:
+  vaultToken:
+labels: []
+org: ORGANIZATION_NAME
+
+# Slack notifications flagger
+flagger:
+  enabled: false
+
+istio:
+  enabled: ENABLE_ISTIO
+  serviceName: ISTIO_SERVICE_NAME
+

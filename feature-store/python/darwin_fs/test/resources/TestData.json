@@ -1,0 +1,364 @@
+{
+  "test_create_entity" : {
+    "request" : {
+      "entity" : {
+        "tableName" : "t10",
+        "features" : [
+          {
+            "name" : "p_col1",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col2",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col3",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          }
+        ],
+        "primaryKeys" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "ttl" : 0
+      },
+      "owner" : "old_fct@dream11.com",
+      "tags" : [],
+      "description" : ""
+    }
+  },
+  "test_create_feature_group" : {
+    "request" : {
+      "featureGroup" : {
+        "featureGroupName" : "f20",
+        "versionEnabled" : false,
+        "featureGroupType" : "ONLINE",
+        "entityName" : "t20",
+        "features" : [
+          {
+            "name" : "col1",
+            "type" : "TEXT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col2",
+            "type" : "ASCII",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col3",
+            "type" : "VARCHAR",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col4",
+            "type" : "BLOB",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col5",
+            "type" : "BOOLEAN",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col6",
+            "type" : "DECIMAL",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col7",
+            "type" : "DOUBLE",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col8",
+            "type" : "FLOAT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col9",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col10",
+            "type" : "BIGINT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col11",
+            "type" : "TIMESTAMP",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col12",
+            "type" : "TIMEUUID",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col13",
+            "type" : "UUID",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col14",
+            "type" : "INET",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col15",
+            "type" : "VARINT",
+            "description" : "",
+            "tags" : []
+          }
+        ]
+      },
+      "owner" : "old_fct@dream11.com",
+      "tags" : [],
+      "description" : ""
+    }
+  },
+  "test_read_features" : {
+    "request" : {
+      "featureGroupName" : "f500",
+      "featureColumns" : [
+        "p_col3",
+        "p_col1",
+        "p_col2",
+        "col7",
+        "col1",
+        "col2",
+        "col3",
+        "col4",
+        "col5",
+        "col6",
+        "col8",
+        "col9",
+        "col10",
+        "col11",
+        "col12",
+        "col13",
+        "col14",
+        "col15"
+      ],
+      "primaryKeys" : {
+        "names" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "values" : [
+          [
+            1,
+            15
+          ],
+          [
+            1,
+            17
+          ]
+        ]
+      }
+    }
+  },
+  "test_write_features_sync" : {
+    "request" : {
+      "featureGroupName": "f300",
+      "features": {
+        "names": [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "values": [
+          [
+            1,
+            2,
+            3,
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ],
+          [
+            1,
+            7,
+            "asdf",
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ]
+        ]
+      }
+    }
+  },
+  "test_read_features_with_version" : {
+    "request" : {
+      "featureGroupName" : "f500",
+      "featureGroupVersion" : "v2",
+      "featureColumns" : [
+        "p_col3",
+        "p_col1",
+        "p_col2",
+        "col7",
+        "col1",
+        "col2",
+        "col3",
+        "col4",
+        "col5",
+        "col6",
+        "col8",
+        "col9",
+        "col10",
+        "col11",
+        "col12",
+        "col13",
+        "col14",
+        "col15"
+      ],
+      "primaryKeys" : {
+        "names" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "values" : [
+          [
+            1,
+            15
+          ],
+          [
+            1,
+            17
+          ]
+        ]
+      }
+    }
+  },
+  "test_write_features_sync_with_version" : {
+    "request" : {
+      "featureGroupName": "f300",
+      "featureGroupVersion" : "v2",
+      "features": {
+        "names": [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "values": [
+          [
+            1,
+            2,
+            3,
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ],
+          [
+            1,
+            7,
+            "asdf",
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ]
+        ]
+      }
+    }
+  }
+}

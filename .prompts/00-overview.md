@@ -80,10 +80,14 @@ applications:
   - application: darwin-compute         # Compute orchestration (Python)
   - application: darwin-cluster-manager # Cluster management (Go)
   - application: darwin-workspace       # Workspace service (Python)
+  - application: ml-serve-app           # ML Serving (Python)
   - application: chronos                # Scheduling (Python)
 
 ray-images:
   - image-name: ray:2.37.0              # Ray runtime images (auto-enabled with compute)
+
+serve-images:
+  - image-name: serve-md-runtime:latest # Serve runtime images (auto-enabled with ml-serve-app)
 
 datastores:
   - name: mysql                         # Database images
@@ -117,10 +121,14 @@ applications:
   darwin-ofs-v2: true
   darwin-mlflow: false
   darwin-compute: true
+  ml-serve-app: true
   # ...
 
 ray-images:
   "ray:2.37.0": true    # Auto-enabled if darwin-compute is enabled
+
+serve-images:
+  "serve-md-runtime:latest": true  # Auto-enabled if ml-serve-app is enabled
 
 datastores:
   mysql: true
@@ -129,7 +137,9 @@ datastores:
   # ...
 ```
 
-**Note**: Ray images are automatically enabled when `darwin-compute` is selected.
+**Note**: 
+- Ray images are automatically enabled when `darwin-compute` is selected.
+- Serve images are automatically enabled when `ml-serve-app` is selected.
 
 ---
 
@@ -168,7 +178,8 @@ service-submodule/
    │   ├── Run .odin/{service}/build.sh
    │   ├── docker build with deployer/images/Dockerfile
    │   └── docker push to registry
-   ├── Build Ray images (if enabled)
+   ├── Build Ray images (if darwin-compute enabled)
+   ├── Build Serve images (if ml-serve-app enabled)
    ├── Pull/tag/push ENABLED datastore images to local registry
    └── Pull/tag/push operator images to local registry
 

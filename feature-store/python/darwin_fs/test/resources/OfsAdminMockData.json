@@ -1,0 +1,1776 @@
+{
+  "getNotFoundFeatureGroup" : {
+    "endpoint" : "/feature-group/metadata",
+    "params" : {
+      "name" : "f10"
+    },
+    "method" : "GET",
+    "status" : 404,
+    "body" : {
+      "error" : {
+        "message" : "feature group not found",
+        "cause" : "feature group not found",
+        "code" : "FEATURE-GROUP-NOT-FOUND-EXCEPTION"
+      }
+    }
+  },
+  "getNotFoundFeatureGroupVersion" : {
+    "endpoint" : "/feature-group/version",
+    "params" : {
+      "name" : "f10",
+      "version" : "v2"
+    },
+    "method" : "GET",
+    "status" : 404,
+    "body" : {
+      "error" : {
+        "message" : "feature group not found",
+        "cause" : "feature group not found",
+        "code" : "FEATURE-GROUP-NOT-FOUND-EXCEPTION"
+      }
+    }
+  },
+  "successCreateEntityTest" : {
+    "endpoint" : "/entity",
+    "params" : {},
+    "method" : "POST",
+    "status" : 200,
+    "requestBody" : {
+      "entity" : {
+        "tableName" : "t10",
+        "features" : [
+          {
+            "name" : "p_col1",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col2",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col3",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          }
+        ],
+        "primaryKeys" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "ttl" : 0
+      },
+      "owner" : "old_fct@dream11.com",
+      "tags" : [],
+      "description" : ""
+    },
+    "body" : {
+      "data" : {
+        "entity" : {
+          "tableName" : "t10",
+          "features" : [
+            {
+              "name" : "p_col1",
+              "type" : "INT",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "p_col2",
+              "type" : "INT",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "p_col3",
+              "type" : "INT",
+              "description" : "",
+              "tags" : []
+            }
+          ],
+          "primaryKeys" : [
+            "p_col1",
+            "p_col2"
+          ],
+          "ttl" : 0
+        }
+      }
+    }
+  },
+  "alreadyExistsCreateEntityTest" : {
+    "endpoint" : "/entity",
+    "params" : {},
+    "method" : "POST",
+    "status" : 400,
+    "requestBody" : {
+      "entity" : {
+        "tableName" : "t15",
+        "features" : [
+          {
+            "name" : "p_col1",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col2",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col3",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          }
+        ],
+        "primaryKeys" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "ttl" : 0
+      },
+      "owner" : "old_fct@dream11.com",
+      "tags" : [],
+      "description" : ""
+    },
+    "body" : {
+      "error" : {
+        "message" : "entity already exists",
+        "cause" : "entity already exists",
+        "code" : "ENTITY-ALREADY-EXISTS-EXCEPTION"
+      }
+    }
+  },
+  "invalidSchemaCreateEntityTest" : {
+    "endpoint" : "/entity",
+    "params" : {},
+    "method" : "POST",
+    "status" : 400,
+    "requestBody" : {
+      "entity" : {
+        "tableName" : "t12",
+        "features" : [
+          {
+            "name" : "p_col1",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col2",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col3",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          }
+        ],
+        "primaryKeys" : [
+          "p_col1",
+          "p_col2",
+          "p_col31"
+        ],
+        "ttl" : 0
+      },
+      "owner" : "old_fct@dream11.com",
+      "tags" : [],
+      "description" : ""
+    },
+    "body" : {
+      "error" : {
+        "message" : "invalid entity schema",
+        "cause" : "invalid entity schema",
+        "code" : "ENTITY-SCHEMA-VALIDATION-EXCEPTION"
+      }
+    }
+  },
+  "successCreateFeatureGroupTest" : {
+    "endpoint" : "/feature-group",
+    "params" : {},
+    "method" : "POST",
+    "status" : 200,
+    "requestBody" : {
+      "featureGroup" : {
+        "featureGroupName" : "f20",
+        "versionEnabled" : false,
+        "featureGroupType" : "ONLINE",
+        "entityName" : "t20",
+        "features" : [
+          {
+            "name" : "col1",
+            "type" : "TEXT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col2",
+            "type" : "ASCII",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col3",
+            "type" : "VARCHAR",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col4",
+            "type" : "BLOB",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col5",
+            "type" : "BOOLEAN",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col6",
+            "type" : "DECIMAL",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col7",
+            "type" : "DOUBLE",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col8",
+            "type" : "FLOAT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col9",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col10",
+            "type" : "BIGINT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col11",
+            "type" : "TIMESTAMP",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col12",
+            "type" : "TIMEUUID",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col13",
+            "type" : "UUID",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col14",
+            "type" : "INET",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col15",
+            "type" : "VARINT",
+            "description" : "",
+            "tags" : []
+          }
+        ]
+      },
+      "owner" : "old_fct@dream11.com",
+      "tags" : [],
+      "description" : ""
+    },
+    "body" : {
+      "data" : {
+        "featureGroup" : {
+          "featureGroupName" : "f20",
+          "versionEnabled" : false,
+          "featureGroupType" : "ONLINE",
+          "entityName" : "t20",
+          "features" : [
+            {
+              "name" : "col1",
+              "type" : "TEXT",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col2",
+              "type" : "ASCII",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col3",
+              "type" : "VARCHAR",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col4",
+              "type" : "BLOB",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col5",
+              "type" : "BOOLEAN",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col6",
+              "type" : "DECIMAL",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col7",
+              "type" : "DOUBLE",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col8",
+              "type" : "FLOAT",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col9",
+              "type" : "INT",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col10",
+              "type" : "BIGINT",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col11",
+              "type" : "TIMESTAMP",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col12",
+              "type" : "TIMEUUID",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col13",
+              "type" : "UUID",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col14",
+              "type" : "INET",
+              "description" : "",
+              "tags" : []
+            },
+            {
+              "name" : "col15",
+              "type" : "VARINT",
+              "description" : "",
+              "tags" : []
+            }
+          ]
+        },
+        "version" : "v1"
+      }
+    }
+  },
+  "alreadyExistsCreateFeatureGroupTest" : {
+    "endpoint" : "/feature-group",
+    "params" : {},
+    "method" : "POST",
+    "status" : 400,
+    "requestBody" : {
+      "featureGroup" : {
+        "featureGroupName" : "f25",
+        "versionEnabled" : false,
+        "featureGroupType" : "ONLINE",
+        "entityName" : "t20",
+        "features" : [
+          {
+            "name" : "col1",
+            "type" : "TEXT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col2",
+            "type" : "ASCII",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col3",
+            "type" : "VARCHAR",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col4",
+            "type" : "BLOB",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col5",
+            "type" : "BOOLEAN",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col6",
+            "type" : "DECIMAL",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col7",
+            "type" : "DOUBLE",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col8",
+            "type" : "FLOAT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col9",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col10",
+            "type" : "BIGINT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col11",
+            "type" : "TIMESTAMP",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col12",
+            "type" : "TIMEUUID",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col13",
+            "type" : "UUID",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col14",
+            "type" : "INET",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col15",
+            "type" : "VARINT",
+            "description" : "",
+            "tags" : []
+          }
+        ]
+      },
+      "owner" : "old_fct@dream11.com",
+      "tags" : [],
+      "description" : ""
+    },
+    "body" : {
+      "error" : {
+        "message" : "feature group already exists",
+        "cause" : "feature group already exists",
+        "code" : "FEATURE-GROUP-ALREADY-EXISTS-EXCEPTION"
+      }
+    }
+  },
+  "getFeatureGroupMetadataTest1" : {
+    "endpoint" : "/feature-group/metadata",
+    "params" : {
+      "name" : "f20"
+    },
+    "method" : "GET",
+    "status" : 200,
+    "body" : {
+      "data" : {
+        "metadata" : {
+          "name" : "f20",
+          "versionEnabled" : true,
+          "version" : "v1",
+          "owner" : "old_fct@dream11.com",
+          "tags" : [],
+          "description" : "",
+          "state" : "LIVE",
+          "tenant" : {
+            "read" : "default-tenant",
+            "write" : "default-tenant",
+            "consume" : "default-tenant"
+          },
+          "featureGroupType" : "ONLINE",
+          "featureGroup" : {
+            "featureGroupName" : "f20",
+            "versionEnabled" : true,
+            "featureGroupType" : "ONLINE",
+            "entityName" : "t15",
+            "features" : [
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "",
+                "tags" : []
+              }
+            ]
+          },
+          "createdAt" : 1708419428000,
+          "updatedAt" : 1708419428000
+        }
+      }
+    }
+  },
+  "getFeatureGroupMetadataTest2" : {
+    "endpoint" : "/feature-group/metadata",
+    "params" : {
+      "name" : "f20",
+      "version" : "v2"
+    },
+    "method" : "GET",
+    "status" : 200,
+    "body" : {
+      "data" : {
+        "metadata" : {
+          "name" : "f20",
+          "versionEnabled" : true,
+          "version" : "v2",
+          "owner" : "old_fct@dream11.com",
+          "tags" : [],
+          "description" : "",
+          "state" : "LIVE",
+          "tenant" : {
+            "read" : "default-tenant",
+            "write" : "default-tenant",
+            "consume" : "default-tenant"
+          },
+          "featureGroupType" : "ONLINE",
+          "featureGroup" : {
+            "featureGroupName" : "f20",
+            "versionEnabled" : true,
+            "featureGroupType" : "ONLINE",
+            "entityName" : "t15",
+            "features" : [
+              {
+                "name" : "col1",
+                "type" : "TEXT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col2",
+                "type" : "ASCII",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col3",
+                "type" : "VARCHAR",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col4",
+                "type" : "BLOB",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col5",
+                "type" : "BOOLEAN",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col6",
+                "type" : "DECIMAL",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col7",
+                "type" : "DOUBLE",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col8",
+                "type" : "FLOAT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col9",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col10",
+                "type" : "BIGINT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col11",
+                "type" : "TIMESTAMP",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col12",
+                "type" : "TIMEUUID",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col13",
+                "type" : "UUID",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col14",
+                "type" : "INET",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col15",
+                "type" : "VARINT",
+                "description" : "",
+                "tags" : []
+              }
+            ]
+          },
+          "createdAt" : 1708419428000,
+          "updatedAt" : 1708419428000
+        }
+      }
+    }
+  },
+  "getEntityMetadataTest1" : {
+    "endpoint" : "/entity/metadata",
+    "params" : {
+      "name" : "t10"
+    },
+    "method" : "GET",
+    "status" : 200,
+    "body" : {
+      "data" : {
+        "metadata" : {
+          "name" : "t10",
+          "entity" : {
+            "tableName" : "t10",
+            "features" : [
+              {
+                "name" : "p_col1",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "p_col2",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "p_col3",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              }
+            ],
+            "primaryKeys" : [
+              "p_col1",
+              "p_col2"
+            ],
+            "ttl" : 0
+          },
+          "owner" : "old_fct@dream11.com",
+          "tags" : [],
+          "description" : "",
+          "state" : "LIVE",
+          "createdAt" : 1737456386000,
+          "updatedAt" : 1737456386000
+        }
+      }
+    }
+  },
+  "getEntityMetadataNotFoundTest" : {
+    "endpoint" : "/entity/metadata",
+    "params" : {
+      "name" : "t15"
+    },
+    "method" : "GET",
+    "status" : 400,
+    "body" : {
+      "error" : {
+        "message" : "entity not found",
+        "cause" : "entity not found",
+        "code" : "ENTITY-NOT-FOUND-EXCEPTION"
+      }
+    }
+  },
+  "getFeatureGroupSchemaTest" : {
+    "endpoint" : "/feature-group/schema",
+    "params" : {
+      "name" : "f20",
+      "version" : "v2"
+    },
+    "method" : "GET",
+    "status" : 200,
+    "body" : {
+      "data" : {
+        "schema" : [
+          {
+            "name" : "p_col1",
+            "type" : "TEXT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col1",
+            "type" : "TEXT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col1",
+            "type" : "TEXT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col2",
+            "type" : "ASCII",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col3",
+            "type" : "VARCHAR",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col4",
+            "type" : "BLOB",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col5",
+            "type" : "BOOLEAN",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col6",
+            "type" : "DECIMAL",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col7",
+            "type" : "DOUBLE",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col8",
+            "type" : "FLOAT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col9",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col10",
+            "type" : "BIGINT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col11",
+            "type" : "TIMESTAMP",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col12",
+            "type" : "TIMEUUID",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col13",
+            "type" : "UUID",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col14",
+            "type" : "INET",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col15",
+            "type" : "VARINT",
+            "description" : "",
+            "tags" : []
+          }
+        ],
+        "primaryKeys" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "version" : "v2",
+        "featureGroupType" : "ONLINE"
+      }
+    }
+  },
+  "successUpdateStateTest" : {
+    "endpoint" : "/feature-group",
+    "params" : {
+      "name" : "f20"
+    },
+    "method" : "PUT",
+    "status" : 200,
+    "requestBody" : {
+      "state" : "ARCHIVED"
+    },
+    "body" : {
+      "data" : {
+        "state" : "ARCHIVED"
+      }
+    }
+  },
+  "successGetVersionTest" : {
+    "endpoint" : "/feature-group/version",
+    "params" : {
+      "name" : "f20"
+    },
+    "method" : "GET",
+    "status" : 200,
+    "body" : {
+      "data" : {
+        "version" : {
+          "name" : "f20",
+          "latestVersion" : "v2",
+          "updatedAt" : 1708419433000
+        }
+      }
+    }
+  },
+  "partialWriteFeaturesTest" : {
+    "endpoint" : "/feature-group/write-features-v2",
+    "method" : "POST",
+    "status" : 200,
+    "requestBody" : {
+      "featureGroupName" : "f300",
+      "featureGroupVersion" : null,
+      "features" : {
+        "names" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "values" : [
+          [
+            1,
+            2,
+            3,
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ],
+          [
+            1,
+            7,
+            "asdf",
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ]
+        ]
+      }
+    },
+    "body" : {
+      "data" : {
+        "featureGroupName" : "f300",
+        "featureGroupVersion" : "v1",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "successfulRows" : [
+          [
+            1,
+            2,
+            3,
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ]
+        ],
+        "failedRows" : [
+          [
+            1,
+            7,
+            "asdf",
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ]
+        ]
+      }
+    }
+  },
+  "partialWriteFeaturesTest1" : {
+    "endpoint" : "/feature-group/write-features-v2",
+    "method" : "POST",
+    "status" : 200,
+    "requestBody" : {
+      "featureGroupName" : "f300",
+      "featureGroupVersion" : "v2",
+      "features" : {
+        "names" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "values" : [
+          [
+            1,
+            2,
+            3,
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ],
+          [
+            1,
+            7,
+            "asdf",
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ]
+        ]
+      }
+    },
+    "body" : {
+      "data" : {
+        "featureGroupName" : "f300",
+        "featureGroupVersion" : "v2",
+        "featureColumns" : [
+          "p_col1",
+          "p_col2",
+          "p_col3",
+          "col1",
+          "col2",
+          "col3",
+          "col4",
+          "col5",
+          "col6",
+          "col7",
+          "col8",
+          "col9",
+          "col10",
+          "col11",
+          "col12",
+          "col13",
+          "col14",
+          "col15"
+        ],
+        "successfulRows" : [
+          [
+            1,
+            2,
+            3,
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ]
+        ],
+        "failedRows" : [
+          [
+            1,
+            7,
+            "asdf",
+            "SampleText",
+            "SampleASCII",
+            "SampleVARCHAR",
+            "YmFzZTY0IGVuY29kaW5n",
+            true,
+            123.456,
+            3.14159,
+            2.71828,
+            42,
+            123456789012,
+            1706467711029,
+            "1d85be70-1d68-11ec-9621-0242ac130002",
+            "550e8400-e29b-41d4-a716-446655440000",
+            "192.0.2.1",
+            1234567890
+          ]
+        ]
+      }
+    }
+  },
+  "successReadFeaturesTest" : {
+    "endpoint" : "/feature-group/read-features",
+    "method" : "GET",
+    "status" : 200,
+    "requestBody" : {
+      "featureGroupName" : "f500",
+      "featureGroupVersion" : null,
+      "featureColumns" : [
+        "p_col3",
+        "p_col1",
+        "p_col2",
+        "col7",
+        "col1",
+        "col2",
+        "col3",
+        "col4",
+        "col5",
+        "col6",
+        "col8",
+        "col9",
+        "col10",
+        "col11",
+        "col12",
+        "col13",
+        "col14",
+        "col15"
+      ],
+      "primaryKeys" : {
+        "names" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "values" : [
+          [
+            1,
+            15
+          ],
+          [
+            1,
+            17
+          ]
+        ]
+      }
+    },
+    "body" : {
+      "data" : {
+        "featureGroupName" : "f500",
+        "featureGroupVersion" : "v2",
+        "successfulKeys" : [
+          {
+            "key" : [
+              1,
+              15
+            ],
+            "features" : [
+              3,
+              1,
+              15,
+              3.14159,
+              "SampleText",
+              "SampleASCII",
+              "SampleVARCHAR",
+              "YmFzZTY0IGVuY29kaW5n",
+              true,
+              123.456,
+              2.71828,
+              42,
+              123456789012,
+              1706467711029,
+              "1d85be70-1d68-11ec-9621-0242ac130002",
+              "550e8400-e29b-41d4-a716-446655440000",
+              "192.0.2.1",
+              1234567890
+            ]
+          }
+        ],
+        "failedKeys" : [
+          [
+            1,
+            17
+          ]
+        ]
+      }
+    }
+  },
+  "successReadFeaturesTest1" : {
+    "endpoint" : "/feature-group/read-features",
+    "method" : "GET",
+    "status" : 200,
+    "requestBody" : {
+      "featureGroupName" : "f500",
+      "featureGroupVersion" : "v2",
+      "featureColumns" : [
+        "p_col3",
+        "p_col1",
+        "p_col2",
+        "col7",
+        "col1",
+        "col2",
+        "col3",
+        "col4",
+        "col5",
+        "col6",
+        "col8",
+        "col9",
+        "col10",
+        "col11",
+        "col12",
+        "col13",
+        "col14",
+        "col15"
+      ],
+      "primaryKeys" : {
+        "names" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "values" : [
+          [
+            1,
+            15
+          ],
+          [
+            1,
+            17
+          ]
+        ]
+      }
+    },
+    "body" : {
+      "data" : {
+        "featureGroupName" : "f500",
+        "featureGroupVersion" : "v2",
+        "successfulKeys" : [
+          {
+            "key" : [
+              1,
+              15
+            ],
+            "features" : [
+              3,
+              1,
+              15,
+              3.14159,
+              "SampleText",
+              "SampleASCII",
+              "SampleVARCHAR",
+              "YmFzZTY0IGVuY29kaW5n",
+              true,
+              123.456,
+              2.71828,
+              42,
+              123456789012,
+              1706467711029,
+              "1d85be70-1d68-11ec-9621-0242ac130002",
+              "550e8400-e29b-41d4-a716-446655440000",
+              "192.0.2.1",
+              1234567890
+            ]
+          }
+        ],
+        "failedKeys" : [
+          [
+            1,
+            17
+          ]
+        ]
+      }
+    }
+  },
+  "getFeatureGroupMetadata_f16" : {
+    "endpoint" : "/feature-group/metadata",
+    "params" : {
+      "name" : "f16",
+      "version" : "v2"
+    },
+    "method" : "GET",
+    "status" : 200,
+    "body" : {
+      "data" : {
+        "metadata" : {
+          "name" : "f16",
+          "versionEnabled" : true,
+          "version" : "v2",
+          "owner" : "old_fct@dream11.com",
+          "tags" : [],
+          "description" : "",
+          "state" : "LIVE",
+          "tenant" : {
+            "read" : "default-tenant",
+            "write" : "default-tenant",
+            "consume" : "default-tenant"
+          },
+          "featureGroupType" : "ONLINE",
+          "featureGroup" : {
+            "featureGroupName" : "f16",
+            "versionEnabled" : true,
+            "featureGroupType" : "ONLINE",
+            "entityName" : "t15",
+            "features" : [
+              {
+                "name" : "col1",
+                "type" : "INT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col2",
+                "type" : "BIGINT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col3",
+                "type" : "BOOLEAN",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col4",
+                "type" : "FLOAT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col5",
+                "type" : "DOUBLE",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col6",
+                "type" : "VARINT",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col7",
+                "type" : "DECIMAL",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col8",
+                "type" : "BLOB",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col9",
+                "type" : "TIMESTAMP",
+                "description" : "",
+                "tags" : []
+              },
+              {
+                "name" : "col10",
+                "type" : "TEXT",
+                "description" : "",
+                "tags" : []
+              }
+            ]
+          },
+          "createdAt" : 1708419428000,
+          "updatedAt" : 1708419428000
+        }
+      }
+    }
+  },
+  "getFgTopicResponse_f16" : {
+    "endpoint" : "/feature-group/topic",
+    "method" : "GET",
+    "status" : 200,
+    "params" : {
+      "name" : "f16"
+    },
+    "body" : {
+      "code" : 200,
+      "data" : {
+        "featureGroupName" : "f16",
+        "topic" : "f16"
+      }
+    }
+  },
+  "getFgSchemaResponse_f16" : {
+    "endpoint" : "/feature-group/schema",
+    "method" : "GET",
+    "status" : 200,
+    "params" : {
+      "name" : "f16",
+      "version" : "v2"
+    },
+    "body" : {
+      "data" : {
+        "schema" : [
+          {
+            "name" : "p_col1",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "p_col2",
+            "type" : "VARCHAR",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col1",
+            "type" : "INT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col2",
+            "type" : "BIGINT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col3",
+            "type" : "BOOLEAN",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col4",
+            "type" : "FLOAT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col5",
+            "type" : "DOUBLE",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col6",
+            "type" : "VARINT",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col7",
+            "type" : "DECIMAL",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col8",
+            "type" : "BLOB",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col9",
+            "type" : "TIMESTAMP",
+            "description" : "",
+            "tags" : []
+          },
+          {
+            "name" : "col10",
+            "type" : "TEXT",
+            "description" : "",
+            "tags" : []
+          }
+        ],
+        "primaryKeys" : [
+          "p_col1",
+          "p_col2"
+        ],
+        "version" : "v2",
+        "featureGroupType" : "ONLINE"
+      }
+    }
+  },
+  "putFeatureGroupRunDataTest" : {
+    "endpoint" : "/feature-group/run-data",
+    "method" : "POST",
+    "status" : 200,
+    "partialMatch": true,
+    "requestBody" : {
+      "name" : "f16",
+      "version" : "v2",
+      "runId": "${json-unit.any-string}",
+      "timeTaken": "${json-unit.any-number}",
+      "count" : 3,
+      "sampleData" : [
+        {
+          "p_col1" : 1,
+          "p_col2" : "a",
+          "col1" : 1,
+          "col2" : 2,
+          "col3" : true,
+          "col4" : 2.5,
+          "col5" : 3.14,
+          "col6" : 1234567894321234567890,
+          "col7" : "${json-unit.any-number}",
+          "col8" : "YzNSeWFXNW4=",
+          "col9" : "${json-unit.any-number}",
+          "col10" : "string"
+        },
+        {
+          "p_col1" : 2,
+          "p_col2" : "a",
+          "col1" : 1,
+          "col2" : 2,
+          "col3" : true,
+          "col4" : 2.5,
+          "col5" : 3.14,
+          "col6" : 1234567894321234567890,
+          "col7" : "${json-unit.any-number}",
+          "col8" : "YzNSeWFXNW4=",
+          "col9" : "${json-unit.any-number}",
+          "col10" : "string"
+        },
+        {
+          "p_col1" : 3,
+          "p_col2" : "a",
+          "col1" : 1,
+          "col2" : 2,
+          "col3" : true,
+          "col4" : 2.5,
+          "col5" : 3.14,
+          "col6" : 1234567894321234567890,
+          "col7" : "${json-unit.any-number}",
+          "col8" : "YzNSeWFXNW4=",
+          "col9" : "${json-unit.any-number}",
+          "col10" : "string"
+        }
+      ],
+      "errorMessage" : "",
+      "status" : "SUCCESS"
+    },
+    "body" : {
+      "data" : {
+        "name" : "f16",
+        "version" : "v2",
+        "runId": "run1",
+        "timeTaken" : 10,
+        "count" : 3,
+        "sampleData" : [
+          {
+            "p_col1" : 1,
+            "p_col2" : "a",
+            "col1" : 1,
+            "col2" : 2,
+            "col3" : true,
+            "col4" : 2.5,
+            "col5" : 3.14,
+            "col6" : 1234567894321234567890,
+            "col7" : 78943212345678.567076526178312345654654,
+            "col8" : "YzNSeWFXNW4=",
+            "col9" : 1528801200,
+            "col10" : "string"
+          },
+          {
+            "p_col1" : 2,
+            "p_col2" : "a",
+            "col1" : 1,
+            "col2" : 2,
+            "col3" : true,
+            "col4" : 2.5,
+            "col5" : 3.14,
+            "col6" : 1234567894321234567890,
+            "col7" : 78943212345678.567076526178312345654654,
+            "col8" : "YzNSeWFXNW4=",
+            "col9" : 1528801200,
+            "col10" : "string"
+          },
+          {
+            "p_col1" : 3,
+            "p_col2" : "a",
+            "col1" : 1,
+            "col2" : 2,
+            "col3" : true,
+            "col4" : 2.5,
+            "col5" : 3.14,
+            "col6" : 1234567894321234567890,
+            "col7" : 78943212345678.567076526178312345654654,
+            "col8" : "YzNSeWFXNW4=",
+            "col9" : 1528801200,
+            "col10" : "string"
+          }
+        ],
+        "errorMessage" : "",
+        "status" : "SUCCESS"
+      }
+    }
+  }
+}

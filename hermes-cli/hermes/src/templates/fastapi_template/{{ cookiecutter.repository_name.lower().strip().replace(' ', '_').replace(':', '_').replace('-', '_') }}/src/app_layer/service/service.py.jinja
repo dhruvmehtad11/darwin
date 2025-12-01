@@ -1,0 +1,54 @@
+from typing import Optional
+from src.app_layer.dto.request.serve_request_dtos import *
+from src.app_layer.dto.response.serve_response_dtos import *
+
+{% for endpoint in cookiecutter.serve_endpoint_schemas.endpoints %}
+class {{ endpoint.endpoint_name | replace('-', ' ') | replace('_', ' ') | title | replace(' ', '') }}Service:
+    def __init__(self):
+        pass
+
+    def preprocess(
+        self,
+        {%- if endpoint.method | upper == 'POST' and 'body' in endpoint.request_schema and endpoint.request_schema.body %}
+        body: {{ endpoint.endpoint_name | replace('-', ' ') | replace('_', ' ') | title | replace(' ', '') }}Request,
+        {%- endif %}
+        {%- if 'path_params' in endpoint.request_schema %}
+        {%- for param in endpoint.request_schema.path_params %}
+        {{ param.name }}: {{ param.type }},
+        {%- endfor %}
+        {%- endif %}
+        {%- if 'query_params' in endpoint.request_schema %}
+        {%- for param in endpoint.request_schema.query_params %}
+        {{ param.name }}: Optional[{{ param.type }}] = None,
+        {%- endfor %}
+        {%- endif %}
+        {%- if 'headers' in endpoint.request_schema %}
+        {%- for header in endpoint.request_schema.headers %}
+        {{ header.name.replace('-', '_') }}: Optional[{{ header.type }}] = None,
+        {%- endfor %}
+        {%- endif %}
+    ):
+        # Implement preprocess logic for {{ endpoint }}
+        # Example:
+        # validated_data = perform_validation(body, header1, query_param1)
+        {%- if endpoint.method | upper == 'POST' and 'body' in endpoint.request_schema and endpoint.request_schema.body %}
+        return body
+        {%- else %}
+        return {}
+        {%- endif %}
+
+    def inference(self, data):
+        # Implement inference logic for {{ endpoint }}
+        return {
+            {%- if 'body' in endpoint.response_schema %}
+            {%- for field in endpoint.response_schema.body %}
+            "{{ field.name }}": {% if field.type == 'int' %}0{% elif field.type == 'float' %}0.0{% elif field.type == 'bool' %}False{% elif field.type == 'str' %}"TODO: Implement inference"{% else %}None{% endif %},
+            {%- endfor %}
+            {%- endif %}
+        }
+
+    def postprocess(self, inference_result: dict) -> {{ endpoint.endpoint_name | replace('-', ' ') | replace('_', ' ') | title | replace(' ', '') }}Response:
+        # Implement postprocess logic for {{ endpoint }}
+        return {{ endpoint.endpoint_name | replace('-', ' ') | replace('_', ' ') | title | replace(' ', '') }}Response(**inference_result)
+
+{% endfor %}

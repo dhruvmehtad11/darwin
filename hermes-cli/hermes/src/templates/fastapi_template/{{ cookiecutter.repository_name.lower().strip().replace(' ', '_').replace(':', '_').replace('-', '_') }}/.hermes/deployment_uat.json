@@ -1,0 +1,18 @@
+{
+    "infrastructure_config": {
+        "api_serve_config": {
+            "backend_type": "fastapi",
+            "cores": 2,
+            "memory": 4,
+            "node_capacity_type": "spot",
+            "min_replicas": 1,
+            "max_replicas": 3
+        }
+    },
+    "deployment_config": {
+        "artifact_version": "1.0.0",
+        "api_serve_deployment_config": {
+            "environment_variables": {}
+        }
+    }
+}

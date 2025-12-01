@@ -1,0 +1,8 @@
+store~=1.0.1
+pydantic~=1.10.2
+fastapi~=0.85.1
+typeguard~=2.13.3
+ddtrace==1.15.1
+uvicorn==0.22.0
+setuptools==67.8.0
+-e ../core

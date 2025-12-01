@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: {{.Release.Name}}-script
+data:
+  head.sh: |
+    cd /home/ray
+    /tmp/script/libraries.sh
+  worker.sh: |
+    /tmp/script/libraries.sh
+  libraries.sh: |
+    {{- range $.Values.commands }}
+    element={{ . | quote }}
+    if var1=$($element 2>&1)
+    then
+      echo "$var1"
+    else
+      curl --retry 5 --location --request PUT $INIT_SCRIPT_API --header 'Content-Type: application/json' --data-raw "{\"cluster_id\" : \"$CLUSTER_ID\",\"status\" : \"FAILED\",\"message\" : \"Error running the command  $element, Error = ${var1}\"}"
+      echo "Error running the command  <$element>"
+      echo "${var1}"
+      exit 100
+    fi
+    {{- end }}

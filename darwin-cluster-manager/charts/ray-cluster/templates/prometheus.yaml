@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: {{.Release.Name }}-prometheus
+  namespace: prometheus
+spec:
+  replicas: {{ .Values.prometheus.replicas | default 1 }}
+  serviceAccountName: prometheus
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector:
+    matchLabels:
+      ray.io/cluster: {{ .Release.Name }}
+  podMonitorSelector:
+    matchLabels:
+      ray.io/cluster: {{ .Release.Name }}
+  podMonitorNamespaceSelector: {}
+  nodeSelector: {{- toYaml .Values.prometheus.nodeSelector | nindent 4 }}
+  imagePullSecrets:
+    - name: dsjfrog-platform
+  podMetadata:
+    labels: {{ include "ray-cluster.monitoring.labels" . | nindent 6 }}
+    annotations:
+      karpenter.sh/do-not-disrupt: "true"
+  {{- if .Values.prometheus.remoteWrite }}
+  remoteWrite: {{- toYaml .Values.prometheus.remoteWrite | nindent 4 }}
+  {{- end }}
+  resources:
+    limits:
+      cpu: 1
+      memory: "1G"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Release.Name }}-prometheus
+  namespace: prometheus
+spec:
+  type: ClusterIP
+  ports:
+    - name: web
+      port: 9090
+      protocol: TCP
+      targetPort: web
+  selector:
+    prometheus: {{.Release.Name}}-prometheus

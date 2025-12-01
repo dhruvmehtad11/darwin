@@ -34,8 +34,47 @@ done
 
 echo '' > config.env
 
+extract_max_supported_api_version() {
+    printf "%s\n" "$1" | sed -n 's/.*Maximum supported API version is \([0-9.]*\).*/\1/p' | head -n 1
+}
+
+ensure_docker_api_version() {
+    if ! command -v docker >/dev/null 2>&1; then
+        echo "❌ Docker is not installed or not found in PATH"
+        exit 1
+    fi
+
+    if docker version >/dev/null 2>&1; then
+        return
+    fi
+
+    error_output="$(docker version 2>&1 || true)"
+    max_version="$(extract_max_supported_api_version "$error_output")"
+
+    if [ -z "$max_version" ]; then
+        ps_error="$(docker ps 2>&1 || true)"
+        error_output="${error_output}\n${ps_error}"
+        max_version="$(extract_max_supported_api_version "$ps_error")"
+    fi
+
+    if [ -n "$max_version" ]; then
+        echo "⚠️  Docker client API version is newer than daemon. Setting DOCKER_API_VERSION=$max_version"
+        export DOCKER_API_VERSION="$max_version"
+        if docker version >/dev/null 2>&1; then
+            echo "✅ Docker API version pinned to $DOCKER_API_VERSION"
+            return
+        fi
+    fi
+
+    printf "%s\n" "$error_output"
+    echo "❌ Failed to communicate with Docker daemon. Please ensure Docker is running."
+    exit 1
+}
+
 ENV=local
 ENV_CREATION=false
+
+ensure_docker_api_version
 
 # Check if ENV environment variable equals "local"
 if [ "$ENV" = "local" ]; then
@@ -170,7 +209,7 @@ app_count=$(yq eval '.applications | length' "$YAML_FILE")
 i=0
 while [ $i -lt $app_count ]; do
   application=$(yq eval ".applications[$i].application" "$YAML_FILE")
-  
+
   # Check enabled status from .setup/enabled-services.yaml
   is_enabled=$(yq eval ".applications.\"$application\"" "$ENABLED_FILE")
   if [ "$is_enabled" != "true" ]; then
@@ -178,7 +217,7 @@ while [ $i -lt $app_count ]; do
     i=$((i + 1))
     continue
   fi
-  
+
   base_path=$(yq eval ".applications[$i].base-path" "$YAML_FILE")
   path=$(yq eval ".applications[$i].path" "$YAML_FILE")
   base_image=$(yq eval ".applications[$i].base-image" "$YAML_FILE")
@@ -214,7 +253,7 @@ ray_image_count=$(yq eval '.ray-images | length' "$YAML_FILE")
 i=0
 while [ $i -lt $ray_image_count ]; do
   image_name=$(yq eval ".ray-images[$i].image-name" "$YAML_FILE")
-  
+
   # Check enabled status from .setup/enabled-services.yaml
   is_enabled=$(yq eval ".ray-images.\"$image_name\"" "$ENABLED_FILE")
   if [ "$is_enabled" != "true" ]; then
@@ -222,9 +261,37 @@ while [ $i -lt $ray_image_count ]; do
     i=$((i + 1))
     continue
   fi
-  
+
   dockerfile_path=$(yq eval ".ray-images[$i].dockerfile-path" "$YAML_FILE")
   echo ">>> Building ray image $image_name..."
+  sh deployer/scripts/ray-image-builder.sh -n "$image_name" -p "$dockerfile_path" -r "$DOCKER_REGISTRY"
+  i=$((i + 1))
+done
+
+# ============================================================================
+# BUILD SERVE RUNTIME IMAGES
+# ============================================================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "                  BUILDING SERVE RUNTIME IMAGES"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+serve_image_count=$(yq eval '.serve-images | length' "$YAML_FILE")
+i=0
+while [ $i -lt $serve_image_count ]; do
+  image_name=$(yq eval ".serve-images[$i].image-name" "$YAML_FILE")
+
+  # Check enabled status from .setup/enabled-services.yaml
+  is_enabled=$(yq eval ".serve-images.\"$image_name\"" "$ENABLED_FILE")
+  if [ "$is_enabled" != "true" ]; then
+    echo "⏭️  Skipping serve image $image_name (disabled)"
+    i=$((i + 1))
+    continue
+  fi
+
+  dockerfile_path=$(yq eval ".serve-images[$i].dockerfile-path" "$YAML_FILE")
+  echo ">>> Building serve runtime image: $image_name"
   sh deployer/scripts/ray-image-builder.sh -n "$image_name" -p "$dockerfile_path" -r "$DOCKER_REGISTRY"
   i=$((i + 1))
 done
@@ -245,9 +312,9 @@ push_datastore_image() {
   local tag=$3
   local full_image="${image}:${tag}"
   local local_image="${DOCKER_REGISTRY}/${image}:${tag}"
-  
+
   echo ">>> Processing datastore: $name ($full_image)"
-  
+
   # Pull from public registry
   echo "    Pulling $full_image..."
   if docker pull "$full_image"; then
@@ -256,11 +323,11 @@ push_datastore_image() {
     echo "    ❌ Failed to pull $full_image"
     return 1
   fi
-  
+
   # Tag for local registry
   echo "    Tagging as $local_image..."
   docker tag "$full_image" "$local_image"
-  
+
   # Push to local registry
   echo "    Pushing to local registry..."
   if docker push "$local_image"; then
@@ -269,7 +336,7 @@ push_datastore_image() {
     echo "    ❌ Failed to push $local_image"
     return 1
   fi
-  
+
   echo ">>> Completed $name"
   echo ""
 }
@@ -282,7 +349,7 @@ if [ "$datastore_count" != "0" ] && [ "$datastore_count" != "null" ]; then
     ds_name=$(yq eval ".datastores[$i].name" "$YAML_FILE")
     ds_image=$(yq eval ".datastores[$i].image" "$YAML_FILE")
     ds_tag=$(yq eval ".datastores[$i].tag" "$YAML_FILE")
-    
+
     # Check enabled status from .setup/enabled-services.yaml
     is_enabled=$(yq eval ".datastores.\"$ds_name\"" "$ENABLED_FILE")
     if [ "$is_enabled" != "true" ]; then
@@ -290,9 +357,9 @@ if [ "$datastore_count" != "0" ] && [ "$datastore_count" != "null" ]; then
       i=$((i + 1))
       continue
     fi
-    
+
     push_datastore_image "$ds_name" "$ds_image" "$ds_tag"
-    
+
     i=$((i + 1))
   done
 else
@@ -315,9 +382,9 @@ push_operator_image() {
   local tag=$3
   local full_image="${image}:${tag}"
   local local_image="${DOCKER_REGISTRY}/${image}:${tag}"
-  
+
   echo ">>> Processing operator: $name ($full_image)"
-  
+
   # Pull from public registry
   echo "    Pulling $full_image..."
   if docker pull "$full_image"; then
@@ -326,11 +393,11 @@ push_operator_image() {
     echo "    ❌ Failed to pull $full_image"
     return 1
   fi
-  
+
   # Tag for local registry
   echo "    Tagging as $local_image..."
   docker tag "$full_image" "$local_image"
-  
+
   # Push to local registry
   echo "    Pushing to local registry..."
   if docker push "$local_image"; then
@@ -339,7 +406,7 @@ push_operator_image() {
     echo "    ❌ Failed to push $local_image"
     return 1
   fi
-  
+
   echo ">>> Completed $name"
   echo ""
 }
@@ -353,16 +420,16 @@ if [ "$operator_count" != "0" ] && [ "$operator_count" != "null" ]; then
     op_image=$(yq eval ".operators[$i].image" "$YAML_FILE")
     op_tag=$(yq eval ".operators[$i].tag" "$YAML_FILE")
     op_enabled=$(yq eval ".operators[$i].enabled" "$YAML_FILE")
-    
+
     # Operators are always pulled if enabled in services.yaml (no user config check)
     if [ "$op_enabled" != "true" ]; then
       echo "⏭️  Skipping operator $op_name (disabled in services.yaml)"
       i=$((i + 1))
       continue
     fi
-    
+
     push_operator_image "$op_name" "$op_image" "$op_tag"
-    
+
     i=$((i + 1))
   done
 else

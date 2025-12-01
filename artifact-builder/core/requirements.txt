@@ -1,0 +1,2 @@
+# Install core package in editable mode
+-e .

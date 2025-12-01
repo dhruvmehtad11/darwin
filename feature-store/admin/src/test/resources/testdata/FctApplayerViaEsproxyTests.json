@@ -1,0 +1,542 @@
+{
+  "getFeatureGroupRuns": {
+    "request": {
+      "endpoint": "/FeatureStore/feature-group-runs?fg_name=test_feature_group_1&version=1",
+      "method": "GET"
+    },
+    "response": {
+      "statusCode": 200,
+      "status": "SUCCESS",
+      "data": [
+        {
+          "executionTime": 1.739275729E9,
+          "duration": 20.0,
+          "status": "SUCCESS",
+          "statusCode": 200,
+          "link": null,
+          "version": 1,
+          "totalRecordsCount": 23,
+          "message": "::: error :::",
+          "features": [
+            {
+              "title": "key",
+              "otherFactors": [
+                {
+                  "name": "mean",
+                  "value": null
+                },
+                {
+                  "name": "mode",
+                  "value": null
+                },
+                {
+                  "name": "median",
+                  "value": null
+                }
+              ],
+              "sampleData": [
+                "k1",
+                "k2"
+              ]
+            },
+            {
+              "title": "value",
+              "otherFactors": [
+                {
+                  "name": "mean",
+                  "value": null
+                },
+                {
+                  "name": "mode",
+                  "value": null
+                },
+                {
+                  "name": "median",
+                  "value": null
+                }
+              ],
+              "sampleData": [
+                "v1",
+                "v2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "getFeatureGroups": {
+    "request": {
+      "endpoint": "/FeatureStore/get-feature-groups",
+      "method": "POST",
+      "body": {
+        "filters": [
+          {
+            "name": "owners",
+            "value": [
+              "bot@dream11.com"
+            ]
+          },
+          {
+            "name": "tags",
+            "value": [
+              "t1"
+            ]
+          }
+        ],
+        "offset": 0,
+        "page_size": 10,
+        "search_string": "feature",
+        "sort_by": ""
+      }
+    },
+    "response": {
+      "status": "SUCCESS",
+      "statusCode": 200,
+      "resultSize": 6,
+      "pageSize": 10,
+      "offset": 0,
+      "totalRecordsCount": 6,
+      "data": [
+        {
+          "id": "test_feature_group_9",
+          "title": "test_feature_group_9",
+          "description": "some-description",
+          "version": 1,
+          "allVersions": [
+            1
+          ],
+          "lastValueUpdated": "2024-02-20T14:27:08Z",
+          "lastFiveRuns": [],
+          "createdBy": "bot@dream11.com",
+          "tags": [
+            "t1",
+            "t2"
+          ],
+          "type": "online",
+          "typesAvailable": [
+            "online",
+            "offline"
+          ],
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin\ndarwin.init()\ndarwin.get_registered_feature_group('test_feature_group_9').get_online_features(entity_name=${{entity}}, primary_keys_with_values = ${{join_keys_dict}})"
+            }
+          ],
+          "sinks": [
+            {
+              "location": "",
+              "type": ""
+            }
+          ]
+        },
+        {
+          "id": "test_feature_group_8",
+          "title": "test_feature_group_8",
+          "description": "some-description",
+          "version": 1,
+          "allVersions": [
+            1
+          ],
+          "lastValueUpdated": "2024-02-20T14:27:08Z",
+          "lastFiveRuns": [],
+          "createdBy": "bot@dream11.com",
+          "tags": [
+            "t1",
+            "t2"
+          ],
+          "type": "online",
+          "typesAvailable": [
+            "online",
+            "offline"
+          ],
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin\ndarwin.init()\ndarwin.get_registered_feature_group('test_feature_group_8').get_online_features(entity_name=${{entity}}, primary_keys_with_values = ${{join_keys_dict}})"
+            }
+          ],
+          "sinks": [
+            {
+              "location": "",
+              "type": ""
+            }
+          ]
+        },
+        {
+          "id": "test_feature_group_5",
+          "title": "test_feature_group_5",
+          "description": "some-description",
+          "version": 1,
+          "allVersions": [
+            1
+          ],
+          "lastValueUpdated": "2024-02-20T14:27:08Z",
+          "lastFiveRuns": [],
+          "createdBy": "bot@dream11.com",
+          "tags": [
+            "t1",
+            "t2"
+          ],
+          "type": "online",
+          "typesAvailable": [
+            "online",
+            "offline"
+          ],
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin\ndarwin.init()\ndarwin.get_registered_feature_group('test_feature_group_5').get_online_features(entity_name=${{entity}}, primary_keys_with_values = ${{join_keys_dict}})"
+            }
+          ],
+          "sinks": [
+            {
+              "location": "",
+              "type": ""
+            }
+          ]
+        },
+        {
+          "id": "test_feature_group_4",
+          "title": "test_feature_group_4",
+          "description": "some-description",
+          "version": 1,
+          "allVersions": [
+            1
+          ],
+          "lastValueUpdated": "2024-02-20T14:27:08Z",
+          "lastFiveRuns": [],
+          "createdBy": "bot@dream11.com",
+          "tags": [
+            "t1",
+            "t2"
+          ],
+          "type": "online",
+          "typesAvailable": [
+            "online",
+            "offline"
+          ],
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin\ndarwin.init()\ndarwin.get_registered_feature_group('test_feature_group_4').get_online_features(entity_name=${{entity}}, primary_keys_with_values = ${{join_keys_dict}})"
+            }
+          ],
+          "sinks": [
+            {
+              "location": "",
+              "type": ""
+            }
+          ]
+        },
+        {
+          "id": "test_feature_group_3",
+          "title": "test_feature_group_3",
+          "description": "not a desc",
+          "version": 1,
+          "allVersions": [
+            1
+          ],
+          "lastValueUpdated": "2024-02-20T14:27:08Z",
+          "lastFiveRuns": [],
+          "createdBy": "bot@dream11.com",
+          "tags": [
+            "t1",
+            "t2"
+          ],
+          "type": "online",
+          "typesAvailable": [
+            "online",
+            "offline"
+          ],
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin\ndarwin.init()\ndarwin.get_registered_feature_group('test_feature_group_3').get_online_features(entity_name=${{entity}}, primary_keys_with_values = ${{join_keys_dict}})"
+            }
+          ],
+          "sinks": [
+            {
+              "location": "",
+              "type": ""
+            }
+          ]
+        },
+        {
+          "id": "test_feature_group_2",
+          "title": "test_feature_group_2",
+          "description": "bullshit",
+          "version": 1,
+          "allVersions": [
+            1
+          ],
+          "lastValueUpdated": "2024-02-20T14:27:08Z",
+          "lastFiveRuns": [],
+          "createdBy": "bot@dream11.com",
+          "tags": [
+            "t1",
+            "t6"
+          ],
+          "type": "online",
+          "typesAvailable": [
+            "online",
+            "offline"
+          ],
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin\ndarwin.init()\ndarwin.get_registered_feature_group('test_feature_group_2').get_online_features(entity_name=${{entity}}, primary_keys_with_values = ${{join_keys_dict}})"
+            }
+          ],
+          "sinks": [
+            {
+              "location": "",
+              "type": ""
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "getFeatureGroupCounts": {
+    "request": {
+      "endpoint": "FeatureStore/feature-groups/count",
+      "method": "POST",
+      "body": {
+        "filters": [
+          {
+            "name": "owners",
+            "value": [
+              "bot@dream11.com"
+            ]
+          },
+          {
+            "name": "tags",
+            "value": [
+              "t1"
+            ]
+          }
+        ],
+        "search_string": ""
+      }
+    },
+    "response": {
+      "status": "SUCCESS",
+      "statusCode": 200,
+      "data": {
+        "onlineCount": 6,
+        "offlineCount": 8
+      }
+    }
+  },
+  "getFeatureGroupDetails": {
+    "request": {
+      "endpoint": "/FeatureStore/get-feature-group?id=test_feature_group_10&type=online",
+      "method": "GET"
+    },
+    "response": {
+      "status": "SUCCESS",
+      "statusCode": 200,
+      "data": {
+        "id": "test_feature_group_10",
+        "title": "test_feature_group_10",
+        "description": "random-description",
+        "version": 1,
+        "allVersions": [
+          1
+        ],
+        "lastValueUpdated": "Tue Feb 20 14:27:08 IST 2024",
+        "createdBy": "ujjawal@dream11.com",
+        "tags": [
+          "t1",
+          "t5"
+        ],
+        "type": "online",
+        "typesAvailable": [
+          "online",
+          "offline"
+        ],
+        "copyCode": [
+          {
+            "name": "Spark Data Frame",
+            "value": "import darwin\ndarwin.init()\ndarwin.get_registered_feature_group('test_feature_group_10').get_online_features(entity_name=${{entity}}, primary_keys_with_values = ${{join_keys_dict}})"
+          }
+        ],
+        "sinks": [
+          {
+            "location": "",
+            "type": ""
+          }
+        ]
+      }
+    }
+  },
+  "getFeatureGroupEntities": {
+    "request": {
+      "endpoint": "/FeatureStore/feature-groups/test_feature_group_8/entities?version=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": "SUCCESS",
+      "statusCode": 200,
+      "data": [
+        {
+          "entityName": "test_entity_4",
+          "type": [
+            "long",
+            "long",
+            "long",
+            "string",
+            "string"
+          ],
+          "joinKeys": [
+            "p_col1",
+            "p_col2",
+            "p_col3",
+            "p_col4",
+            "p_col5"
+          ],
+          "description": "some-description"
+        }
+      ]
+    }
+  },
+  "getCopyCodeForFeatureGroup": {
+    "request": {
+      "endpoint": "/FeatureStore/copy-code/features",
+      "method": "POST",
+      "body": {
+        "feature_group_name": "test_feature_group_1",
+        "feature_titles": []
+      }
+    },
+    "response": {
+      "status": "SUCCESS",
+      "statusCode": 200,
+      "data": "import darwin;\ndarwin.init();\ndarwin.get_registered_feature_group('test_feature_group_1').get_online_features(entity_name=${entity}, primary_keys_with_values=${join_keys_dict}, features=[])"
+    }
+  },
+  "getFeaturesOfFeatureGroup": {
+    "request": {
+      "endpoint": "/FeatureStore/get-feature-of-feature-group?feature_group_id=test_feature_group_9&search_string=col&page_size=5&offset=1",
+      "method": "GET"
+    },
+    "response": {
+      "status": "SUCCESS",
+      "statusCode": 200,
+      "resultSize": 5,
+      "pageSize": 5,
+      "offset": 1,
+      "totalRecordsCount": 5,
+      "data": [
+        {
+          "title": "p_col4",
+          "description": "something",
+          "tags": [
+            "a",
+            "b"
+          ],
+          "type": "string",
+          "isPrimaryKey": true,
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin;\ndarwin.init();\ndarwin.get_registered_feature_group('test_feature_group_9').get_online_features(entity_name=${entity}, primary_keys_with_values=${join_keys_dict}, features=['p_col4'])"
+            }
+          ]
+        },
+        {
+          "title": "p_col3",
+          "description": "something",
+          "tags": [
+            "a",
+            "b"
+          ],
+          "type": "long",
+          "isPrimaryKey": true,
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin;\ndarwin.init();\ndarwin.get_registered_feature_group('test_feature_group_9').get_online_features(entity_name=${entity}, primary_keys_with_values=${join_keys_dict}, features=['p_col3'])"
+            }
+          ]
+        },
+        {
+          "title": "p_col2",
+          "description": "something",
+          "tags": [
+            "a",
+            "b"
+          ],
+          "type": "long",
+          "isPrimaryKey": true,
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin;\ndarwin.init();\ndarwin.get_registered_feature_group('test_feature_group_9').get_online_features(entity_name=${entity}, primary_keys_with_values=${join_keys_dict}, features=['p_col2'])"
+            }
+          ]
+        },
+        {
+          "title": "p_col1",
+          "description": "something",
+          "tags": [
+            "a",
+            "b"
+          ],
+          "type": "long",
+          "isPrimaryKey": true,
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin;\ndarwin.init();\ndarwin.get_registered_feature_group('test_feature_group_9').get_online_features(entity_name=${entity}, primary_keys_with_values=${join_keys_dict}, features=['p_col1'])"
+            }
+          ]
+        },
+        {
+          "title": "col9",
+          "description": "something",
+          "tags": [
+            "a",
+            "b"
+          ],
+          "type": "int",
+          "isPrimaryKey": true,
+          "copyCode": [
+            {
+              "name": "Spark Data Frame",
+              "value": "import darwin;\ndarwin.init();\ndarwin.get_registered_feature_group('test_feature_group_9').get_online_features(entity_name=${entity}, primary_keys_with_values=${join_keys_dict}, features=['col9'])"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "getFilters": {
+    "request": {
+      "endpoint": "/FeatureStore/group-filters",
+      "method": "GET"
+    },
+    "response": {
+      "status": "SUCCESS",
+      "statusCode": 200,
+      "data": [
+        {
+          "name": "tags",
+          "value": [
+            "tag_1"
+          ]
+        },
+        {
+          "name": "owners",
+          "value": [
+            "bot@dream11.com",
+            "saurabh@dream11.com",
+            "ujjawal@dream11.com"
+          ]
+        }
+      ]
+    }
+  }
+}

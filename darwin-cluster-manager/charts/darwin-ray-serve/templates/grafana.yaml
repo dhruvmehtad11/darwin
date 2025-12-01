@@ -1,0 +1,142 @@
+# TODO - add grafana dashboard for ray serve
+apiVersion: v1
+kind: Secret
+metadata:
+  name: grafana-config-{{ .Release.Name }}
+  namespace: prometheus
+stringData:
+  grafana.ini: |
+    [date_formats]
+    default_timezone = UTC
+    [server]
+    domain = darwin-int-11-stag.d11dev.com
+    root_url = %(protocol)s://%(domain)s:%(http_port)s/{{.Release.Name}}-metrics/
+    serve_from_sub_path = true
+    [auth.anonymous]
+    enabled = true
+    org_name = Main Org.
+    org_role = Admin
+    hide_version = true
+    [auth.basic]
+    enabled = false
+    [auth]
+    disable_login_form = true
+    [dashboards]
+    default_home_dashboard_path = /grafana-dashboard-definitions/0/darwin-default-dashboard/darwin-default-dashboard.json
+
+type: Opaque
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-{{ .Release.Name }}
+  namespace: prometheus
+data:
+  prometheus.yaml: |-
+    {
+        apiVersion: 1,
+        datasources: [
+            {
+                editable: true,
+                name: prometheus,
+                orgId: 1,
+                type: prometheus,
+                url: http://{{ .Release.Name }}-prometheus.prometheus.svc.cluster.local:9090,
+                version: 1
+            }
+        ]
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-grafana
+  namespace: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-grafana
+  template:
+    metadata:
+      name: {{ .Release.Name }}-grafana
+      labels:
+        app: {{ .Release.Name }}-grafana
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-grafana
+          image: 000375658054.dkr.ecr.us-east-1.amazonaws.com/darwin:grafana
+          ports:
+            - name: grafana
+              containerPort: 3000
+          volumeMounts:
+            - mountPath: /etc/grafana/provisioning/datasources
+              name: {{ .Release.Name }}-grafana
+              readOnly: false
+            - mountPath: /etc/grafana/provisioning/dashboards
+              name: grafana-dashboards
+              readOnly: false
+            - mountPath: /grafana-dashboard-definitions/0/darwin-default-dashboard
+              name: darwin-default-dashboard
+              readOnly: false
+            - mountPath: /etc/grafana
+              name: grafana-config
+              readOnly: false
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4G"
+            requests:
+              cpu: "1"
+              memory: "2G"
+      volumes:
+        - name: {{ .Release.Name }}-grafana
+          configMap:
+            defaultMode: 420
+            name: grafana-{{ .Release.Name }}
+        - name: grafana-dashboards
+          configMap:
+            name: grafana-dashboards
+        - name: grafana-config
+          secret:
+            secretName: grafana-config-{{ .Release.Name }}
+        - name: darwin-default-dashboard
+          configMap:
+            defaultMode: 420
+            name: darwin-default-dashboard
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-grafana
+  namespace: prometheus
+spec:
+  selector:
+    app: {{ .Release.Name }}-grafana
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{printf "grafana-%s" .Release.Name }}
+  namespace: istio-system
+spec:
+  gateways:
+    - darwin-gateway
+  hosts:
+    - '*'
+  http:
+    - match:
+        - uri:
+            prefix: {{ printf "/%s-metrics/" .Release.Name }}
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: {{ printf "%s-grafana.prometheus.svc.cluster.local" .Release.Name }}
+            port:
+              number: 3000

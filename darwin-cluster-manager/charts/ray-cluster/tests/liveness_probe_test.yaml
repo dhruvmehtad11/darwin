@@ -1,0 +1,101 @@
+suite: "Livenessprobe configuration deployment tests"
+
+#   This suite tests the liveness probe configurations for both head
+#   and worker group specifications in the Ray cluster. It ensures that
+#   all liveness probe parameters, such as failure threshold, initial delay,
+#   period, success threshold, and timeout, are correctly set according to the defined values.
+
+
+tests:
+  - it: test failed , headGroupSpec livenessProbe.failureThreshold
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.failureThreshold: 10
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].livenessProbe.failureThreshold
+          value: 10
+
+  - it: test failed , headGroupSpec livenessProbe.initialDelaySeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.initialDelaySeconds: 60
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].livenessProbe.initialDelaySeconds
+          value: 60
+
+  - it: test failed , headGroupSpec livenessProbe.periodSeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.periodSeconds: 15
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].livenessProbe.periodSeconds
+          value: 15
+
+  - it: test failed , headGroupSpec livenessProbe.successThreshold
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.successThreshold: 1
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].livenessProbe.successThreshold
+          value: 1
+
+  - it: test failed , headGroupSpec livenessProbe.timeoutSeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.timeoutSeconds: 3
+    asserts:
+      - equal:
+          path: spec.headGroupSpec.template.spec.containers[0].livenessProbe.timeoutSeconds
+          value: 3
+
+  - it: test failed , workerGroupSpec livenessProbe.failureThreshold
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.failureThreshold: 10
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].livenessProbe.failureThreshold
+          value: 10
+
+  - it: test failed , workerGroupSpec livenessProbe.initialDelaySeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.initialDelaySeconds: 60
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].livenessProbe.initialDelaySeconds
+          value: 60
+
+  - it: test failed , workerGroupSpec livenessProbe.periodSeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.periodSeconds: 15
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].livenessProbe.periodSeconds
+          value: 15
+
+  - it: test failed , workerGroupSpec livenessProbe.successThreshold
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.successThreshold: 1
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].livenessProbe.successThreshold
+          value: 1
+
+  - it: test failed , workerGroupSpec livenessProbe.timeoutSeconds
+    template: "raycluster-cluster.yaml"
+    set:
+      livenessProbe.timeoutSeconds: 3
+    asserts:
+      - equal:
+          path: spec.workerGroupSpecs[0].template.spec.containers[0].livenessProbe.timeoutSeconds
+          value: 3
+
+
+

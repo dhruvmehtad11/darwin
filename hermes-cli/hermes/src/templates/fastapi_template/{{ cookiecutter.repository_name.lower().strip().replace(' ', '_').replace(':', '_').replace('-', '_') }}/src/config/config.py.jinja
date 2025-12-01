@@ -1,0 +1,39 @@
+import os
+
+from typeguard import typechecked
+from src.config.constants import CONFIGS_MAP
+
+@typechecked
+class Config:
+    """
+    Config class to get the configuration based on environment
+    """
+
+    def __init__(self, env: str = None):
+        if not env:
+            env = os.getenv("ENV", "local")
+
+        self.env = env
+        self._config = CONFIGS_MAP[self.env]
+    
+    @property
+    def get_env(self):
+        return self.env
+
+    @property
+    def get_feature_store_url(self):
+        return self._config["feature_store_url"]
+
+    {% if cookiecutter.repository_inference_type in ["online", "both"] %}
+    @property
+    def get_model_path(self):
+        return self._config["model_path"]
+    
+    @property
+    def get_model_flavor(self):
+        return self._config["model_flavor"]
+
+    @property
+    def get_model_author(self):
+        return self._config["model_author"]
+    {% endif %}

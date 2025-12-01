@@ -10,6 +10,15 @@ kind/config/*
 !.setup/.gitkeep
 
 # ===========================
+# Darwin Catalog build artifacts
+# ===========================
+darwin-catalog/target/
+darwin-catalog/*.jar
+darwin-catalog/*.jar.original
+darwin-catalog/.idea/
+darwin-catalog/.mvn/
+
+# ===========================
 # OS generated files
 # ===========================
 .DS_Store

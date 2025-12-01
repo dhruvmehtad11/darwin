@@ -1,0 +1,216 @@
+{
+  "getAllConsumerMetadataTest" : {
+    "request" : {
+      "endpoint" : "/consumer/metadata/all",
+      "method" : "GET"
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : [
+          {
+            "tenantName" : "t100",
+            "topicName" : "f100",
+            "numConsumers" : 8
+          },
+          {
+            "tenantName" : "t200",
+            "topicName" : "f200",
+            "numConsumers" : 2
+          }
+        ]
+      }
+    }
+  },
+  "onboardConsumersSuccessTest" : {
+    "request" : {
+      "endpoint" : "/consumer/onboard",
+      "method" : "POST",
+      "body" : {
+        "tenantName" : "t300",
+        "topicName" : "f300",
+        "numPartitions" : 10
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "tenantName" : "t300",
+          "topicName" : "f300",
+          "numPartitions" : 10
+        }
+      }
+    }
+  },
+  "onboardConsumersFeatureGroupNotFoundTest" : {
+    "request" : {
+      "endpoint" : "/consumer/onboard",
+      "method" : "POST",
+      "body" : {
+        "tenantName" : "t900",
+        "topicName" : "f300",
+        "numPartitions" : 10
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error" : {
+          "message" : "tenant not found",
+          "cause" : "tenant not found",
+          "code" : "OFS-V2-TENANT-NOT-FOUND-EXCEPTION"
+        }
+      }
+    }
+  },
+  "changeConsumerCountTest" : {
+    "request" : {
+      "endpoint" : "/consumer/count",
+      "method" : "PUT",
+      "body" : {
+        "tenantName" : "t1000",
+        "numConsumers" : 10
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "tenantName" : "t1000",
+          "numConsumers" : 10
+        }
+      }
+    }
+  },
+  "changeConsumerCountFailedTest" : {
+    "request" : {
+      "endpoint" : "/consumer/count",
+      "method" : "PUT",
+      "body" : {
+        "tenantName" : "t1000",
+        "numConsumers" : 12
+      }
+    },
+    "response" : {
+      "status" : 400,
+      "body" : {
+        "error" : {
+          "message" : "consumer count cannot be greater than num partitions",
+          "cause" : "consumer count cannot be greater than num partitions",
+          "code" : "OFS-V2-KAFKA-ADMIN-EXCEPTION"
+        }
+      }
+    }
+  },
+  "updatePartitionsTest" : {
+    "request" : {
+      "endpoint" : "/consumer/partitions",
+      "method" : "PUT",
+      "body" : {
+        "tenantName" : "t1200",
+        "numPartitions" : 12
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "tenantName" : "t1200",
+          "numPartitions" : 12
+        }
+      }
+    }
+  },
+  "updateTopicTest" : {
+    "request" : {
+      "endpoint" : "/consumer/topic",
+      "method" : "PUT",
+      "body" : {
+        "tenantName" : "t1300",
+        "topicName" : "f1300-1"
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "tenantName" : "t1300",
+          "topicName" : "f1300-1"
+        }
+      }
+    }
+  },
+  "getFeatureGroupTopicTest" : {
+    "request" : {
+      "endpoint" : "/feature-group/f400/topic",
+      "method" : "GET",
+      "body" : {}
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "message" : "Feature Group Topic Details Fetched Successfully",
+        "data" : {
+          "topic" : "f400-topic"
+        }
+      }
+    }
+  },
+  "putPopulatorMetadataTest" : {
+    "request" : {
+      "endpoint" : "/populator/metadata",
+      "method" : "PUT",
+      "body" : {
+        "tenantName" : "t1",
+        "numWorkers" : 10
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "tenantName" : "t1",
+          "numWorkers" : 10
+        }
+      }
+    }
+  },
+  "putPopulatorMetadataIncreaseTest" : {
+    "request" : {
+      "endpoint" : "/populator/metadata",
+      "method" : "PUT",
+      "body" : {
+        "tenantName" : "t1",
+        "numWorkers" : 15
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : {
+          "tenantName" : "t1",
+          "numWorkers" : 15
+        }
+      }
+    }
+  },
+  "getAllPopulatorMetadataTest" : {
+    "request" : {
+      "endpoint" : "/populator/metadata/all",
+      "method" : "GET",
+      "body" : {}
+    },
+    "response" : {
+      "status" : 200,
+      "body" : {
+        "data" : [
+          {
+            "tenantName" : "t1",
+            "numWorkers" : 15
+          }
+        ]
+      }
+    }
+  }
+}
