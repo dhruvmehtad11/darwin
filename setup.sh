@@ -358,7 +358,12 @@ if [ "$datastore_count" != "0" ] && [ "$datastore_count" != "null" ]; then
       continue
     fi
 
-    push_datastore_image "$ds_name" "$ds_image" "$ds_tag"
+    # Attempt to pull datastore image, but don't fail the entire setup if it fails
+    # (network/proxy issues may occur, but datastores are more critical than operators)
+    if ! push_datastore_image "$ds_name" "$ds_image" "$ds_tag"; then
+      echo "⚠️  Warning: Failed to pull datastore $ds_name, but continuing setup..."
+      echo "   This may be due to network/proxy issues. You can retry pulling this image later."
+    fi
 
     i=$((i + 1))
   done
@@ -428,7 +433,12 @@ if [ "$operator_count" != "0" ] && [ "$operator_count" != "null" ]; then
       continue
     fi
 
-    push_operator_image "$op_name" "$op_image" "$op_tag"
+    # Attempt to pull operator image, but don't fail the entire setup if it fails
+    # (operators may not be critical for initial setup, and proxy/network issues may occur)
+    if ! push_operator_image "$op_name" "$op_image" "$op_tag"; then
+      echo "⚠️  Warning: Failed to pull operator $op_name, but continuing setup..."
+      echo "   This may be due to network/proxy issues. You can retry pulling this image later."
+    fi
 
     i=$((i + 1))
   done

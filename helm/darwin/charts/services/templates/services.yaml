@@ -55,16 +55,30 @@ spec:
                 echo "🔍 Debug: API response excerpt: $(echo "$response" | head -c 200)..."
               fi
               
-              if echo "$response" | grep -q '"succeeded": *1'; then
+              # Check if job exists (allow for spaces in JSON formatting)
+              if ! echo "$response" | grep -qE '"kind"\s*:\s*"Job"'; then
+                echo "⏳ Waiting for health check job to start... (attempt $attempt/$max_attempts)"
+                sleep 5
+                attempt=$((attempt + 1))
+                continue
+              fi
+              
+              # Check job status (allow for spaces in JSON formatting)
+              if echo "$response" | grep -qE '"succeeded"\s*:\s*1'; then
                 echo "✅ Datastore health check completed - proceeding with {{ $serviceName }} service"
                 exit 0
-              elif echo "$response" | grep -q '"failed": *[1-9]'; then
+              elif echo "$response" | grep -qE '"failed"\s*:\s*[1-9]'; then
                 echo "❌ Datastore health check failed - cannot start {{ $serviceName }} service"
+                # Show job logs for debugging
+                echo "📋 Fetching health check job logs for debugging..."
+                kubectl logs -n "$namespace" -l app.kubernetes.io/component=datastore-health-check --tail=50 || true
                 exit 1
-              elif echo "$response" | grep -q '"kind":"Job"'; then
-                echo "⏳ Health check still running... (attempt $attempt/$max_attempts)"
               else
-                echo "⏳ Waiting for health check job to start... (attempt $attempt/$max_attempts)"
+                # Job exists but not completed yet
+                active=$(echo "$response" | grep -o '"active": *[0-9]*' | grep -o '[0-9]*' || echo "0")
+                succeeded=$(echo "$response" | grep -o '"succeeded": *[0-9]*' | grep -o '[0-9]*' || echo "0")
+                failed=$(echo "$response" | grep -o '"failed": *[0-9]*' | grep -o '[0-9]*' || echo "0")
+                echo "⏳ Health check still running... (active: $active, succeeded: $succeeded, failed: $failed) (attempt $attempt/$max_attempts)"
               fi
               
               sleep 5

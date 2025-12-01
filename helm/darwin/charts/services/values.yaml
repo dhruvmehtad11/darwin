@@ -154,10 +154,9 @@ services:
 
   # Workflow Orchestration Service
   workflow:
-    enabled: false
+    enabled: true
     replicaCount: 1
     serviceName: darwin-workflow
-    skipInitContainer: true
     image:
       registry: localhost:5000
       name: darwin-workflow
@@ -165,7 +164,7 @@ services:
       pullPolicy: IfNotPresent
     service:
       type: ClusterIP
-      port: 8001
+      port: 8000
     ingress:
       enabled: true
       className: nginx
@@ -176,6 +175,10 @@ services:
               pathType: Prefix
     autoscaling:
       enabled: false
+    healthcheck:
+      path: /healthcheck
+      initialDelaySeconds: 120
+      readinessDelay: 90
     extraEnvVars:
       # Elasticsearch Configuration (using dedicated Elasticsearch instance for workflow, NOT OpenSearch)
       - name: ELASTICSEARCH_URL
@@ -221,7 +224,7 @@ services:
         value: "http://darwin-commuter:8888/view"
       # Application URLs (new variable names)
       - name: WORKFLOW_APP_LAYER_URL
-        value: "http://darwin-workflow:8001"
+        value: "http://darwin-workflow:8000"
       - name: WORKFLOW_APP_LAYER_PUBLIC_URL
         value: "http://darwin-workflow.local"
       - name: WORKFLOW_UI_BASE_URL
@@ -241,7 +244,7 @@ services:
         value: "darwin_workflow_local/airflow_artifacts"
       # Events and Callbacks (new variable names)
       - name: DEFAULT_CALLBACK_URL
-        value: "http://darwin-workflow:8001/events"
+        value: "http://darwin-workflow:8000/events"
       - name: EVENTS_SERVICE_URL
         value: "http://darwin-events:8080"
       # PyPI Configuration (for internal packages)
@@ -524,8 +527,8 @@ services:
     # Consider using privileged: true or mounting Docker socket if needed
     # For now, disabled by default to not disturb existing deployments
     securityContext:
-      privileged: true  # Required for Docker-in-Docker or accessing Docker socket with permissions
-      runAsUser: 0      # Root access needed for Docker operations
+      privileged: true # Required for Docker-in-Docker or accessing Docker socket with permissions
+      runAsUser: 0 # Root access needed for Docker operations
 
     volumeMounts:
       - mountPath: /var/run/docker.sock
@@ -535,7 +538,7 @@ services:
         hostPath:
           path: /var/run/docker.sock
           type: Socket
-    
+
     # Persistence for logs
     persistence:
       enabled: true
@@ -734,7 +737,7 @@ ingress:
       port: 8000
     - path: "/workflow(/|$)(.*)"
       service: "workflow"
-      port: 8001
+      port: 8000
     - path: "/darwin-catalog(/|$)(.*)"
       service: "catalog"
       port: 8081

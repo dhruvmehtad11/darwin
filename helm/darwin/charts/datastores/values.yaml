@@ -97,15 +97,15 @@ zookeeper:
 # Apache Airflow
 airflow:
   enabled: false
-  executor: LocalExecutor  # Changed from CeleryExecutor to LocalExecutor for local development
+  executor: LocalExecutor # Changed from CeleryExecutor to LocalExecutor for local development
   image:
-    repository: darwin-airflow
-    tag: "latest"
+    repository: apache/airflow
+    tag: "2.7.0"
     pullPolicy: IfNotPresent
   config:
     scheduler:
-      dag_dir_list_interval: 30  # Scan for new DAGs every 30 seconds (default is 300)
-      min_file_process_interval: 30  # Process DAG files every 30 seconds
+      dag_dir_list_interval: 30 # Scan for new DAGs every 30 seconds (default is 300)
+      min_file_process_interval: 30 # Process DAG files every 30 seconds
   webserver:
     replicas: 1
     defaultUser:
@@ -157,7 +157,7 @@ airflow:
         cpu: 200m
         memory: 1Gi
   logs:
-    storage: 5Gi  # Storage size for Airflow logs PVC
+    storage: 5Gi # Storage size for Airflow logs PVC
     # storageClassName: ""  # Optional: specify storage class if needed
 
 # LocalStack (S3 Mock)
@@ -185,7 +185,7 @@ localstack:
 opensearch:
   enabled: true
   clusterName: darwin-opensearch
-  replicaCount: 1  # Single node for local development
+  replicaCount: 1 # Single node for local development
   auth:
     username: "{{ .Values.global.database.elasticsearch.username }}"
     password: "{{ .Values.global.database.elasticsearch.password }}"

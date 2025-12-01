@@ -3,6 +3,7 @@ global:
   imageRegistry: docker.io
   storageClass: standard
   namespace: darwin
+  environment: darwin-local # Set to "local" or "darwin-local" for local development
   # Use local Kind storage (hostPath) vs real K8s storage (PVCs)
   local-k8s: true
 
@@ -11,12 +12,12 @@ global:
     mysql:
       username: "darwin"
       rootPassword: "password"
-      database: "darwin"  # Main database name
+      database: "darwin" # Main database name
       userPassword: "password"
     cassandra:
       username: "darwin_user"
       password: "darwin_password"
-    elasticsearch:  # OpenSearch deployment but kept as "elasticsearch" for backward compatibility
+    elasticsearch: # OpenSearch deployment but kept as "elasticsearch" for backward compatibility
       username: "admin"
       password: "admin"
 
@@ -64,4 +65,3 @@ production:
   security:
     networkPolicies: true
     podSecurityStandards: true
-

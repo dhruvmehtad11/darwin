@@ -41,7 +41,6 @@ if __name__ == "__main__":
             "requests~=2.32.3",
             "dataclasses-json~=0.5.7",
             "typeguard~=4.4.2",
-            "darwin-logger~=2.0.6",
             "PyYAML~=6.0.2",
         ],
         python_requires=">=3.8",

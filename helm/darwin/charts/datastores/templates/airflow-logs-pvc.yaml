@@ -17,6 +17,11 @@ spec:
   {{- if or (eq $env "local") (eq $env "darwin-local") }}
   # For local development, use empty storageClassName to bind to manual PV
   storageClassName: ""
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: airflow-logs
+      app.kubernetes.io/name: {{ include "darwin.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   {{- else if .Values.airflow.logs.storageClassName }}
   storageClassName: {{ .Values.airflow.logs.storageClassName }}
   {{- end }}

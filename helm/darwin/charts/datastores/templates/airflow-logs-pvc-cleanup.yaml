@@ -1,0 +1,99 @@
+{{- if .Values.airflow.enabled }}
+{{- $env := .Values.global.environment | default "stag" }}
+{{- if or (eq $env "local") (eq $env "darwin-local") }}
+---
+# Pre-install hook to clean up stuck PVCs before creating new ones
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-airflow-logs-pvc-cleanup
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "darwin.labels" . | nindent 4 }}
+    app.kubernetes.io/component: airflow-logs-cleanup
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    metadata:
+      labels:
+        {{- include "darwin.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: airflow-logs-cleanup
+    spec:
+      # Use default service account since this runs before services chart creates the service account
+      restartPolicy: Never
+      containers:
+      - name: cleanup
+        image: alpine/k8s:1.28.0
+        command: ['sh', '-c']
+        args:
+          - |
+            set -e
+            namespace="{{ .Values.global.namespace }}"
+            pvc_name="{{ .Release.Name }}-airflow-logs"
+            
+            echo "🔍 Checking for stuck PVC: $pvc_name"
+            
+            # Check if PVC exists and is stuck in deletion
+            pvc_status=$(kubectl get pvc "$pvc_name" -n "$namespace" -o jsonpath='{.status.phase}' 2>/dev/null || echo "NotFound")
+            
+            if [ "$pvc_status" = "NotFound" ]; then
+              echo "✅ PVC does not exist - nothing to clean up"
+              exit 0
+            fi
+            
+            echo "📊 PVC status: $pvc_status"
+            
+            # Check if PVC is stuck in deletion
+            deletion_timestamp=$(kubectl get pvc "$pvc_name" -n "$namespace" -o jsonpath='{.metadata.deletionTimestamp}' 2>/dev/null || echo "")
+            
+            if [ -n "$deletion_timestamp" ]; then
+              echo "⚠️  PVC is stuck in deletion state - attempting cleanup"
+              
+              # Check for pods using this PVC
+              echo "🔍 Checking for pods using this PVC..."
+              # Find pods that reference this PVC in their volume mounts
+              pods_using_pvc=$(kubectl get pods -n "$namespace" -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{range .spec.volumes[*]}{.persistentVolumeClaim.claimName}{"\n"}{end}{end}' 2>/dev/null | \
+                grep -w "$pvc_name" | cut -f1 | sort -u || echo "")
+              
+              if [ -n "$pods_using_pvc" ]; then
+                echo "⚠️  Found pods still using PVC: $pods_using_pvc"
+                echo "🗑️  Force deleting pods..."
+                echo "$pods_using_pvc" | while read -r pod; do
+                  if [ -n "$pod" ]; then
+                    kubectl delete pod "$pod" -n "$namespace" --force --grace-period=0 --ignore-not-found=true || true
+                  fi
+                done
+                echo "⏳ Waiting for pods to terminate..."
+                sleep 5
+              else
+                echo "✅ No pods found using this PVC"
+              fi
+              
+              # Remove finalizers to allow deletion
+              echo "🔧 Removing finalizers from PVC..."
+              kubectl patch pvc "$pvc_name" -n "$namespace" \
+                -p '{"metadata":{"finalizers":[]}}' \
+                --type=merge || true
+              
+              # Wait for PVC to be fully deleted
+              echo "⏳ Waiting for PVC deletion to complete..."
+              for i in {1..30}; do
+                if ! kubectl get pvc "$pvc_name" -n "$namespace" &>/dev/null; then
+                  echo "✅ PVC successfully deleted"
+                  exit 0
+                fi
+                sleep 2
+              done
+              
+              echo "⚠️  PVC still exists after cleanup attempt - may need manual intervention"
+            else
+              echo "✅ PVC is not stuck in deletion - no cleanup needed"
+            fi
+            
+            exit 0
+{{- end }}
+{{- end }}

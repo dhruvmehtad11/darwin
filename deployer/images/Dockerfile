@@ -22,9 +22,7 @@ ENV BASE_DIR=/app
 ENV DEPLOYMENT_TYPE=container
 
 RUN if [ -f "/app/.odin/setup.sh" ]; then \
-      echo "${EXTRA_ENV_VARS_FINAL}" | tr '|' '\n' > /tmp/env_vars.txt && \
-      set -a && . /tmp/env_vars.txt && set +a && \
-      bash -x /app/.odin/setup.sh; \
+      env $(echo ${EXTRA_ENV_VARS_FINAL} | tr '|' ' ') bash -x /app/.odin/setup.sh; \
     fi
 
 # Entrypoint
