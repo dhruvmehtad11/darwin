@@ -21,11 +21,43 @@ spec:
     spec:
       initContainers:
         - name: fix-logs-permissions
-          image: busybox:latest
+          image: {{ include "darwin.image" (dict "image" "busybox:latest" "context" .) }}
           command: ['sh', '-c', 'chmod -R 777 /opt/airflow/logs && chown -R 50000:0 /opt/airflow/logs']
           volumeMounts:
             - name: airflow-logs
               mountPath: /opt/airflow/logs
+        - name: setup-operators
+          image: {{ include "darwin.image" (dict "image" "busybox:latest" "context" .) }}
+          command: ['sh', '-c', 'mkdir -p /opt/airflow/plugins/operators && cp /tmp/operators/*.py /opt/airflow/plugins/operators/']
+          volumeMounts:
+            - name: airflow-operators
+              mountPath: /tmp/operators
+            - name: airflow-plugins
+              mountPath: /opt/airflow/plugins
+        - name: install-airflow-core
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
+          command: ['sh', '-c', 'mkdir -p /opt/airflow/custom-packages && if [ -f ~/.pip/pip.conf ]; then sed -i "s/user = true/user = false/" ~/.pip/pip.conf 2>/dev/null || true; fi && if [ -f /etc/pip.conf ]; then sed -i "s/user = true/user = false/" /etc/pip.conf 2>/dev/null || true; fi && export PIP_USER=false && {{ if and .Values.airflow.airflowCore .Values.airflow.airflowCore.gitRepo }}apt-get update && apt-get install -y git && pip install --target /opt/airflow/custom-packages pydantic==1.10.8 && pip install --target /opt/airflow/custom-packages airflow_core@git+https://{{ .Values.airflow.airflowCore.gitToken }}@github.com/{{ .Values.airflow.airflowCore.gitRepo }}@{{ .Values.airflow.airflowCore.gitBranch | default "main" }}#subdirectory=airflow --force-reinstall --upgrade && touch /opt/airflow/custom-packages/__init__.py{{ else }}grep -v -E "(compute_sdk|darwin-compute)" /tmp/airflow-source/requirements.txt > /tmp/requirements-filtered.txt && pip install --target /opt/airflow/custom-packages -r /tmp/requirements-filtered.txt && cp -r /tmp/airflow-source/src/airflow_core /opt/airflow/custom-packages/ && cp -r /tmp/commons-source /opt/airflow/custom-packages/commons && cp -r /tmp/darwin-compute-sdk-source/src/darwin_compute /opt/airflow/custom-packages/ && cp -r /tmp/darwin-compute-model-source/src/compute_model /opt/airflow/custom-packages/ && cp -r /tmp/darwin-compute-core-source/src/compute_core /opt/airflow/custom-packages/ && touch /opt/airflow/custom-packages/__init__.py{{ end }}']
+          volumeMounts:
+            {{- if not (and .Values.airflow.airflowCore .Values.airflow.airflowCore.gitRepo) }}
+            - name: airflow-source
+              mountPath: /tmp/airflow-source
+              readOnly: true
+            - name: commons-source
+              mountPath: /tmp/commons-source
+              readOnly: true
+            - name: darwin-compute-sdk-source
+              mountPath: /tmp/darwin-compute-sdk-source
+              readOnly: true
+            - name: darwin-compute-model-source
+              mountPath: /tmp/darwin-compute-model-source
+              readOnly: true
+            - name: darwin-compute-core-source
+              mountPath: /tmp/darwin-compute-core-source
+              readOnly: true
+            {{- end }}
+            - name: python-packages
+              mountPath: /opt/airflow/custom-packages
         - name: airflow-init-db
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
           imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
@@ -41,6 +73,11 @@ spec:
               value: "rpc://"
             - name: AIRFLOW__CORE__FERNET_KEY
               value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
+            - name: PYTHONPATH
+              value: "/opt/airflow/custom-packages:${PYTHONPATH}"
+          volumeMounts:
+            - name: python-packages
+              mountPath: /opt/airflow/custom-packages
         - name: airflow-create-user
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
           imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
@@ -71,11 +108,16 @@ spec:
               value: "rpc://"
             - name: AIRFLOW__CORE__FERNET_KEY
               value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
+            - name: PYTHONPATH
+              value: "/opt/airflow/custom-packages:${PYTHONPATH}"
+          volumeMounts:
+            - name: python-packages
+              mountPath: /opt/airflow/custom-packages
       containers:
         - name: airflow-webserver
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
           imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
-          command: ['airflow', 'webserver']
+          command: ['sh', '-c', 'export PYTHONPATH=/opt/airflow/custom-packages:${PYTHONPATH} && airflow webserver']
           ports:
             - name: airflow-web
               containerPort: 8080
@@ -100,9 +142,11 @@ spec:
             - name: AIRFLOW__WEBSERVER__EXPOSE_CONFIG
               value: "true"
             - name: AIRFLOW__WEBSERVER__BASE_URL
-              value: "http://localhost/airflow"
+              value: "http://airflow.localhost/airflow"
             - name: AIRFLOW__API__AUTH_BACKENDS
               value: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
+            - name: PYTHONPATH
+              value: "/opt/airflow/custom-packages:${PYTHONPATH}"
           livenessProbe:
             tcpSocket:
               port: airflow-web
@@ -120,6 +164,10 @@ spec:
           volumeMounts:
             - name: airflow-logs
               mountPath: /opt/airflow/logs
+            - name: airflow-plugins
+              mountPath: /opt/airflow/plugins
+            - name: python-packages
+              mountPath: /opt/airflow/custom-packages
           resources:
             {{- toYaml .Values.airflow.webserver.resources | nindent 12 }}
       {{- $env := .Values.global.environment | default "stag" }}
@@ -141,6 +189,35 @@ spec:
         - name: airflow-logs
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-airflow-logs
+        - name: airflow-operators
+          configMap:
+            name: airflow-operators
+        - name: airflow-plugins
+          emptyDir: {}
+        {{- if not (and .Values.airflow.airflowCore .Values.airflow.airflowCore.gitRepo) }}
+        - name: airflow-source
+          hostPath:
+            path: {{ if and .Values.airflow.airflowCore .Values.airflow.airflowCore.sourcePath }}{{ .Values.airflow.airflowCore.sourcePath }}{{ else }}/tmp/workflow/airflow{{ end }}
+            type: Directory
+        - name: commons-source
+          hostPath:
+            path: /tmp/workflow/commons
+            type: Directory
+        - name: darwin-compute-sdk-source
+          hostPath:
+            path: /tmp/workflow/darwin-compute-sdk
+            type: Directory
+        - name: darwin-compute-model-source
+          hostPath:
+            path: /tmp/workflow/darwin-compute-model
+            type: Directory
+        - name: darwin-compute-core-source
+          hostPath:
+            path: /tmp/workflow/darwin-compute-core
+            type: Directory
+        {{- end }}
+        - name: python-packages
+          emptyDir: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -164,16 +241,68 @@ spec:
     spec:
       initContainers:
         - name: fix-logs-permissions
-          image: busybox:latest
+          image: {{ include "darwin.image" (dict "image" "busybox:latest" "context" .) }}
           command: ['sh', '-c', 'chmod -R 777 /opt/airflow/logs && chown -R 50000:0 /opt/airflow/logs']
           volumeMounts:
             - name: airflow-logs
               mountPath: /opt/airflow/logs
+        - name: setup-operators
+          image: {{ include "darwin.image" (dict "image" "busybox:latest" "context" .) }}
+          command: ['sh', '-c', 'mkdir -p /opt/airflow/plugins/operators && cp /tmp/operators/*.py /opt/airflow/plugins/operators/']
+          volumeMounts:
+            - name: airflow-operators
+              mountPath: /tmp/operators
+            - name: airflow-plugins
+              mountPath: /opt/airflow/plugins
+        - name: install-airflow-core
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
+          command: ['sh', '-c', 'mkdir -p /opt/airflow/custom-packages && if [ -f ~/.pip/pip.conf ]; then sed -i "s/user = true/user = false/" ~/.pip/pip.conf 2>/dev/null || true; fi && if [ -f /etc/pip.conf ]; then sed -i "s/user = true/user = false/" /etc/pip.conf 2>/dev/null || true; fi && export PIP_USER=false && {{ if and .Values.airflow.airflowCore .Values.airflow.airflowCore.gitRepo }}apt-get update && apt-get install -y git && pip install --target /opt/airflow/custom-packages pydantic==1.10.8 && pip install --target /opt/airflow/custom-packages airflow_core@git+https://{{ .Values.airflow.airflowCore.gitToken }}@github.com/{{ .Values.airflow.airflowCore.gitRepo }}@{{ .Values.airflow.airflowCore.gitBranch | default "main" }}#subdirectory=airflow --force-reinstall --upgrade && touch /opt/airflow/custom-packages/__init__.py{{ else }}grep -v -E "(compute_sdk|darwin-compute)" /tmp/airflow-source/requirements.txt > /tmp/requirements-filtered.txt && pip install --target /opt/airflow/custom-packages -r /tmp/requirements-filtered.txt && cp -r /tmp/airflow-source/src/airflow_core /opt/airflow/custom-packages/ && cp -r /tmp/commons-source /opt/airflow/custom-packages/commons && cp -r /tmp/darwin-compute-sdk-source/src/darwin_compute /opt/airflow/custom-packages/ && cp -r /tmp/darwin-compute-model-source/src/compute_model /opt/airflow/custom-packages/ && cp -r /tmp/darwin-compute-core-source/src/compute_core /opt/airflow/custom-packages/ && touch /opt/airflow/custom-packages/__init__.py{{ end }}']
+          volumeMounts:
+            {{- if not (and .Values.airflow.airflowCore .Values.airflow.airflowCore.gitRepo) }}
+            - name: airflow-source
+              mountPath: /tmp/airflow-source
+              readOnly: true
+            - name: commons-source
+              mountPath: /tmp/commons-source
+              readOnly: true
+            - name: darwin-compute-sdk-source
+              mountPath: /tmp/darwin-compute-sdk-source
+              readOnly: true
+            - name: darwin-compute-model-source
+              mountPath: /tmp/darwin-compute-model-source
+              readOnly: true
+            - name: darwin-compute-core-source
+              mountPath: /tmp/darwin-compute-core-source
+              readOnly: true
+            {{- end }}
+            - name: python-packages
+              mountPath: /opt/airflow/custom-packages
+        - name: airflow-init-db
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
+          command: ['airflow', 'db', 'init']
+          env:
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: "{{ .Values.airflow.executor }}"
+            - name: AIRFLOW__CELERY__BROKER_URL
+              value: "pyamqp://{{ .Values.airflow.rabbitmq.auth.username }}:{{ .Values.airflow.rabbitmq.auth.password }}@{{ .Release.Name }}-airflow-rabbitmq:5672//"
+            - name: AIRFLOW__CELERY__RESULT_BACKEND
+              value: "rpc://"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              value: "81HqDtbqAywKSOumSKKJ6HJJXBRw7LwVwF4XLrwLqsI="
+            - name: PYTHONPATH
+              value: "/opt/airflow/custom-packages:${PYTHONPATH}"
+          volumeMounts:
+            - name: python-packages
+              mountPath: /opt/airflow/custom-packages
       containers:
         - name: airflow-scheduler
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
           imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
-          command: ['airflow', 'scheduler']
+          command: ['sh', '-c', 'export PYTHONPATH=/opt/airflow/custom-packages:${PYTHONPATH} && airflow scheduler']
           env:
             - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
               value: "mysql://root:{{ .Values.global.database.mysql.rootPassword }}@{{ .Release.Name }}-mysql:3306/airflow"
@@ -209,11 +338,17 @@ spec:
               value: "/opt/airflow/logs"
             - name: FSX_BASE_PATH
               value: "/opt/airflow/workspace"
+            - name: PYTHONPATH
+              value: "/opt/airflow/custom-packages:${PYTHONPATH}"
           volumeMounts:
             - name: dags
               mountPath: /opt/airflow/dags
             - name: airflow-logs
               mountPath: /opt/airflow/logs
+            - name: airflow-plugins
+              mountPath: /opt/airflow/plugins
+            - name: python-packages
+              mountPath: /opt/airflow/custom-packages
           resources:
             {{- toYaml .Values.airflow.scheduler.resources | nindent 12 }}
         {{- $env := .Values.global.environment | default "stag" }}
@@ -268,6 +403,35 @@ spec:
         - name: airflow-logs
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-airflow-logs
+        - name: airflow-operators
+          configMap:
+            name: airflow-operators
+        - name: airflow-plugins
+          emptyDir: {}
+        {{- if not (and .Values.airflow.airflowCore .Values.airflow.airflowCore.gitRepo) }}
+        - name: airflow-source
+          hostPath:
+            path: {{ if and .Values.airflow.airflowCore .Values.airflow.airflowCore.sourcePath }}{{ .Values.airflow.airflowCore.sourcePath }}{{ else }}/tmp/workflow/airflow{{ end }}
+            type: Directory
+        - name: commons-source
+          hostPath:
+            path: /tmp/workflow/commons
+            type: Directory
+        - name: darwin-compute-sdk-source
+          hostPath:
+            path: /tmp/workflow/darwin-compute-sdk
+            type: Directory
+        - name: darwin-compute-model-source
+          hostPath:
+            path: /tmp/workflow/darwin-compute-model
+            type: Directory
+        - name: darwin-compute-core-source
+          hostPath:
+            path: /tmp/workflow/darwin-compute-core
+            type: Directory
+        {{- end }}
+        - name: python-packages
+          emptyDir: {}
         {{- $env := .Values.global.environment | default "stag" }}
         {{- if or (eq $env "local") (eq $env "darwin-local") }}
         - name: sync-script
@@ -296,6 +460,39 @@ spec:
         {{- include "darwin.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: airflow-worker
     spec:
+      initContainers:
+        - name: setup-operators
+          image: {{ include "darwin.image" (dict "image" "busybox:latest" "context" .) }}
+          command: ['sh', '-c', 'mkdir -p /opt/airflow/plugins/operators && cp /tmp/operators/*.py /opt/airflow/plugins/operators/']
+          volumeMounts:
+            - name: airflow-operators
+              mountPath: /tmp/operators
+            - name: airflow-plugins
+              mountPath: /opt/airflow/plugins
+        - name: install-airflow-core
+          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
+          imagePullPolicy: {{ .Values.airflow.image.pullPolicy | default "IfNotPresent" }}
+          command: ['sh', '-c', 'mkdir -p /opt/airflow/custom-packages && if [ -f ~/.pip/pip.conf ]; then sed -i "s/user = true/user = false/" ~/.pip/pip.conf 2>/dev/null || true; fi && if [ -f /etc/pip.conf ]; then sed -i "s/user = true/user = false/" /etc/pip.conf 2>/dev/null || true; fi && export PIP_USER=false && {{ if and .Values.airflow.airflowCore .Values.airflow.airflowCore.gitRepo }}apt-get update && apt-get install -y git && pip install --target /opt/airflow/custom-packages pydantic==1.10.8 && pip install --target /opt/airflow/custom-packages airflow_core@git+https://{{ .Values.airflow.airflowCore.gitToken }}@github.com/{{ .Values.airflow.airflowCore.gitRepo }}@{{ .Values.airflow.airflowCore.gitBranch | default "main" }}#subdirectory=airflow --force-reinstall --upgrade && touch /opt/airflow/custom-packages/__init__.py{{ else }}grep -v -E "(compute_sdk|darwin-compute)" /tmp/airflow-source/requirements.txt > /tmp/requirements-filtered.txt && pip install --target /opt/airflow/custom-packages -r /tmp/requirements-filtered.txt && cp -r /tmp/airflow-source/src/airflow_core /opt/airflow/custom-packages/ && cp -r /tmp/commons-source /opt/airflow/custom-packages/commons && cp -r /tmp/darwin-compute-sdk-source/src/darwin_compute /opt/airflow/custom-packages/ && cp -r /tmp/darwin-compute-model-source/src/compute_model /opt/airflow/custom-packages/ && cp -r /tmp/darwin-compute-core-source/src/compute_core /opt/airflow/custom-packages/ && touch /opt/airflow/custom-packages/__init__.py{{ end }}']
+          volumeMounts:
+            {{- if not (and .Values.airflow.airflowCore .Values.airflow.airflowCore.gitRepo) }}
+            - name: airflow-source
+              mountPath: /tmp/airflow-source
+              readOnly: true
+            - name: commons-source
+              mountPath: /tmp/commons-source
+              readOnly: true
+            - name: darwin-compute-sdk-source
+              mountPath: /tmp/darwin-compute-sdk-source
+              readOnly: true
+            - name: darwin-compute-model-source
+              mountPath: /tmp/darwin-compute-model-source
+              readOnly: true
+            - name: darwin-compute-core-source
+              mountPath: /tmp/darwin-compute-core-source
+              readOnly: true
+            {{- end }}
+            - name: python-packages
+              mountPath: /opt/airflow/custom-packages
       containers:
         - name: airflow-worker
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
@@ -316,7 +513,44 @@ spec:
               value: "/opt/airflow/dags"
             - name: AIRFLOW__CORE__LOAD_EXAMPLES
               value: "false"
+            - name: PYTHONPATH
+              value: "/opt/airflow/custom-packages:${PYTHONPATH}"
+          volumeMounts:
+            - name: airflow-plugins
+              mountPath: /opt/airflow/plugins
+            - name: python-packages
+              mountPath: /opt/airflow/custom-packages
           resources:
             {{- toYaml .Values.airflow.workers.resources | nindent 12 }}
+      volumes:
+        - name: airflow-operators
+          configMap:
+            name: airflow-operators
+        - name: airflow-plugins
+          emptyDir: {}
+        {{- if not (and .Values.airflow.airflowCore .Values.airflow.airflowCore.gitRepo) }}
+        - name: airflow-source
+          hostPath:
+            path: {{ if and .Values.airflow.airflowCore .Values.airflow.airflowCore.sourcePath }}{{ .Values.airflow.airflowCore.sourcePath }}{{ else }}/tmp/workflow/airflow{{ end }}
+            type: Directory
+        - name: commons-source
+          hostPath:
+            path: /tmp/workflow/commons
+            type: Directory
+        - name: darwin-compute-sdk-source
+          hostPath:
+            path: /tmp/workflow/darwin-compute-sdk
+            type: Directory
+        - name: darwin-compute-model-source
+          hostPath:
+            path: /tmp/workflow/darwin-compute-model
+            type: Directory
+        - name: darwin-compute-core-source
+          hostPath:
+            path: /tmp/workflow/darwin-compute-core
+            type: Directory
+        {{- end }}
+        - name: python-packages
+          emptyDir: {}
 {{- end }}
 {{- end }}

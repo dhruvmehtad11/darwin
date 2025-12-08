@@ -168,6 +168,10 @@ services:
     ingress:
       enabled: true
       className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+        nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
       hosts:
         - host: darwin-workflow.local
           paths:
@@ -179,6 +183,8 @@ services:
       path: /healthcheck
       initialDelaySeconds: 120
       readinessDelay: 90
+      timeoutSeconds: 10
+      readinessTimeoutSeconds: 20
     extraEnvVars:
       # Elasticsearch Configuration (using dedicated Elasticsearch instance for workflow, NOT OpenSearch)
       - name: ELASTICSEARCH_URL
@@ -261,6 +267,10 @@ services:
       # Skip Aerich migrations to avoid initialization hang
       - name: SKIP_AERICH_MIGRATIONS
         value: "true"
+      # ROOT_PATH for FastAPI OpenAPI/Swagger docs to work behind reverse proxy
+      # This ensures /docs loads /openapi.json from the correct path prefix
+      - name: ROOT_PATH
+        value: "/workflow"
 
   # Compute Orchestration Service
   compute:
@@ -702,6 +712,9 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
   host: "localhost"
   # Path-based routing: /service/endpoint -> service:port/endpoint
   paths:

@@ -60,3 +60,17 @@ Darwin platform helpers (for backward compatibility)
 {{- define "darwin.fullname" -}}
 {{- printf "%s-darwin" .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
+
+{{/*
+Helper to prepend image registry prefix if configured
+Usage: {{ include "darwin.image" (dict "image" "alpine/k8s:1.28.0" "context" .) }}
+*/}}
+{{- define "darwin.image" -}}
+{{- $image := .image -}}
+{{- $registry := .context.Values.global.imageRegistry | default "" -}}
+{{- if and $registry (not (hasPrefix $registry $image)) -}}
+{{- printf "%s%s" $registry $image -}}
+{{- else -}}
+{{- $image -}}
+{{- end -}}
+{{- end -}}

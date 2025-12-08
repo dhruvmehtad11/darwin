@@ -88,12 +88,14 @@ data:
         /tmp/remote-command/run-remote-command.sh {{ .executionId }} '{{ .command }}' {{ .timeout }} &
         pids+=($!)
       {{- end }}
+      echo "$(date): No head commands to execute or all head commands launched"
     else
       {{- range .Values.remoteCommand.commands.worker }}
         # Launch each command in the background and capture its PID
         /tmp/remote-command/run-remote-command.sh {{ .executionId }} '{{ .command }}' {{ .timeout }} &
         pids+=($!)
       {{- end }}
+      echo "$(date): No worker commands to execute or all worker commands launched"
     fi
 
     # Wait for all background processes to complete

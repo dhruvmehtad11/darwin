@@ -51,8 +51,10 @@ cp -r .odin/$application/. $path/target/$application/.odin
 chmod 755 $path/target/$application/.odin
 cd "$cur_dir"
 
+
+if [[ "$application" == "darwin-workflow" ]]; then
 docker build \
-  --no-cache \
+    --no-cache \
   --build-arg BASE_IMAGE=$base_image \
   --build-arg APP_NAME=$application \
   --build-arg APP_BASE_DIR=$base_path \
@@ -61,5 +63,18 @@ docker build \
   -t $application:latest \
   -f deployer/images/Dockerfile .
   
-docker tag "$application":latest "$registry/$application":latest
-docker push "$registry/$application":latest
+    docker tag "$application":latest "$registry/$application":latest
+    docker push "$registry/$application":latest
+else
+    docker build \
+    --build-arg BASE_IMAGE=$base_image \
+    --build-arg APP_NAME=$application \
+    --build-arg APP_BASE_DIR=$base_path \
+    --build-arg APP_DIR=$path \
+    --build-arg EXTRA_ENV_VARS="$env_vars" \
+    -t $application:latest \
+    -f deployer/images/Dockerfile .
+
+    docker tag "$application":latest "$registry/$application":latest
+    docker push "$registry/$application":latest
+fi

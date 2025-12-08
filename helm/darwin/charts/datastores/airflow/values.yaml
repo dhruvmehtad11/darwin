@@ -65,7 +65,7 @@ rabbitmq:
     size: 5Gi
 
 mysql:
-  enabled: false  # Use existing MySQL service
+  enabled: false # Use existing MySQL service
 
 config:
   core:
@@ -83,7 +83,7 @@ dags:
   persistence:
     enabled: true
     size: 5Gi
-    
+
 logs:
   persistence:
     enabled: true
@@ -112,7 +112,7 @@ env:
   - name: AIRFLOW__CELERY__RESULT_BACKEND
     value: "rpc://"
   - name: AIRFLOW__WEBSERVER__BASE_URL
-    value: "http://localhost/airflow"
+    value: "http://airflow.localhost/airflow"
 
 extraVolumes:
   - name: darwin-scripts
@@ -122,3 +122,14 @@ extraVolumes:
 extraVolumeMounts:
   - name: darwin-scripts
     mountPath: /opt/airflow/scripts
+
+# Airflow Core Installation Configuration
+airflowCore:
+  # If gitRepo is set, install from GitHub (production-like)
+  # For local development, you can use a public repo or set gitToken for private repos
+  gitRepo: "dream11/darwin-workflow" # e.g., "dream11/darwin-workflow"
+  gitBranch: "main" # Branch to use - update to your branch
+  gitToken: "" # GitHub token for private repos (leave empty for public repos, or use secret in production)
+  # If gitRepo is empty, install from local sourcePath (for local development)
+  # Note: hostPath doesn't work well with kind, so prefer git-based installation
+  sourcePath: "/tmp/workflow/airflow"

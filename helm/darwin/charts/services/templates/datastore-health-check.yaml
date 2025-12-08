@@ -71,7 +71,7 @@ spec:
       restartPolicy: Never
       initContainers:
       - name: kubectl-installer
-        image: alpine/k8s:1.28.0
+        image: {{ include "darwin.image" (dict "image" "alpine/k8s:1.28.0" "context" .) }}
         command: ['sh', '-c']
         args:
           - |
@@ -83,7 +83,7 @@ spec:
           mountPath: /shared
       containers:
       - name: health-checker
-        image: alpine/k8s:1.28.0
+        image: {{ include "darwin.image" (dict "image" "alpine/k8s:1.28.0" "context" .) }}
         command: ['sh', '-c']
         env:
         # Pre-deploy environment variables (same as pre-deploy.sh)

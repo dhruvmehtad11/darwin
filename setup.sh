@@ -11,10 +11,10 @@ fi
 echo "✅ Found configuration: $ENABLED_SERVICES_FILE"
 
 # Initialize and update git submodules
-echo "Initializing git submodules..."
-git submodule sync --recursive
-git submodule update --init --recursive --remote
-echo "✅ Git submodules initialized"
+# echo "Initializing git submodules..."
+# git submodule sync --recursive
+# git submodule update --init --recursive --remote
+# echo "✅ Git submodules initialized"
 
 # Parse command line arguments
 AUTO_YES=false
@@ -324,16 +324,20 @@ push_datastore_image() {
     return 1
   fi
 
-  # Tag for local registry
+  # Tag for local registry (using dynamic port from DOCKER_REGISTRY)
   echo "    Tagging as $local_image..."
   docker tag "$full_image" "$local_image"
 
-  # Push to local registry
-  echo "    Pushing to local registry..."
+  # Push to local registry (using actual registry port)
+  # Note: We only push to the actual registry port (DOCKER_REGISTRY)
+  # The containerd mirror in Kind will map localhost:5000 to kind-registry:5000
+  # when Kubernetes pulls images, so we use localhost:5000 in Helm values
+  echo "    Pushing to local registry at $DOCKER_REGISTRY..."
   if docker push "$local_image"; then
     echo "    ✅ Pushed $local_image"
+    echo "    ℹ️  Image will be accessible as localhost:5000/${image}:${tag} via containerd mirror"
   else
-    echo "    ❌ Failed to push $local_image"
+    echo "    ❌ Failed to push to local registry"
     return 1
   fi
 
@@ -367,6 +371,14 @@ if [ "$datastore_count" != "0" ] && [ "$datastore_count" != "null" ]; then
 
     i=$((i + 1))
   done
+  
+  # Also push busybox:latest (many Helm templates use :latest instead of specific tag)
+  echo ">>> Also pushing busybox:latest for Helm templates..."
+  if docker pull busybox:latest && docker tag busybox:latest "${DOCKER_REGISTRY}/busybox:latest" && docker push "${DOCKER_REGISTRY}/busybox:latest"; then
+    echo "    ✅ Pushed busybox:latest"
+  else
+    echo "    ⚠️  Failed to push busybox:latest (non-critical)"
+  fi
 else
   echo "⚠️  No datastores defined in services.yaml"
 fi
@@ -399,16 +411,20 @@ push_operator_image() {
     return 1
   fi
 
-  # Tag for local registry
+  # Tag for local registry (using dynamic port from DOCKER_REGISTRY)
   echo "    Tagging as $local_image..."
   docker tag "$full_image" "$local_image"
 
-  # Push to local registry
-  echo "    Pushing to local registry..."
+  # Push to local registry (using actual registry port)
+  # Note: We only push to the actual registry port (DOCKER_REGISTRY)
+  # The containerd mirror in Kind will map localhost:5000 to kind-registry:5000
+  # when Kubernetes pulls images, so we use localhost:5000 in Helm values
+  echo "    Pushing to local registry at $DOCKER_REGISTRY..."
   if docker push "$local_image"; then
     echo "    ✅ Pushed $local_image"
+    echo "    ℹ️  Image will be accessible as localhost:5000/${image}:${tag} via containerd mirror"
   else
-    echo "    ❌ Failed to push $local_image"
+    echo "    ❌ Failed to push to local registry"
     return 1
   fi
 

@@ -180,6 +180,9 @@ localstack:
       memory: 512Mi
   env:
     awsEndpointOverride: "http://{{ $.Release.Name }}-localstack:4566"
+  # S3 buckets to create automatically on LocalStack startup
+  buckets:
+    - darwin-local-bucket
 
 # OpenSearch (Elasticsearch-compatible)
 opensearch:

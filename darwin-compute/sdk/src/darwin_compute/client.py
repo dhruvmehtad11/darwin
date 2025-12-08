@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from os import environ
 from typing import Optional
 
@@ -9,7 +11,7 @@ from darwin_compute.util.utils import read_yaml
 """
 Compute SDK
 """
-env = environ.get("ENV", "prod")
+env = environ.get("ENV", "darwin-local")
 app_layer = ComputeAppLayer(env)
 
 

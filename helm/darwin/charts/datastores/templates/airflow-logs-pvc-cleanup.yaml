@@ -1,6 +1,7 @@
 {{- if .Values.airflow.enabled }}
 {{- $env := .Values.global.environment | default "stag" }}
-{{- if or (eq $env "local") (eq $env "darwin-local") }}
+{{- $isLocalK8s := index .Values.global "local-k8s" | default false }}
+{{- if or (eq $env "local") (eq $env "darwin-local") $isLocalK8s }}
 ---
 # Pre-install hook to clean up stuck PVCs before creating new ones
 apiVersion: batch/v1
@@ -27,7 +28,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: cleanup
-        image: alpine/k8s:1.28.0
+        image: {{ include "darwin.image" (dict "image" "alpine/k8s:1.28.0" "context" .) }}
         command: ['sh', '-c']
         args:
           - |

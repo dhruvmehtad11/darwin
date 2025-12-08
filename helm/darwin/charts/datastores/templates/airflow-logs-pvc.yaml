@@ -14,7 +14,8 @@ spec:
     requests:
       storage: {{ .Values.airflow.logs.storage | default "5Gi" }}
   {{- $env := .Values.global.environment | default "stag" }}
-  {{- if or (eq $env "local") (eq $env "darwin-local") }}
+  {{- $isLocalK8s := index .Values.global "local-k8s" | default false }}
+  {{- if or (eq $env "local") (eq $env "darwin-local") $isLocalK8s }}
   # For local development, use empty storageClassName to bind to manual PV
   storageClassName: ""
   selector:

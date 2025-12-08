@@ -61,6 +61,72 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 3
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    # Wait for LocalStack S3 service to be ready
+                    echo "Waiting for LocalStack S3 service to be ready..."
+                    for i in $(seq 1 30); do
+                      if curl -s http://localhost:4566/_localstack/health 2>/dev/null | grep -q '"s3": "available"'; then
+                        echo "LocalStack S3 service is ready"
+                        break
+                      fi
+                      echo "Waiting for LocalStack S3 service... ($i/30)"
+                      sleep 2
+                    done
+                    # Create required S3 buckets using Python/boto3 (most reliable method)
+                    {{- if .Values.localstack.buckets }}
+                    python3 << 'PYTHON_SCRIPT'
+                    import boto3
+                    import sys
+                    import time
+                    from botocore.exceptions import ClientError
+                    
+                    endpoint_url = "http://localhost:4566"
+                    s3_client = boto3.client(
+                        's3',
+                        endpoint_url=endpoint_url,
+                        aws_access_key_id='minioadmin',
+                        aws_secret_access_key='minioadmin',
+                        region_name='us-east-1'
+                    )
+                    
+                    buckets = [{{- range $index, $bucket := .Values.localstack.buckets }}{{ if $index }}, {{ end }}"{{ $bucket }}"{{- end }}]
+                    
+                    for bucket in buckets:
+                        try:
+                            s3_client.head_bucket(Bucket=bucket)
+                            print(f"  ✓ Bucket {bucket} already exists")
+                        except ClientError as e:
+                            error_code = e.response.get('Error', {}).get('Code', '')
+                            if error_code == '404':
+                                try:
+                                    s3_client.create_bucket(Bucket=bucket)
+                                    print(f"  ✓ Bucket {bucket} created successfully")
+                                except Exception as create_err:
+                                    print(f"  ✗ Failed to create bucket {bucket}: {create_err}")
+                            else:
+                                print(f"  ⚠ Error checking bucket {bucket}: {error_code}")
+                    
+                    # Create Airflow DAGs folder structure for darwin-local-bucket
+                    if "darwin-local-bucket" in buckets:
+                        try:
+                            s3_client.put_object(
+                                Bucket="darwin-local-bucket",
+                                Key="darwin_workflow_local/airflow_artifacts/dags/.keep",
+                                Body=b""
+                            )
+                            print("  ✓ Airflow DAGs folder structure created")
+                        except Exception as e:
+                            print(f"  ⚠ DAGs folder creation: {e}")
+                    
+                    print("S3 bucket initialization complete")
+                    PYTHON_SCRIPT
+                    {{- end }}
           resources:
             {{- toYaml .Values.localstack.resources | nindent 12 }}
           {{- if .Values.localstack.persistence.enabled }}

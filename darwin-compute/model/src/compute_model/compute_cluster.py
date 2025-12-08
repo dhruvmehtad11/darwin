@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -42,11 +42,11 @@ class ComputeClusterDefinition(DataClassJsonMixin):
     """
 
     name: str
-    tags: list[str]
+    tags: List[str]
     runtime: str
     head_node: HeadNode
     worker_group: List[WorkerGroup]
-    labels: dict[str, str] = field(default_factory=lambda: DEFAULT_LABELS)
+    labels: Dict[str, str] = field(default_factory=lambda: DEFAULT_LABELS)
     terminate_after_minutes: int = 60
     auto_termination_policies: List[PolicyDefinition] = field(
         default_factory=lambda: [
@@ -63,7 +63,7 @@ class ComputeClusterDefinition(DataClassJsonMixin):
     is_job_cluster: bool = False
     start_cluster: Optional[bool] = True
     estimated_cost: Optional[str] = (None,)
-    packages: Optional[list[Package]] = None
+    packages: Optional[List[Package]] = None
 
     def __post_init__(self):
         if not isinstance(self.name, str):
