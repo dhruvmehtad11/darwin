@@ -93,6 +93,6 @@ spec:
   channel: {{ .Values.flagger.slackChannel }}
   username: flagger
   # webhook address (ignored if secretRef is specified)
-  address: https://hooks.slack.com/services/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
+  address: https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
 
 {{- end }}

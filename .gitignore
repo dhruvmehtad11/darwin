@@ -266,3 +266,6 @@ local.properties
 # ===========================
 .history/
 .ionide/
+
+# Local kubeconfig with certificates
+kind/config/kindkubeconfig.yaml

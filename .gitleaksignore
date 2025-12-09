@@ -1,0 +1,5 @@
+# Gitleaks ignore file - False positives from JavaScript compiled/minified files
+
+# False positive: JavaScript variables in compiled MLflow UI code
+mlflow/app_layer/src/mlflow_app_layer/static-files/static/js/main.d89240a1.js:generic-api-key:11
+mlflow/app_layer/src/mlflow_app_layer/static-files/static/js/850.191b69b2.chunk.js.map:generic-api-key:1
