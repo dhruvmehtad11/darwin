@@ -1,0 +1,76 @@
+from typing_extensions import Literal
+import os
+
+ENV_TYPE = Literal["prod", "stag", "uat", "local"]
+INDEX = "workflow_cud"
+INDEX_TRACKING = "workflow_tracking"
+JOB_CLUSTER_INDEX = "job_clusters"
+WORKFLOW_CLUSTERS_INDEX = "workflow_clusters"
+WORKFLOW_HISTORY_INDEX = "workflow_cud_history"
+LATEST_TASK_RUN = "latest_task_run"
+ERROR = "error"
+CLUSTER_NAME_ALREADY_EXISTS_ERROR = "Cluster name already exists"
+DELETED = "deleted"
+AIRFLOW_ENDPOINT = "/api/v1"
+ACTIVE = "active"
+INACTIVE = "inactive"
+PAUSED = "paused"
+QUEUED = "queued"
+RUNNING = "running"
+STOPPING = "stopping"
+SKIPPED = "skipped"
+SUCCESS = "success"
+EXPIRED = "expired"
+CREATED_ARTIFACT = "created_artifact"
+CREATING_ARTIFACT = "creating_artifact"
+CREATION_FAILED = "creating_failed"
+UPDATED_ARTIFACT = "updated_artifact"
+UPDATING_ARTIFACT = "updating_artifact"
+UPDATE_FAILED = "updating_failed"
+RESUMING = "resuming"
+PAUSING = "pausing"
+REPAIRING = "repairing"
+FAIL = "failed"
+AUTH_TOKEN = f'{os.getenv("VAULT_SERVICE_AIRFLOW_TOKEN")}'
+ENV = 'prod'
+NOTEBOOK = "notebook"
+SCRIPT = "script"
+SCHEDULED = "scheduled"
+AUTOMATIC = "automatic"
+MANUAL = "manual"
+EXTERNAL = "external"
+VALID = "valid"
+INVALID = "invalid"
+STOP_RUN = {"state": "failed"}
+PAUSE_RUN = {"is_paused": True}
+RESUME_RUN = {"is_paused": False}
+BASIC = "basic"
+JOB = "job"
+STRING = "string"
+NAMESPACE = "ray"
+msg = ''
+SLACK_USERNAME = 'prd_ids alert'
+auth = ('admin', 'admin@123')
+GIT_TOKEN = f'{os.getenv("VAULT_SERVICE_GIT_TOKEN")}'
+GIT_FC_TOKEN = f'{os.getenv("VAULT_SERVICE_GIT_FC_TOKEN")}'
+GIT_OWNER = 'dream11'
+GIT = "git"
+ZIP = "zip"
+WORKSPACE = "workspace"
+JOB_CLUSTER = "job"
+BASIC_CLUSTER = "basic"
+TIMEOUT = 600
+MAX_ACTIVE_TASKS = 128
+FSX_BASE_PATH = "/var/www/fsx/workspace/"
+FSX_BASE_PATH_DYNAMIC_TRUE = "/home/ray/fsx/workspace/"
+AIRFLOW_LOGS_BASE_PATH = "/root/airflow/fsx/workspace"
+STATIC_FILES_ENDPOINT = "static"
+DARWIN_DEFAULT_CHANNEL = "darwin-workflow-alerts"
+headers = {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache'
+}
+MAX_SLACK_CONTENT_LENGTH = 1900
+SLACK_TOKEN = f'{os.getenv("VAULT_SERVICE_SLACK_TOKEN")}'
+HTML = "html"
+COMMUTER = "commuter"

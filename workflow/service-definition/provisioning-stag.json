@@ -1,0 +1,10 @@
+[
+  {
+    "component_name": "darwin-workflow",
+    "deployment_type": "aws_ec2"
+  },
+  {
+      "component_name": "darwin-workflow-rds",
+      "deployment_type": "aws_rds_aurora"
+  }
+]

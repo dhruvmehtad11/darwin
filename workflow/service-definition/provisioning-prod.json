@@ -1,0 +1,28 @@
+[
+  {
+    "component_name": "darwin-workflow",
+    "deployment_type": "aws_ec2",
+    "env_variables": {
+      "ENABLE_GRANULATE": "true",
+      "ENABLE_WAZUH": "false"
+    },
+    "params": {
+      "lb_type": "alb",
+      "instance_pool": [
+        "c5.2xlarge",
+        "c5n.2xlarge",
+        "m5.2xlarge",
+        "m5n.2xlarge",
+        "r5.2xlarge",
+        "m4.2xlarge"
+      ],
+      "strategy": {
+        "name": "blue-green",
+        "auto_routing": true,
+        "canary": true,
+        "passive_downscale": true
+      },
+      "num_instances": 2
+    }
+  }
+]

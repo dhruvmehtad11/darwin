@@ -1,0 +1,74 @@
+name: Run Unit Tests
+
+on: [pull_request]
+
+env:
+  ENV: stag
+  TEAM_SUFFIX: -mlp-stag
+  VPC_SUFFIX: -stag
+  GITHUB_TOKEN: ${{ secrets.COMMIT_ACCESS_TOKEN }}
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.9"
+
+    - name: Build Project
+      run: |
+        # Requirement Installation
+        pip install -e app_layer/. --force-reinstall
+        pip install aiohttp==3.11.12
+        pip install mysql-connector-python~=8.0.33
+        pip install PyYAML==6.0
+        pip install dataclasses-json~=0.5.7
+        pip install aiomysql==0.2.0
+        pip install fastapi==0.95.1
+        pip install pytz~=2023.3.post1
+        pip install nbconvert==7.16.2
+        pip install nbformat==5.9.2
+        pip install aenum==3.1.15
+        pip install shortuuid==1.0.11
+        pip install python-dateutil==2.8.2
+        pip install boto3~=1.34.54
+        pip install mlp_commons@git+https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dream11/mlp-commons@feat/kafka
+        pip install compute-model@git+https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dream11/darwin-compute@main#subdirectory=model
+        pip install compute-sdk@git+https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dream11/darwin-compute@fix/sdk-user#subdirectory=sdk&egg=compute_sdk
+        pip install -e model/. --force-reinstall
+        pip install urllib3==1.26.6 --force-reinstall
+        pip install pytest==8.0.1 --force-reinstall
+        pip install pytest-cov==4.1.0 --force-reinstall
+        pip install pytest-asyncio==0.21.1 --force-reinstall
+
+    - name: Run tests
+      run: |
+            LOG_FILE=workflow.log pytest --junitxml=pytest.xml -v --ignore='tests/' --cov-report json --cov='app_layer/src' --cov='core/src' --cov='model/src' --cov-report "xml:coverage.xml" --cov-branch core &&
+            echo "Tests complete"
+
+    - name: Pytest coverage comment
+      if: always()
+      uses: MishaKav/pytest-coverage-comment@main
+      with:
+        pytest-xml-coverage-path: ./coverage.xml
+        junitxml-path: ./pytest.xml
+        hide-report: true
+
+#    - name: Comment on PR with report
+#      if: always()  # Ensure this step always runs, regardless of previous steps
+#      uses: actions/github-script@v6
+#      with:
+#        script: |
+#          github.rest.issues.createComment({
+#            owner: context.repo.owner,
+#            repo: context.repo.repo,
+#            issue_number: context.issue.number,
+#            body: coverage.json
+#          })

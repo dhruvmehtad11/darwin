@@ -1,0 +1,39 @@
+- name: Deploy airflow_core and all operator files from GitHub branch
+  hosts: airflow_workers
+  become: yes
+  vars:
+    airflow_plugin_path: /root/airflow/plugins/operators
+    github_repo: dream11/darwin-workflow
+    github_api_url: "https://api.github.com/repos/{{ github_repo }}/contents/airflow/operators?ref={{ github_branch }}"
+    operator_files:
+      - pelican_operator.py
+      - workflow_operator.py
+
+  tasks:
+
+    - name: Ensure plugin directory exists
+      file:
+        path: "{{ airflow_plugin_path }}"
+        state: directory
+        mode: '0755'
+
+    - name: Install airflow_core from GitHub
+      pip:
+        name: "airflow_core@git+https://{{ github_token }}@github.com/{{ github_repo }}@{{ github_branch }}#subdirectory=airflow"
+        extra_args: "--index-url http://pypi-server.darwin.dream11-k8s.local/ --trusted-host pypi-server.darwin.dream11-k8s.local -t /usr/local/lib/python3.9/site-packages --force-reinstall --upgrade"
+        executable: pip3.9
+
+    - name: Install pydantic
+      pip:
+        name: pydantic==1.10.8
+        executable: pip3.9
+
+    - name: Download operator files from GitHub API
+      get_url:
+        url: "https://api.github.com/repos/{{ github_repo }}/contents/airflow/operators/{{ item }}?ref={{ github_branch }}"
+        headers:
+          Authorization: "token {{ github_token }}"
+          Accept: "application/vnd.github.v3.raw"
+        dest: "{{ airflow_plugin_path }}/{{ item }}"
+        mode: '0644'
+      loop: "{{ operator_files }}"

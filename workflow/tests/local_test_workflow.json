@@ -1,0 +1,27 @@
+{
+  "workflow_name": "local-test-10min",
+  "display_name": "local-test-10min",
+  "description": "Test workflow that runs every 10 minutes for local testing",
+  "tags": ["test", "local"],
+  "schedule": "*/10 * * * *",
+  "retries": 1,
+  "notify_on": "failure",
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_name": "test_task",
+      "source_type": "git",
+      "source": "https://github.com/dream11/darwin-workflow",
+      "file_path": "core/tests/test_files/test1.py",
+      "dynamic_artifact": true,
+      "cluster_type": "job",
+      "cluster_id": "job-956247bc",
+      "dependent_libraries": "",
+      "input_parameters": {},
+      "retries": 1,
+      "timeout": 7200,
+      "depends_on": []
+    }
+  ]
+}
+

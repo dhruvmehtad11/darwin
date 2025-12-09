@@ -1,0 +1,40 @@
+name: Release Concrete Artifact
+
+on:
+  pull_request:
+    types: [ closed ]
+    branches:
+      - develop
+
+jobs:
+  post-merge-checks:
+    name: Post Merge Checks
+    if: ${{ github.event.pull_request.merged }}
+    runs-on: [ self-hosted, linux, X64, k8s, darwin-workflow ]
+    steps:
+      - name: Checkout service repo
+        id: checkout-service
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.COMMIT_ACCESS_TOKEN }}
+          fetch-depth: 0
+
+      - name: Install aws-cli
+        uses: dream11/d11-github-actions/install-aws-cli@v1.4.10
+
+      - name: Upload concrete artifacts
+        if: ${{contains(github.event.pull_request.labels.*.name, 'publish')}}
+        uses: dream11/d11-github-actions/upload-artifacts@v1.4.10
+        with:
+          github_token: ${{ secrets.COMMIT_ACCESS_TOKEN }}
+          jfrog_username: ${{ secrets.JFROG_USERNAME }}
+          jfrog_password: ${{ secrets.JFROG_PASSWORD }}
+
+      - name: Update service-definitions artifact
+        if: ${{contains(github.event.pull_request.labels.*.name, 'publish')}}
+        uses: dream11/d11-github-actions/service-definition-pr@v1.4.10
+        with:
+          github_access_token: ${{ secrets.COMMIT_ACCESS_TOKEN }}
+          directory_name_in_service_definitions: darwin-workflow
+          auto_merge: true
+          uat_deploy: false

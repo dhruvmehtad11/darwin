@@ -1,0 +1,29 @@
+name: Release Snapshot Artifact
+
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+
+jobs:
+  ci:
+    name: CI
+    runs-on: [ self-hosted, linux, X64, k8s, darwin-workflow ]
+    steps:
+      - name: Checkout service repo
+        id: checkout-service
+        uses: actions/checkout@v3
+
+      - name: Check if base branch is rebased
+        id: rebase_check
+        uses: dream11/d11-github-actions/rebase-check@v1.4.10
+
+      - name: Install aws-cli
+        uses: dream11/d11-github-actions/install-aws-cli@v1.4.10
+
+      - name: Upload artifacts
+        id: upload-artifacts
+        uses: dream11/d11-github-actions/upload-artifacts@v1.4.10
+        with:
+          github_token: ${{ secrets.COMMIT_ACCESS_TOKEN }}
+          jfrog_username: ${{ secrets.JFROG_USERNAME }}
+          jfrog_password: ${{ secrets.JFROG_PASSWORD }}

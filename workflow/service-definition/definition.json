@@ -1,0 +1,36 @@
+{
+  "name": "darwin-workflow",
+  "version": "1.0.0",
+  "team": "ml-platform",
+  "components": [
+    {
+      "type": "application",
+      "name": "darwin-workflow",
+      "version": "1.0.0",
+      "config": {
+        "artifact_name": "darwin-workflow",
+        "artifact_version": "1.1.6",
+        "build_type": "debian-python",
+        "build_version": "3.9.7",
+        "port": 8000,
+        "liveness_endpoint": "healthcheck",
+        "readiness_endpoint": "healthcheck"
+      }
+    },
+    {
+      "type": "rds",
+      "name": "darwin-workflow-rds",
+      "version": "2.0.0",
+      "config": {
+        "binlog_enabled": false,
+        "discovery": {
+          "reader": "darwin-workflow-reader${TEAM_SUFFIX}.dream11${VPC_SUFFIX}.local",
+          "writer": "darwin-workflow-master${TEAM_SUFFIX}.dream11${VPC_SUFFIX}.local"
+        },
+        "master_username": "${secretstore.master.darwin-workflow.spring_datasource_mysql_username}",
+        "master_password": "${secretstore.master.darwin-workflow.spring_datasource_mysql_password}",
+        "version": "8.0.23"
+      }
+    }
+  ]
+}

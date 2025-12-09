@@ -1,0 +1,37 @@
+{
+  "workflow_name": "local_test_workflow_10min_v3",
+  "display_name": "Local Test Workflow V3 - Every 10 Minutes",
+  "description": "V3 API test workflow that runs every 10 minutes for local testing - regenerated",
+  "tags": ["test", "local", "v3"],
+  "schedule": "*/10 * * * *",
+  "retries": 1,
+  "notify_on": "failure",
+  "max_concurrent_runs": 1,
+  "start_date": "2025-01-01T00:00:00",
+  "end_date": "2025-12-31T23:59:59",
+  "expected_run_duration": 300,
+  "queue_enabled": true,
+  "tenant": "d11",
+  "timezone": "UTC",
+  "tasks": [
+    {
+      "task_name": "test_task",
+      "task_type": "darwin",
+      "task_config": {
+        "source": "workspace://test",
+        "source_type": "Workspace",
+        "file_path": "test_script.py",
+        "cluster_type": "basic",
+        "cluster_name": "test-cluster",
+        "input_parameters": {
+          "test_param": "test_value"
+        },
+        "dynamic_artifact": true,
+        "dependent_libraries": ""
+      },
+      "retries": 1,
+      "timeout": 3600
+    }
+  ]
+}
+
